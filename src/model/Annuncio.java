@@ -12,8 +12,7 @@ public class Annuncio {
 
 
     //costruttore di default
-    public Annuncio() {
-    }
+    public Annuncio() {}
 
     //costruttore principale
     public Annuncio(int idAnnuncio, String titolo, String descrizione, boolean stato, float prezzo, TipoAnnuncio tipoAnnuncio, int idUtente) {

@@ -8,6 +8,8 @@ public class Utente {
     private String password;
     private String numeroTelefono;
 
+    //costruttore di default
+    public Utente() {}
     //costruttore
     public Utente(String username, String email, String password, String numeroTelefono) {
         this.username = username;
@@ -17,14 +19,29 @@ public class Utente {
     }
 
     //metodi getter e setter
-    
+    //idUtente
+    public int getIdUtente() { return idUtente;}
+
+    public int setIdUtente(int idUtente) { this.idUtente = idUtente; }
+
+    //username
     public String getUsername() {
         return username;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    //email
     public String getEmail() {
         return email;
     }
+
+    public void setEmail(String email) { this.email=email;}
+
+    //password
+    public String getPassword(){return password;}
 
     public void setPassword(String password) {
         if(DataCheck.isStrongPassword(password)) {
@@ -34,10 +51,7 @@ public class Utente {
         }
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
+    //numeroTelefono
     public String getNumeroTelefono() {
         return numeroTelefono;
     }
