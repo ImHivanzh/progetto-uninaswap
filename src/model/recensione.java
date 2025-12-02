@@ -1,6 +1,6 @@
 package mdoel;
 
-public class recensione {
+public class Recensione {
     private int idRecensione;
     private int voto;
     private String descrizione;

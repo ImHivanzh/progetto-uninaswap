@@ -1,6 +1,7 @@
 package model;
+import java.util.Date;
 
-public class Rititro{
+public class Ritiro {
     private int idRitiro;
     private String sede;
     private String orario;

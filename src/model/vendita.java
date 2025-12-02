@@ -1,12 +1,6 @@
 package model;
 
-public class vendita {
-    private int idVendita;
-    private float controOfferta;
-    private boolean accettato;
-    private int idAnnuncio;
-    private int idUtente;
-
+public class Vendita {
     private int idVendita;
     private float controOfferta;
     private boolean accettato; // TRUE = la controfferta è stata accettata
@@ -72,6 +66,4 @@ public class vendita {
     public void setIdUtente(int idUtente) {
         this.idUtente = idUtente;
     }
-}
-
 }

@@ -1,6 +1,6 @@
 package model;
 
-public class scambio {
+public class Scambio {
     private int idScambio;
     private int idAnnuncio;
     private int idUtente;

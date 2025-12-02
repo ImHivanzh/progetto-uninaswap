@@ -11,7 +11,7 @@ public class Utente {
     //costruttore di default
     public Utente() {}
     //costruttore
-    public Utente(String username, String email, String password, String numeroTelefono) {
+    public Utente(String username, String password, String email, String numeroTelefono) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -22,7 +22,7 @@ public class Utente {
     //idUtente
     public int getIdUtente() { return idUtente;}
 
-    public int setIdUtente(int idUtente) { this.idUtente = idUtente; }
+    public void setIdUtente(int idUtente) { this.idUtente = idUtente; }
 
     //username
     public String getUsername() {

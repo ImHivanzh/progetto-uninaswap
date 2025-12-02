@@ -1,6 +1,6 @@
 package model;
 
-public class immagini {
+public class Immagini {
     private int idImmagine;
     private String immagine;
     private int idAnnuncio;

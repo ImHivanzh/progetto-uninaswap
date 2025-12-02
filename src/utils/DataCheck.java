@@ -16,6 +16,9 @@ public class DataCheck {
             return false;
         }
         boolean hasUpper = false, hasLower = false, hasDigit = false, hasSpecial = false;
+        // Caratteri speciali considerati: qualsiasi cosa non sia lettera o numero
+        String specialChars = "!@#$%^&*()_+-=[]{}|;':\",./<>?";
+
         for (char c : password.toCharArray()) {
             if (Character.isUpperCase(c)) hasUpper = true;
             else if (Character.isLowerCase(c)) hasLower = true;
