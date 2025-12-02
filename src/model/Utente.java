@@ -1,5 +1,5 @@
 package model;
-import utils.dataCheck;
+import utils.DataCheck;
 
 public class Utente {
     private int idUtente;
@@ -8,6 +8,7 @@ public class Utente {
     private String password;
     private String numeroTelefono;
 
+    //costruttore
     public Utente(String username, String email, String password, String numeroTelefono) {
         this.username = username;
         this.email = email;
@@ -15,6 +16,8 @@ public class Utente {
         this.numeroTelefono = numeroTelefono;
     }
 
+    //metodi getter e setter
+    
     public String getUsername() {
         return username;
     }
@@ -24,7 +27,7 @@ public class Utente {
     }
 
     public void setPassword(String password) {
-        if(utils.dataCheck.isStrongPassword(password)) {
+        if(DataCheck.isStrongPassword(password)) {
             this.password = password;
         } else {
             throw new IllegalArgumentException("Password non sufficientemente sicura.");

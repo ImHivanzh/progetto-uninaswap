@@ -74,6 +74,7 @@ public class LoginForm extends JFrame {
         });
     }
 
+
     private void checkLogin() {
         String user = userField.getText();
         char[] pass = passField.getPassword(); // Ottieni la password come array di char
