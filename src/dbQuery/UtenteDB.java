@@ -1,56 +1,48 @@
 package dbQuery;
-import model.Utente;
 
+import model.Utente;
+import db.dbConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet; // Importante importarlo
 import java.sql.SQLException;
 
-import db.dbConnection;
-
-
 public class UtenteDB {
-    private Connection dbConn;
 
-    public UtenteDB() throws Exception {
-        try {
-            dbConn = dbConnection.getInstance().getConnection();
-        } catch (Exception e) {
-            throw new Exception("Errore durante la connessione al database: " + e.getMessage());
-        }
+    public UtenteDB() {
     }
 
     public void registraUtente(String username, String email, String password, String numeroTelefono) throws SQLException {
-        // Implementazione della logica per registrare l'utente nel database
-        String sql = "INSERT INTO utenti (username, email, password, numeroTelefono) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO utente (nomeutente, mail, password, numerotelefono) VALUES (?, ?, ?, ?)";
 
-        try (PreparedStatement registratiPS = dbConn.prepareStatement(sql)) {
-            registratiPS.setString(1, username);
-            registratiPS.setString(2, email);
-            registratiPS.setString(3, password);
-            registratiPS.setString(4, numeroTelefono);
-            registratiPS.executeUpdate();
+        try (Connection conn = dbConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+            ps.setString(1, username);
+            ps.setString(2, email);
+            ps.setString(3, password);
+            ps.setString(4, numeroTelefono);
+            ps.executeUpdate();
+
         }
     }
 
     public Utente autenticaUtente(String username, String password) throws SQLException {
-        // Implementazione della logica per autenticare l'utente
-        String sql = "SELECT * FROM utenti WHERE username = ? AND password = ?";
+        String sql = "SELECT * FROM utente WHERE nomeutente = ? AND password = ?";
 
-        try (PreparedStatement autenticaPS = dbConn.prepareStatement(sql)) {
-            autenticaPS.setString(1, username);
-            autenticaPS.setString(2, password);
+        try (Connection conn = dbConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            var rs = autenticaPS.executeQuery();
-            if (rs.next()) {
-                String email = rs.getString("email");
-                String numeroTelefono = rs.getString("numeroTelefono");
-                return new Utente(username, email, password, numeroTelefono);
+            ps.setString(1, username);
+            ps.setString(2, password);
+
+            try (ResultSet rs = ps.executeQuery()) { // Anche il ResultSet va nel try
+                if (rs.next()) {
+                    String email = rs.getString("mail");
+                    String numTel = rs.getString("numerotelefono");
+                    return new Utente(username, email, password, numTel);
+                }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
     }

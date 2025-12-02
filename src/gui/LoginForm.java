@@ -1,11 +1,15 @@
 package gui;
 
+import dbQuery.UtenteDB;
+import model.Utente;
+
 import javax.swing.*;
 import java.awt.*;             // Import necessario per il cursore e colori
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 import java.util.Arrays;
 
 public class LoginForm extends JFrame {
@@ -30,7 +34,11 @@ public class LoginForm extends JFrame {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+              try {
                 checkLogin();
+              } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+              }
             }
         });
 
@@ -41,7 +49,7 @@ public class LoginForm extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 JOptionPane.showMessageDialog(LoginForm.this, "Apertura pagina registrazione...");
-                // Qui metterai: new RegistrazioneForm().setVisible(true);
+                // new RegistrazioneForm().setVisible(true);
             }
 
             @Override
@@ -75,15 +83,18 @@ public class LoginForm extends JFrame {
     }
 
 
-    private void checkLogin() {
+    private void checkLogin() throws SQLException {
         String user = userField.getText();
-        char[] pass = passField.getPassword(); // Ottieni la password come array di char
+        char[] tmp_pass = passField.getPassword(); // Ottieni la password come array di char
+        String password = new String(tmp_pass);
+
+        UtenteDB utenteDAO = new UtenteDB();
 
         // Logica di controllo (Esempio: admin / 123)
-        if (true) {
+        if (utenteDAO.autenticaUtente(user,password) != null) {
             JOptionPane.showMessageDialog(this, "Login effettuato con successo!");
 
-            // Qui chiudi il login e apri l'app principale
+            // Chiudi il login e apri l'app principale
             // dispose();
             // new MainApp().setVisible(true);
         } else {

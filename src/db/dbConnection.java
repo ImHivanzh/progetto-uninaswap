@@ -6,35 +6,31 @@ import java.sql.SQLException;
 
 /**
  * Classe singleton per la gestione della connessione al database PostgreSQL.
- * Fornisce un'unica istanza condivisa dell'oggetto {@link Connection} per evitare
- * la creazione multipla di connessioni durante l'esecuzione dell'applicazione.
+ * Gestisce automaticamente la riconnessione se la connessione viene chiusa.
  */
 public class dbConnection {
+
     private static dbConnection instance;
     private Connection connection;
+
+    // Costanti di configurazione del Database
     private static final String NOME = "ivanbuonocore";
-    private static final String PASSWORD = ""; 
+    private static final String PASSWORD = ""; // Lascia vuoto se non hai password locale
     private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
 
-
     /**
-     * Costruttore privato per impedire l'istanziazione diretta dall'esterno.
-     * Inizializza la connessione al database.
-     *
-     * @throws SQLException se la connessione non può essere stabilita
+     * Costruttore privato per impedire l'istanziazione diretta.
      */
-    private dbConnection() throws SQLException {
-        connection = DriverManager.getConnection(URL, NOME, PASSWORD);
+    private dbConnection() {
+        // Non apriamo la connessione qui.
+        // Ci pensa il metodo getConnection() a farlo quando serve (Lazy Loading).
     }
 
     /**
-     * Restituisce l'istanza singleton della classe, creandola se necessario.
-     * È sincronizzato per essere thread-safe.
-     *
-     * @return l'unica istanza di {@code DBConnessione}
-     * @throws SQLException se la connessione non può essere creata
+     * Restituisce l'istanza singleton della classe Manager.
+     * @return l'unica istanza di {@code dbConnection}
      */
-    public static synchronized dbConnection getInstance() throws SQLException {
+    public static synchronized dbConnection getInstance() {
         if (instance == null) {
             instance = new dbConnection();
         }
@@ -43,17 +39,28 @@ public class dbConnection {
 
     /**
      * Restituisce l'oggetto {@code Connection} attivo.
+     * Se la connessione è null o è stata chiusa (es. dal try-with-resources),
+     * ne apre una nuova automaticamente.
      *
-     * @return l'oggetto {@code Connection}
+     * @return l'oggetto {@code Connection} valido.
+     * @throws SQLException se la connessione non può essere stabilita.
      */
-    public Connection getConnection() {
+    public Connection getConnection() throws SQLException {
+        if (connection == null || connection.isClosed()) {
+            try {
+                // Utilizzo le costanti definite in alto
+                connection = DriverManager.getConnection(URL, NOME, PASSWORD);
+            } catch (SQLException e) {
+                // Rilancio l'eccezione per gestirla nella GUI (mostrare errore all'utente)
+                throw new SQLException("Errore durante la connessione al Database: " + e.getMessage());
+            }
+        }
         return connection;
     }
 
     /**
      * Chiude la connessione al database se aperta.
-     *
-     * @throws SQLException se si verifica un errore durante la chiusura
+     * Utile alla chiusura dell'applicazione.
      */
     public void closeConnection() throws SQLException {
         if (connection != null && !connection.isClosed()) {
