@@ -1,4 +1,4 @@
-package mdoel;
+package model;
 
 public class Recensione {
     private int idRecensione;
