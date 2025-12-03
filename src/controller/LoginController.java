@@ -1,12 +1,12 @@
 package controller;
 
 import gui.LoginForm;
+import gui.PassDimenticataForm;
 import gui.RegistrazioneForm;
 import dbQuery.UtenteDB;
 import model.Utente;
 import utils.SessionManager;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -54,7 +54,10 @@ public class LoginController {
     this.view.addForgotPassListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-        view.mostraMessaggio("Procedura recupero password avviata.");
+        // Apre la finestra di recupero password
+        PassDimenticataForm passForm = new PassDimenticataForm();
+        new PassDimenticataController(passForm); // Collega il controller
+        passForm.setVisible(true);
       }
     });
   }

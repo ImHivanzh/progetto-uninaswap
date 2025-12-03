@@ -1,6 +1,8 @@
 import com.formdev.flatlaf.FlatLightLaf;
 import gui.LoginForm;
 import controller.LoginController; // Ho aggiunto l'import del controller
+import gui.MainApp;
+
 import javax.swing.SwingUtilities;
 
 public class App {

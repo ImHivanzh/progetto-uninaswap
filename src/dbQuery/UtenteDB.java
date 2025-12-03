@@ -101,4 +101,36 @@ public class UtenteDB {
             }
         }
     }
+
+    /**
+     * Aggiorna la password di un utente esistente.
+     *
+     * @param username       Lo username dell'utente.
+     * @param nuovaPassword  La nuova password (già validata).
+     * @return true se l'aggiornamento ha avuto successo, false altrimenti.
+     * @throws SQLException se c'è un errore nel DB.
+     */
+    public boolean aggiornaPassword(String username, String nuovaPassword) throws SQLException {
+        if (!esisteUtente(username)) {
+            throw new IllegalArgumentException("Utente non trovato: " + username);
+        }
+
+        // Controllo robustezza password prima di scrivere nel DB
+        if (!DataCheck.isStrongPassword(nuovaPassword)) {
+            throw new IllegalArgumentException("La nuova password non rispetta i criteri di sicurezza.");
+        }
+
+        String sql = "UPDATE utente SET password = ? WHERE nomeutente = ?";
+
+        try (Connection conn = dbConnection.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, nuovaPassword);
+            ps.setString(2, username);
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
+
 }
