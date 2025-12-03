@@ -1,16 +1,36 @@
 package gui;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class BaseFrame extends JFrame {
 
     public BaseFrame(String titolo) {
         super(titolo);
+        setFrameIcon();
     }
 
-    // Costruttore vuoto se necessario
     public BaseFrame() {
         super();
+        setFrameIcon();
+    }
+
+    /**
+     * Carica l'immagine logo.png dal classpath e la imposta come icona della finestra.
+     */
+    private void setFrameIcon() {
+        try {
+            java.net.URL imageUrl = getClass().getResource("../img/logo.png");
+
+            if (imageUrl != null) {
+                Image icon = new ImageIcon(imageUrl).getImage();
+                setIconImage(icon);
+            } else {
+                System.err.println("AVVISO: Risorsa icona non trovata. Controlla il percorso: /logo.png");
+            }
+        } catch (Exception e) {
+            System.err.println("Errore durante il caricamento dell'icona: " + e.getMessage());
+        }
     }
 
     /**
