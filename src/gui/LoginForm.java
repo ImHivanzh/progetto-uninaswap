@@ -2,35 +2,30 @@ package gui;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class LoginForm extends JFrame {
+public class LoginForm extends BaseFrame {
     private JPanel mainPanel;
     private JTextField userField;
     private JPasswordField passField;
     private JButton loginButton;
-
-    // Componenti dal .form
     private JLabel registerLabel;
+
+    // CORRETTO: Rinominato da 'passDimenticataLabel' a 'forgotPassLabel'
+    // per corrispondere al binding nel file LoginPage.form
     private JLabel forgotPassLabel;
 
     public LoginForm() {
+        super("Login"); // Imposta il titolo usando il costruttore di BaseFrame
+
         setContentPane(mainPanel);
-        setTitle("Login Form");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(450, 450);
-        setLocationRelativeTo(null);
+        pack();
 
-        getRootPane().setDefaultButton(loginButton);
-
-        // Ho mantenuto qui la logica estetica (UI)
-        configuraEffettiGrafici();
+        centraFinestra(); // Usa il metodo di BaseFrame
     }
 
-    // --- Metodi per il Controller ---
-
+    // --- GETTERS ---
     public String getUsername() {
         return userField.getText();
     }
@@ -39,6 +34,7 @@ public class LoginForm extends JFrame {
         return new String(passField.getPassword());
     }
 
+    // --- LISTENERS ---
     public void addLoginListener(ActionListener listener) {
         loginButton.addActionListener(listener);
     }
@@ -48,39 +44,7 @@ public class LoginForm extends JFrame {
     }
 
     public void addForgotPassListener(MouseListener listener) {
+        // Usa il nome corretto della variabile
         forgotPassLabel.addMouseListener(listener);
-    }
-
-    public void mostraErrore(String messaggio) {
-        JOptionPane.showMessageDialog(this, messaggio, "Errore", JOptionPane.ERROR_MESSAGE);
-    }
-
-    public void mostraMessaggio(String messaggio) {
-        JOptionPane.showMessageDialog(this, messaggio);
-    }
-
-    // --- Effetti Grafici (UI pura) ---
-    private void configuraEffettiGrafici() {
-        registerLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                registerLabel.setText("<html><u>Non sei registrato? Clicca qui</u></html>");
-            }
-            @Override
-            public void mouseExited(MouseEvent e) {
-                registerLabel.setText("Non sei registrato? Clicca qui");
-            }
-        });
-
-        forgotPassLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                forgotPassLabel.setText("<html><u>Hai dimenticato la password?</u></html>");
-            }
-            @Override
-            public void mouseExited(MouseEvent e) {
-                forgotPassLabel.setText("Hai dimenticato la password?");
-            }
-        });
     }
 }

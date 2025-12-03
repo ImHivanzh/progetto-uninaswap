@@ -1,3 +1,10 @@
 .idea
 bin
 out
+*.iml
+*.class
+*.log
+*.tmp
+.DS_Store
+gui/MainApp.form
+gui/MainApp.java
