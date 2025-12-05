@@ -8,21 +8,21 @@ public class Ritiro {
     private Date data;
     private String numeroTelefono;
     private boolean ritirato;
-    private int idAnnuncio;
+    private Annuncio annuncio;
 
     //costruttore di default
     public Ritiro() {
     }
 
     //costruttore
-    public Ritiro(int idRitiro, String sede, String orario, Date data, String numeroTelefono, boolean ritirato, int idAnnuncio) {
+    public Ritiro(int idRitiro, String sede, String orario, Date data, String numeroTelefono, boolean ritirato, Annuncio annuncio) {
         this.idRitiro = idRitiro;
         this.sede = sede;
         this.orario = orario;
         this.data = data;
         this.numeroTelefono = numeroTelefono;
         this.ritirato = ritirato;
-        this.idAnnuncio = idAnnuncio;
+        this.annuncio = annuncio;
     }
 
     // metodi getter e setter
@@ -57,7 +57,7 @@ public class Ritiro {
     public void setRitirato(boolean ritirato) { this.ritirato = ritirato; }
 
     // idAnnuncio
-    public int getIdAnnuncio() { return idAnnuncio; }
+    public Annuncio getAnnuncio() { return annuncio; }
 
-    public void setIdAnnuncio(int idAnnuncio) { this.idAnnuncio = idAnnuncio; }
+    public void setAnnuncio(Annuncio annuncio) { this.annuncio = annuncio; }
 }

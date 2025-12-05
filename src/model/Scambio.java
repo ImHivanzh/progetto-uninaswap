@@ -2,8 +2,8 @@ package model;
 
 public class Scambio {
     private int idScambio;
-    private int idAnnuncio;
-    private int idUtente;
+    private Annuncio annuncio;
+    private Utente utente;
     private String propScambio;
     private boolean accettato;
 
@@ -12,10 +12,10 @@ public class Scambio {
     }
 
     //costruttore
-    public Scambio(int idScambio, int idAnnuncio, int idUtente, String propScambio, boolean accettato) {
+    public Scambio(int idScambio, Annuncio annuncio, Utente utente, String propScambio, boolean accettato) {
         this.idScambio = idScambio;
-        this.idAnnuncio = idAnnuncio;
-        this.idUtente = idUtente;
+        this.annuncio = annuncio;
+        this.utente = utente;
         this.propScambio = propScambio;
         this.accettato = accettato;
     }
@@ -32,21 +32,19 @@ public class Scambio {
     }
 
     // idAnnuncio
-    public int getIdAnnuncio() {
-        return idAnnuncio;
+    public Annuncio getAnnuncio() {
+        return annuncio;
     }
 
-    public void setIdAnnuncio(int idAnnuncio) {
-        this.idAnnuncio = idAnnuncio;
-    }
+    public void setAnnuncio(Annuncio annuncio) { this.annuncio = annuncio;}
 
     // idUtente
-    public int getIdUtente() {
-        return idUtente;
+    public Utente getUtente() {
+        return utente;
     }
 
-    public void setIdUtente(int idUtente) {
-        this.idUtente = idUtente;
+    public void setUtente(Utente utente) {
+        this.utente = utente;
     }
 
     // propScambio
