@@ -8,21 +8,21 @@ public class Annuncio {
     private boolean stato; // TRUE = disponibile
     private float prezzo;
     private TipoAnnuncio tipoAnnuncio;
-    private int idUtente;
+    private Utente utente;
 
 
     //costruttore di default
     public Annuncio() {}
 
     //costruttore principale
-    public Annuncio(int idAnnuncio, String titolo, String descrizione, boolean stato, float prezzo, TipoAnnuncio tipoAnnuncio, int idUtente) {
+    public Annuncio(int idAnnuncio, String titolo, String descrizione, boolean stato, float prezzo, TipoAnnuncio tipoAnnuncio, Utente utente) {
         this.idAnnuncio = idAnnuncio;
         this.titolo = titolo;
         this.descrizione = descrizione;
         this.stato = stato;
         this.prezzo = prezzo;
         this.tipoAnnuncio = tipoAnnuncio;
-        this.idUtente = idUtente;
+        this.utente = utente;
     }
 
     //metodi getter e setter
@@ -81,11 +81,11 @@ public class Annuncio {
     }
 
     // idUtente
-    public int getIdUtente() {
-        return idUtente;
+    public Utente getUtente() {
+        return utente;
     }
 
-    public void setIdUtente(int idUtente) {
-        this.idUtente = idUtente;
+    public void setUtente(Utente utente) {
+        this.utente = utente;
     }
 }

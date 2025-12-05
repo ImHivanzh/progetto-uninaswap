@@ -3,8 +3,8 @@ package model;
 public class Immagini {
     private int idImmagine;
     private String immagine;
-    private int idAnnuncio;
-    private int idScambio;
+    private Annuncio annuncio;
+    private Scambio scambio;
 
     //costruttore di default
     public Immagini() {
@@ -12,11 +12,11 @@ public class Immagini {
 
 
     //costruttore
-    public Immagini(int idImmagine, String immagine, int idAnnuncio, int idScambio) {
+    public Immagini(int idImmagine, String immagine, Annuncio annuncio, Scambio scambio) {
         this.idImmagine = idImmagine;
         this.immagine = immagine;
-        this.idAnnuncio = idAnnuncio;
-        this.idScambio = idScambio;
+        this.annuncio=annuncio;
+        this.scambio= scambio;
     }
 
     // metodi getter e setter
@@ -40,20 +40,20 @@ public class Immagini {
     }
 
     // idAnnuncio
-    public int getIdAnnuncio() {
-        return idAnnuncio;
+    public Annuncio getAnnuncio() {
+        return annuncio;
     }
 
-    public void setIdAnnuncio(int idAnnuncio) {
-        this.idAnnuncio = idAnnuncio;
+    public void setIdAnnuncio(Annuncio annuncio) {
+        this.annuncio = annuncio;
     }
 
     // idScambio
-    public int getIdScambio() {
-        return idScambio;
+    public Scambio getScambio() {
+        return scambio;
     }
 
-    public void setIdScambio(int idScambio) {
-        this.idScambio = idScambio;
+    public void setScambio(Scambio scambio) {
+        this.scambio = scambio;
     }
 }
