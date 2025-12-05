@@ -5,20 +5,20 @@ public class Regalo {
     private int idRegalo;
     private Date dataPrenotazione;
     private boolean accettato;
-    private int idUtente;
-    private int idAnnuncio;
+    private Utente utente;
+    private Annuncio annuncio;
 
     //costruttore di default
     public Regalo() {
     }
 
     //costruttore
-    public Regalo(int idRegalo, Date dataPrenotazione, boolean accettato, int idUtente, int idAnnuncio) {
+    public Regalo(int idRegalo, Date dataPrenotazione, boolean accettato, Utente utente, Annuncio annuncio) {
         this.idRegalo = idRegalo;
         this.dataPrenotazione = dataPrenotazione;
         this.accettato = accettato;
-        this.idUtente = idUtente;
-        this.idAnnuncio = idAnnuncio;
+        this.utente = utente;
+        this.annuncio = annuncio;
     }
 
     // metodi getter e setter
@@ -51,21 +51,21 @@ public class Regalo {
     }
 
     // idUtente
-    public int getIdUtente() {
-        return idUtente;
+    public Utente getUtente() {
+        return utente;
     }
 
-    public void setIdUtente(int idUtente) {
-        this.idUtente = idUtente;
+    public void setUtente(Utente utente) {
+        this.utente = utente;
     }
 
     // idAnnuncio
-    public int getIdAnnuncio() {
-        return idAnnuncio;
+    public Annuncio getAnnuncio() {
+        return annuncio;
     }
 
-    public void setIdAnnuncio(int idAnnuncio) {
-        this.idAnnuncio = idAnnuncio;
+    public void setAnnuncio(Annuncio annuncio) {
+        this.annuncio = annuncio;
     }
 
 }

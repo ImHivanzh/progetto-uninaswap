@@ -4,18 +4,18 @@ public class Recensione {
     private int voto;
     private String descrizione;
     private int idUtente;
-    private int idUtenteRecensito;
+    private Utente utenteRecensito;
 
     //costruttore di defualt
     public Recensione() {
     }
 
     //costruttore
-    public Recensione(int voto, String descrizione, int idUtente, int idUtenteRecensito) {
+    public Recensione(int voto, String descrizione, int idUtente, Utente utenteRecensito) {
         this.voto = voto;
         this.descrizione = descrizione;
         this.idUtente = idUtente;
-        this.idUtenteRecensito = idUtenteRecensito;
+        this.utenteRecensito = utenteRecensito;
     }
 
     // metodi getter e setter
@@ -48,11 +48,11 @@ public class Recensione {
     }
 
     // idUtenteRecensito
-    public int getIdUtenteRecensito() {
-        return idUtenteRecensito;
+    public Utente getUtenteRecensito() {
+        return utenteRecensito;
     }
 
-    public void setIdUtenteRecensito(int idUtenteRecensito) {
-        this.idUtenteRecensito = idUtenteRecensito;
+    public void setUtenteRecensito(Utente utenteRecensito) {
+        this.utenteRecensito = utenteRecensito;
     }
 }
