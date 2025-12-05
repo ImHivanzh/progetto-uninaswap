@@ -14,9 +14,9 @@ public class dbConnection {
     private Connection connection;
 
     // Costanti di configurazione del Database
-    private static final String NOME = "ivanbuonocore";
-    private static final String PASSWORD = ""; // Lascia vuoto se non hai password locale
-    private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
+    private static final String NOME = "postgres.wzzmgxzgtpsvazdwdbqr";
+    private static final String PASSWORD = "UninaSwapDB"; // Lascia vuoto se non hai password locale
+    private static final String URL = "jdbc:postgresql://aws-1-eu-west-1.pooler.supabase.com:5432/postgres";
 
     /**
      * Costruttore privato per impedire l'istanziazione diretta.

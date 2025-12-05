@@ -1,0 +1,35 @@
+package dbQuery;
+
+import model.Recensione;
+import db.dbConnection;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class RecensioneDB {
+
+  public RecensioneDB() {}
+
+  /**
+   * Inserisce una nuova recensione nel database.
+   * @param recensione Oggetto Recensione da salvare.
+   * @return true se l'inserimento ha successo.
+   * @throws SQLException in caso di errore SQL.
+   */
+  public boolean inserisciRecensione(Recensione recensione) throws SQLException {
+    String sql = "INSERT INTO recensione (idutente, idutenterecens, voto, descrizione) VALUES (?, ?, ?, ?)";
+
+    try (Connection conn = dbConnection.getInstance().getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+      ps.setInt(1, recensione.getIdUtente());
+      ps.setInt(2, recensione.getIdUtenteRecensito());
+      ps.setInt(3, recensione.getVoto());
+      ps.setString(4, recensione.getDescrizione());
+
+      int rowsAffected = ps.executeUpdate();
+      return rowsAffected > 0;
+    }
+  }
+}

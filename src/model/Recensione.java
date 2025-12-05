@@ -1,7 +1,6 @@
 package model;
 
 public class Recensione {
-    private int idRecensione;
     private int voto;
     private String descrizione;
     private int idUtente;
@@ -12,8 +11,7 @@ public class Recensione {
     }
 
     //costruttore
-    public Recensione(int idRecensione, int voto, String descrizione, int idUtente, int idUtenteRecensito) {
-        this.idRecensione = idRecensione;
+    public Recensione(int voto, String descrizione, int idUtente, int idUtenteRecensito) {
         this.voto = voto;
         this.descrizione = descrizione;
         this.idUtente = idUtente;
@@ -21,15 +19,6 @@ public class Recensione {
     }
 
     // metodi getter e setter
-
-    // idRecensione
-    public int getIdRecensione() {
-        return idRecensione;
-    }
-
-    public void setIdRecensione(int idRecensione) {
-        this.idRecensione = idRecensione;
-    }
 
     // voto
     public int getVoto() {

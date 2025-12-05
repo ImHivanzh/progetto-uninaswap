@@ -16,7 +16,8 @@ public class BaseFrame extends JFrame {
     }
 
     /**
-     * Carica l'immagine logo.png dal classpath e la imposta come icona della finestra.
+     * Carica l'immagine e la imposta sia come icona della finestra (Windows/Linux)
+     * che come icona del Dock (macOS).
      */
     private void setFrameIcon() {
         try {
@@ -24,32 +25,32 @@ public class BaseFrame extends JFrame {
 
             if (imageUrl != null) {
                 Image icon = new ImageIcon(imageUrl).getImage();
+
                 setIconImage(icon);
+
+                if (Taskbar.isTaskbarSupported()) {
+                    Taskbar taskbar = Taskbar.getTaskbar();
+                    if (taskbar.isSupported(Taskbar.Feature.ICON_IMAGE)) {
+                        taskbar.setIconImage(icon);
+                    }
+                }
+
             } else {
-                System.err.println("AVVISO: Risorsa icona non trovata. Controlla il percorso: /logo.png");
+                System.err.println("AVVISO: Risorsa icona non trovata. Controlla il percorso: ../img/logo.png");
             }
         } catch (Exception e) {
             System.err.println("Errore durante il caricamento dell'icona: " + e.getMessage());
         }
     }
 
-    /**
-     * Mostra un messaggio di informazione standard.
-     */
     public void mostraMessaggio(String messaggio) {
         JOptionPane.showMessageDialog(this, messaggio, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    /**
-     * Mostra un messaggio di errore standard.
-     */
     public void mostraErrore(String errore) {
         JOptionPane.showMessageDialog(this, errore, "Errore", JOptionPane.ERROR_MESSAGE);
     }
 
-    /**
-     * Metodo opzionale per centrare la finestra sullo schermo
-     */
     public void centraFinestra() {
         setLocationRelativeTo(null);
     }
