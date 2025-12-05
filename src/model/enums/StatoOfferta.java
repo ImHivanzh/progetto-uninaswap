@@ -1,6 +1,6 @@
 package model.enums;
 
-public enum statoOfferta {
+public enum StatoOfferta {
     IN_ATTESA,
     ACCETTATA,
     RIFIUTATA
