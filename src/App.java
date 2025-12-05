@@ -1,12 +1,14 @@
 import com.formdev.flatlaf.FlatLightLaf;
+import controller.ScriviRecensioneController;
 import gui.LoginForm;
 import controller.LoginController; // Ho aggiunto l'import del controller
 import gui.MainApp;
+import gui.ScriviRecensione;
 
 import javax.swing.SwingUtilities;
 
 public class App {
-    public static void main(String[] args) {
+    static void main(String[] args) {
 
         FlatLightLaf.setup();
         // FlatDarkLaf.setup();
@@ -18,6 +20,11 @@ public class App {
                 new LoginController(loginPage);
 
                 loginPage.setVisible(true);
+
+                ScriviRecensione scriviRecensione = new ScriviRecensione();
+                new ScriviRecensioneController(scriviRecensione, 1);
+
+                scriviRecensione.setVisible(true);
             }
         });
     }
