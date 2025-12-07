@@ -1,4 +1,4 @@
-package dbQuery;
+package dao;
 
 import model.Utente;
 import utils.DataCheck;
@@ -9,9 +9,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UtenteDB {
+public class UtenteDAO {
 
-    public UtenteDB() {
+    public UtenteDAO() {
     }
 
     /**

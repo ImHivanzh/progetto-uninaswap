@@ -1,7 +1,7 @@
 package controller;
 
 import gui.RegistrazioneForm;
-import dbQuery.UtenteDB;
+import dao.UtenteDAO;
 import model.Utente;
 
 import java.awt.event.ActionEvent;
@@ -10,11 +10,11 @@ import java.awt.event.ActionListener;
 public class RegistrazioneController {
 
   private final RegistrazioneForm view;
-  private final UtenteDB utenteDB;
+  private final UtenteDAO utenteDAO;
 
   public RegistrazioneController(RegistrazioneForm view) {
     this.view = view;
-    this.utenteDB = new UtenteDB();
+    this.utenteDAO = new UtenteDAO();
 
     initListeners();
   }
@@ -41,7 +41,7 @@ public class RegistrazioneController {
 
     // 2. Logica di Business / DB
     try {
-      boolean successo = utenteDB.registraUtente(new Utente(username, password, mail, telefono));
+      boolean successo = utenteDAO.registraUtente(new Utente(username, password, mail, telefono));
 
       if (successo) {
         view.mostraMessaggio("Registrazione completata per: " + username);

@@ -3,7 +3,7 @@ package controller;
 import gui.LoginForm;
 import gui.PassDimenticataForm;
 import gui.RegistrazioneForm;
-import dbQuery.UtenteDB;
+import dao.UtenteDAO;
 import model.Utente;
 import utils.SessionManager;
 
@@ -16,11 +16,11 @@ import java.sql.SQLException;
 public class LoginController {
 
   private final LoginForm view;
-  private final UtenteDB utenteDB;
+  private final UtenteDAO utenteDAO;
 
   public LoginController(LoginForm view) {
     this.view = view;
-    this.utenteDB = new UtenteDB();
+    this.utenteDAO = new UtenteDAO();
 
     // Ho inizializzato qui i listener
     initListeners();
@@ -71,7 +71,7 @@ public class LoginController {
       return;
     }
 
-    Utente utente = utenteDB.autenticaUtente(user, password);
+    Utente utente = utenteDAO.autenticaUtente(user, password);
 
     if (utente != null) {
       SessionManager.getInstance().login(utente);
