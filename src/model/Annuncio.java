@@ -1,5 +1,7 @@
 package model;
 
+import model.enums.TipoAnnuncio;
+
 public class Annuncio {
 
     private int idAnnuncio;

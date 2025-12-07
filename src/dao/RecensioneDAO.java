@@ -1,4 +1,4 @@
-package dbQuery;
+package dao;
 
 import model.Recensione;
 import db.dbConnection;
@@ -7,9 +7,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class RecensioneDB {
+public class RecensioneDAO {
 
-  public RecensioneDB() {}
+  public RecensioneDAO() {}
 
   /**
    * Inserisce una nuova recensione nel database.

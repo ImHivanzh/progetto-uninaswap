@@ -1,7 +1,7 @@
 package controller;
 
 import gui.PassDimenticataForm;
-import dbQuery.UtenteDB;
+import dao.UtenteDAO;
 import utils.DataCheck;
 
 import java.awt.event.ActionEvent;
@@ -11,11 +11,11 @@ import java.sql.SQLException;
 public class PassDimenticataController {
 
     private final PassDimenticataForm view;
-    private final UtenteDB utenteDB;
+    private final UtenteDAO utenteDAO;
 
     public PassDimenticataController(PassDimenticataForm view) {
         this.view = view;
-        this.utenteDB = new UtenteDB();
+        this.utenteDAO = new UtenteDAO();
 
         initListeners();
     }
@@ -54,7 +54,7 @@ public class PassDimenticataController {
 
         // 4. Aggiornamento nel DB
         try {
-            boolean successo = utenteDB.aggiornaPassword(username, nuovaPass);
+            boolean successo = utenteDAO.aggiornaPassword(username, nuovaPass);
             if (successo) {
                 view.mostraMessaggio("Password aggiornata con successo!");
                 view.dispose(); // Chiude la finestra

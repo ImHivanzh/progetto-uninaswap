@@ -1,8 +1,10 @@
 import com.formdev.flatlaf.FlatLightLaf;
+import controller.PubblicaAnnuncioController;
 import controller.ScriviRecensioneController;
 import gui.LoginForm;
 import controller.LoginController; // Ho aggiunto l'import del controller
 import gui.MainApp;
+import gui.PubblicaAnnuncio;
 import gui.ScriviRecensione;
 
 import javax.swing.SwingUtilities;
@@ -21,10 +23,10 @@ public class App {
 
                 loginPage.setVisible(true);
 
-                ScriviRecensione scriviRecensione = new ScriviRecensione();
-                new ScriviRecensioneController(scriviRecensione, 1);
+                PubblicaAnnuncio pubblicaAnnuncio = new PubblicaAnnuncio();
+                new PubblicaAnnuncioController(pubblicaAnnuncio);
 
-                scriviRecensione.setVisible(true);
+                pubblicaAnnuncio.setVisible(true);
             }
         });
     }

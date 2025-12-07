@@ -1,7 +1,7 @@
 package controller;
 
 import gui.ScriviRecensione;
-import dbQuery.RecensioneDB;
+import dao.RecensioneDAO;
 import model.Recensione;
 import model.Utente;
 import utils.SessionManager;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public class ScriviRecensioneController {
 
   private final ScriviRecensione view;
-  private final RecensioneDB recensioneDB;
+  private final RecensioneDAO recensioneDAO;
   private final int idUtenteDestinatario; // L'ID dell'utente che viene recensito
 
   /**
@@ -23,7 +23,7 @@ public class ScriviRecensioneController {
   public ScriviRecensioneController(ScriviRecensione view, int idUtenteDestinatario) {
     this.view = view;
     this.idUtenteDestinatario = idUtenteDestinatario;
-    this.recensioneDB = new RecensioneDB();
+    this.recensioneDAO = new RecensioneDAO();
 
     initListeners();
   }
@@ -64,7 +64,7 @@ public class ScriviRecensioneController {
 
     // 4. Salvataggio su DB
     try {
-      boolean successo = recensioneDB.inserisciRecensione(recensione);
+      boolean successo = recensioneDAO.inserisciRecensione(recensione);
       if (successo) {
         view.mostraMessaggio("Recensione inviata con successo!");
         view.dispose(); // Chiude la finestra dopo l'invio
