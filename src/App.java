@@ -1,11 +1,12 @@
 import com.formdev.flatlaf.FlatLightLaf;
+import controller.ProfiloController;
 import controller.PubblicaAnnuncioController;
 import controller.ScriviRecensioneController;
-import gui.LoginForm;
+import dao.UtenteDAO;
+import gui.*;
 import controller.LoginController; // Ho aggiunto l'import del controller
-import gui.MainApp;
-import gui.PubblicaAnnuncio;
-import gui.ScriviRecensione;
+import model.Utente;
+import utils.SessionManager;
 
 import javax.swing.SwingUtilities;
 
@@ -18,15 +19,22 @@ public class App {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                LoginForm loginPage = new LoginForm();
-                new LoginController(loginPage);
+                //LoginForm loginPage = new LoginForm();
+                //new LoginController(loginPage);
 
-                loginPage.setVisible(true);
+                //loginPage.setVisible(true);
+                try {
+                    UtenteDAO utenteDAO = new UtenteDAO();
+                    Utente utente = utenteDAO.autenticaUtente("a", "a");
+                    SessionManager.getInstance().login(utente);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-                PubblicaAnnuncio pubblicaAnnuncio = new PubblicaAnnuncio();
-                new PubblicaAnnuncioController(pubblicaAnnuncio);
+                Profilo profilo = new Profilo();
+                new ProfiloController(profilo);
 
-                pubblicaAnnuncio.setVisible(true);
+                profilo.setVisible(true);
             }
         });
     }
