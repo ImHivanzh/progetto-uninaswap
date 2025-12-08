@@ -3,6 +3,7 @@ package dao;
 import model.Utente;
 import utils.DataCheck;
 import db.dbConnection;
+import exception.DatabaseException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,39 +15,25 @@ public class UtenteDAO {
     public UtenteDAO() {
     }
 
-    /**
-     * Tenta di registrare un nuovo utente.
-     * @throws IllegalArgumentException se i dati non sono validi o l'utente esiste già.
-     * @throws SQLException se c'è un errore tecnico del database.
-     */
-    public boolean registraUtente(String username, String email, String password, String numeroTelefono) throws SQLException {
-
-        // Pulizia input: rimuovo spazi vuoti accidentali all'inizio/fine
-        // Spesso il problema "formato non valido" è dato da uno spazio invisibile
+    public boolean registraUtente(String username, String email, String password, String numeroTelefono) throws DatabaseException {
         if (email != null) email = email.trim();
         if (username != null) username = username.trim();
         if (numeroTelefono != null) numeroTelefono = numeroTelefono.trim();
 
-        // 1. Controllo Validità Dati (usa utils.DataCheck)
         if (!DataCheck.isValidEmail(email)) {
-            // Aggiungo il valore nel messaggio per capire meglio cosa sta fallendo
             throw new IllegalArgumentException("Formato email non valido: '" + email + "'");
         }
-
         if (!DataCheck.isValidPhoneNumber(numeroTelefono)) {
             throw new IllegalArgumentException("Numero di telefono non valido (richieste 10 cifre).");
         }
-
         if (!DataCheck.isStrongPassword(password)) {
             throw new IllegalArgumentException("Password debole: serve min. 8 caratteri, una maiuscola, un numero e un carattere speciale.");
         }
 
-        // 2. Controllo Esistenza Utente
         if (esisteUtente(username)) {
             throw new IllegalArgumentException("L'username '" + username + "' è già in uso.");
         }
 
-        // 3. Inserimento nel Database
         String sql = "INSERT INTO utente (nomeutente, mail, password, numerotelefono) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = dbConnection.getInstance().getConnection();
@@ -60,15 +47,16 @@ public class UtenteDAO {
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
 
+        } catch (SQLException e) {
+            throw new DatabaseException("Errore durante la registrazione dell'utente", e);
         }
-        // Nota: Non catturo SQLException qui, la lascio risalire al Controller
-        // così può distinguere tra errore di validazione (IllegalArgument) ed errore tecnico (SQL)
     }
-    public boolean registraUtente(Utente utente) throws SQLException {
+
+    public boolean registraUtente(Utente utente) throws DatabaseException {
         return registraUtente(utente.getUsername(), utente.getEmail(), utente.getPassword(), utente.getNumeroTelefono());
     }
 
-    public Utente autenticaUtente(String username, String password) throws SQLException {
+    public Utente autenticaUtente(String username, String password) throws DatabaseException {
         String sql = "SELECT * FROM utente WHERE nomeutente = ? AND password = ?";
 
         try (Connection conn = dbConnection.getInstance().getConnection();
@@ -81,14 +69,17 @@ public class UtenteDAO {
                 if (rs.next()) {
                     String email = rs.getString("mail");
                     String numTel = rs.getString("numerotelefono");
-                    return new Utente(username, email, password, numTel);
+                    int userid = rs.getInt("idutente");
+                    return new Utente(userid, username, password, email, numTel);
                 }
             }
+        } catch (SQLException e) {
+            throw new DatabaseException("Errore durante l'autenticazione", e);
         }
         return null;
     }
 
-    public boolean esisteUtente(String username) throws SQLException {
+    public boolean esisteUtente(String username) throws DatabaseException {
         String sql = "SELECT 1 FROM utente WHERE nomeutente = ?";
 
         try (Connection conn = dbConnection.getInstance().getConnection();
@@ -97,25 +88,18 @@ public class UtenteDAO {
             ps.setString(1, username);
 
             try (ResultSet rs = ps.executeQuery()) {
-                return rs.next(); // Ritorna true se trova almeno un risultato
+                return rs.next();
             }
+        } catch (SQLException e) {
+            throw new DatabaseException("Errore durante la verifica dell'utente", e);
         }
     }
 
-    /**
-     * Aggiorna la password di un utente esistente.
-     *
-     * @param username       Lo username dell'utente.
-     * @param nuovaPassword  La nuova password (già validata).
-     * @return true se l'aggiornamento ha avuto successo, false altrimenti.
-     * @throws SQLException se c'è un errore nel DB.
-     */
-    public boolean aggiornaPassword(String username, String nuovaPassword) throws SQLException {
+    public boolean aggiornaPassword(String username, String nuovaPassword) throws DatabaseException {
         if (!esisteUtente(username)) {
             throw new IllegalArgumentException("Utente non trovato: " + username);
         }
 
-        // Controllo robustezza password prima di scrivere nel DB
         if (!DataCheck.isStrongPassword(nuovaPassword)) {
             throw new IllegalArgumentException("La nuova password non rispetta i criteri di sicurezza.");
         }
@@ -130,7 +114,8 @@ public class UtenteDAO {
 
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
+        } catch (SQLException e) {
+            throw new DatabaseException("Errore durante l'aggiornamento della password", e);
         }
     }
-
 }

@@ -41,7 +41,7 @@ public class RegistrazioneController {
 
     // 2. Logica di Business / DB
     try {
-      boolean successo = utenteDAO.registraUtente(new Utente(username, password, mail, telefono));
+      boolean successo = utenteDAO.registraUtente(new Utente(0, username, password, mail, telefono));
 
       if (successo) {
         view.mostraMessaggio("Registrazione completata per: " + username);

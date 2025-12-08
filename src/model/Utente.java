@@ -11,7 +11,8 @@ public class Utente {
     //costruttore di default
     public Utente() {}
     //costruttore
-    public Utente(String username, String password, String email, String numeroTelefono) {
+    public Utente(int idUtente, String username, String password, String email, String numeroTelefono) {
+        this.idUtente = idUtente;
         this.username = username;
         this.email = email;
         this.password = password;
