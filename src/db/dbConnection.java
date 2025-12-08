@@ -1,5 +1,7 @@
 package db;
 
+import exception.DatabaseException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -22,13 +24,11 @@ public class dbConnection {
      * Costruttore privato per impedire l'istanziazione diretta.
      */
     private dbConnection() {
-        // Non apriamo la connessione qui.
-        // Ci pensa il metodo getConnection() a farlo quando serve (Lazy Loading).
+        // Lazy Loading
     }
 
     /**
      * Restituisce l'istanza singleton della classe Manager.
-     * @return l'unica istanza di {@code dbConnection}
      */
     public static synchronized dbConnection getInstance() {
         if (instance == null) {
@@ -39,32 +39,31 @@ public class dbConnection {
 
     /**
      * Restituisce l'oggetto {@code Connection} attivo.
-     * Se la connessione è null o è stata chiusa (es. dal try-with-resources),
-     * ne apre una nuova automaticamente.
-     *
-     * @return l'oggetto {@code Connection} valido.
-     * @throws SQLException se la connessione non può essere stabilita.
+     * @throws DatabaseException se la connessione non può essere stabilita.
      */
-    public Connection getConnection() throws SQLException {
-        if (connection == null || connection.isClosed()) {
-            try {
+    public Connection getConnection() throws DatabaseException {
+        try {
+            if (connection == null || connection.isClosed()) {
                 // Utilizzo le costanti definite in alto
                 connection = DriverManager.getConnection(URL, NOME, PASSWORD);
-            } catch (SQLException e) {
-                // Rilancio l'eccezione per gestirla nella GUI (mostrare errore all'utente)
-                throw new SQLException("Errore durante la connessione al Database: " + e.getMessage());
             }
+            return connection;
+        } catch (SQLException e) {
+            // Avvolgiamo l'eccezione SQL nella nostra eccezione personalizzata
+            throw new DatabaseException("Errore durante la connessione al Database: " + e.getMessage(), e);
         }
-        return connection;
     }
 
     /**
      * Chiude la connessione al database se aperta.
-     * Utile alla chiusura dell'applicazione.
      */
-    public void closeConnection() throws SQLException {
-        if (connection != null && !connection.isClosed()) {
-            connection.close();
+    public void closeConnection() throws DatabaseException {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Errore durante la chiusura della connessione", e);
         }
     }
 }

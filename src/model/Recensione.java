@@ -3,24 +3,24 @@ package model;
 public class Recensione {
     private int voto;
     private String descrizione;
-    private int idUtente;
-    private Utente utenteRecensito;
+    private int idUtente; // ID dell'utente che scrive la recensione
+    private int idUtenteRecensito; // ID dell'utente che riceve la recensione
 
-    //costruttore di defualt
+    // Costruttore di default
     public Recensione() {
     }
 
-    //costruttore
-    public Recensione(int voto, String descrizione, int idUtente, Utente utenteRecensito) {
+    // Costruttore completo
+    public Recensione(int voto, String descrizione, int idUtente, int idUtenteRecensito) {
         this.voto = voto;
         this.descrizione = descrizione;
         this.idUtente = idUtente;
-        this.utenteRecensito = utenteRecensito;
+        this.idUtenteRecensito = idUtenteRecensito;
     }
 
-    // metodi getter e setter
+    // --- Metodi Getter e Setter ---
 
-    // voto
+    // Voto
     public int getVoto() {
         return voto;
     }
@@ -29,7 +29,7 @@ public class Recensione {
         this.voto = voto;
     }
 
-    // descrizione
+    // Descrizione
     public String getDescrizione() {
         return descrizione;
     }
@@ -47,12 +47,13 @@ public class Recensione {
         this.idUtente = idUtente;
     }
 
-    // idUtenteRecensito
-    public Utente getUtenteRecensito() {
-        return utenteRecensito;
+    // idUtenteRecensito (Destinatario)
+    // Rinominato per coerenza con il DAO che chiama getIdUtenteRecensito()
+    public int getIdUtenteRecensito() {
+        return idUtenteRecensito;
     }
 
-    public void setUtenteRecensito(Utente utenteRecensito) {
-        this.utenteRecensito = utenteRecensito;
+    public void setIdUtenteRecensito(int idUtenteRecensito) {
+        this.idUtenteRecensito = idUtenteRecensito;
     }
 }

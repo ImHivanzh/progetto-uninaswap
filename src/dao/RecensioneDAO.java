@@ -2,6 +2,7 @@ package dao;
 
 import model.Recensione;
 import db.dbConnection;
+import exception.DatabaseException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,9 +16,9 @@ public class RecensioneDAO {
    * Inserisce una nuova recensione nel database.
    * @param recensione Oggetto Recensione da salvare.
    * @return true se l'inserimento ha successo.
-   * @throws SQLException in caso di errore SQL.
+   * @throws DatabaseException in caso di errore SQL.
    */
-  public boolean inserisciRecensione(Recensione recensione) throws SQLException {
+  public boolean inserisciRecensione(Recensione recensione) throws DatabaseException {
     String sql = "INSERT INTO recensione (idutente, idutenterecens, voto, descrizione) VALUES (?, ?, ?, ?)";
 
     try (Connection conn = dbConnection.getInstance().getConnection();
@@ -30,6 +31,8 @@ public class RecensioneDAO {
 
       int rowsAffected = ps.executeUpdate();
       return rowsAffected > 0;
+    } catch (SQLException e) {
+      throw new DatabaseException("Errore durante l'inserimento della recensione", e);
     }
   }
 }

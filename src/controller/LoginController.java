@@ -6,12 +6,12 @@ import gui.RegistrazioneForm;
 import dao.UtenteDAO;
 import model.Utente;
 import utils.SessionManager;
+import exception.DatabaseException;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.SQLException;
 
 public class LoginController {
 
@@ -21,48 +21,37 @@ public class LoginController {
   public LoginController(LoginForm view) {
     this.view = view;
     this.utenteDAO = new UtenteDAO();
-
-    // Ho inizializzato qui i listener
     initListeners();
   }
 
   private void initListeners() {
-    // Gestione Login
     this.view.addLoginListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        try {
-          controllaLogin();
-        } catch (SQLException ex) {
-          view.mostraErrore("Errore DB: " + ex.getMessage());
-        }
+        controllaLogin();
       }
     });
 
-    // Gestione click su "Registrati"
     this.view.addRegisterListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
         RegistrazioneForm regForm = new RegistrazioneForm();
-        new RegistrazioneController(regForm); // Collega il cervello alla form
+        new RegistrazioneController(regForm);
         regForm.setVisible(true);
-        // view.dispose(); // Da decidere se lasciare aperta la login o no
       }
     });
 
-    // Gestione click su "Password Dimenticata"
     this.view.addForgotPassListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-        // Apre la finestra di recupero password
         PassDimenticataForm passForm = new PassDimenticataForm();
-        new PassDimenticataController(passForm); // Collega il controller
+        new PassDimenticataController(passForm);
         passForm.setVisible(true);
       }
     });
   }
 
-  private void controllaLogin() throws SQLException {
+  private void controllaLogin() {
     String user = view.getUsername();
     String password = view.getPassword();
 
@@ -71,16 +60,19 @@ public class LoginController {
       return;
     }
 
-    Utente utente = utenteDAO.autenticaUtente(user, password);
+    try {
+      Utente utente = utenteDAO.autenticaUtente(user, password);
 
-    if (utente != null) {
-      SessionManager.getInstance().login(utente);
-      // Login riuscito
-      view.mostraMessaggio("Login effettuato con successo!");
-      view.dispose();
-      // new MainApp().setVisible(true);
-    } else {
-      view.mostraErrore("Username o Password errati");
+      if (utente != null) {
+        SessionManager.getInstance().login(utente);
+        view.mostraMessaggio("Login effettuato con successo!");
+        view.dispose();
+        // new MainApp().setVisible(true);
+      } else {
+        view.mostraErrore("Username o Password errati");
+      }
+    } catch (DatabaseException ex) {
+      view.mostraErrore("Errore di connessione al Database: " + ex.getMessage());
     }
   }
 }

@@ -5,26 +5,21 @@ import dao.RecensioneDAO;
 import model.Recensione;
 import model.Utente;
 import utils.SessionManager;
+import exception.DatabaseException;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 
 public class ScriviRecensioneController {
 
   private final ScriviRecensione view;
   private final RecensioneDAO recensioneDAO;
-  private final int idUtenteDestinatario; // L'ID dell'utente che viene recensito
+  private final int idUtenteDestinatario;
 
-  /**
-   * @param view La finestra GUI
-   * @param idUtenteDestinatario L'ID dell'utente a cui stiamo lasciando la recensione
-   */
   public ScriviRecensioneController(ScriviRecensione view, int idUtenteDestinatario) {
     this.view = view;
     this.idUtenteDestinatario = idUtenteDestinatario;
     this.recensioneDAO = new RecensioneDAO();
-
     initListeners();
   }
 
@@ -47,31 +42,28 @@ public class ScriviRecensioneController {
     }
 
     Utente utenteLoggato = SessionManager.getInstance().getUtente();
-//    if (utenteLoggato == null) {
-//      view.mostraErrore("Devi essere loggato per lasciare una recensione.");
-//      view.dispose();
-//      return;
-//    }
 
-    // Controllo opzionale: non recensire se stessi
-    if (utenteLoggato.getIdUtente() == idUtenteDestinatario) {
+    if (utenteLoggato != null && utenteLoggato.getIdUtente() == idUtenteDestinatario) {
       view.mostraErrore("Non puoi recensirti da solo!");
       return;
     }
 
-    // 3. Creazione Modello
+    if (utenteLoggato == null) {
+      view.mostraErrore("Utente non loggato.");
+      return;
+    }
+
     Recensione recensione = new Recensione(voto, descrizione, utenteLoggato.getIdUtente(), idUtenteDestinatario);
 
-    // 4. Salvataggio su DB
     try {
       boolean successo = recensioneDAO.inserisciRecensione(recensione);
       if (successo) {
         view.mostraMessaggio("Recensione inviata con successo!");
-        view.dispose(); // Chiude la finestra dopo l'invio
+        view.dispose();
       } else {
         view.mostraErrore("Errore durante l'invio della recensione.");
       }
-    } catch (SQLException ex) {
+    } catch (DatabaseException ex) {
       view.mostraErrore("Errore Database: " + ex.getMessage());
       ex.printStackTrace();
     }
