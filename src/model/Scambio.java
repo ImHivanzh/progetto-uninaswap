@@ -1,67 +1,30 @@
 package model;
 
-public class Scambio {
-    private int idScambio;
-    private Annuncio annuncio;
-    private Utente utente;
-    private String propScambio;
-    private boolean accettato;
+import model.enums.Categoria;
+import model.enums.TipoAnnuncio;
 
-    //costruttore di default
-    public Scambio() {
+public class Scambio extends Annuncio {
+    private String oggettoRichiesto;
+
+    // Costruttore completo (dal DB)
+    public Scambio(int id, String titolo, String descrizione, Categoria categoria, int utenteID, String oggettoRichiesto) {
+        super(id, titolo, descrizione, categoria, utenteID, TipoAnnuncio.SCAMBIO);
+        this.oggettoRichiesto = oggettoRichiesto;
     }
 
-    //costruttore
-    public Scambio(int idScambio, Annuncio annuncio, Utente utente, String propScambio, boolean accettato) {
-        this.idScambio = idScambio;
-        this.annuncio = annuncio;
-        this.utente = utente;
-        this.propScambio = propScambio;
-        this.accettato = accettato;
+    // Costruttore nuovo inserimento
+    public Scambio(String titolo, String descrizione, Categoria categoria, int utenteID, String oggettoRichiesto) {
+        super(titolo, descrizione, categoria, utenteID, TipoAnnuncio.SCAMBIO);
+        this.oggettoRichiesto = oggettoRichiesto;
     }
 
-    // metodi getter e setter
+    public String getOggettoRichiesto() { return oggettoRichiesto; }
+    public void setOggettoRichiesto(String oggettoRichiesto) { this.oggettoRichiesto = oggettoRichiesto; }
 
-    // idScambio
-    public int getIdScambio() {
-        return idScambio;
-    }
-
-    public void setIdScambio(int idScambio) {
-        this.idScambio = idScambio;
-    }
-
-    // idAnnuncio
-    public Annuncio getAnnuncio() {
-        return annuncio;
-    }
-
-    public void setAnnuncio(Annuncio annuncio) { this.annuncio = annuncio;}
-
-    // idUtente
-    public Utente getUtente() {
-        return utente;
-    }
-
-    public void setUtente(Utente utente) {
-        this.utente = utente;
-    }
-
-    // propScambio
-    public String getPropScambio() {
-        return propScambio;
-    }
-
-    public void setPropScambio(String propScambio) {
-        this.propScambio = propScambio;
-    }
-
-    // accettato (boolean -> isAccettato)
-    public boolean isAccettato() {
-        return accettato;
-    }
-
-    public void setAccettato(boolean accettato) {
-        this.accettato = accettato;
+    @Override
+    public String toString() {
+        return "Scambio{" +
+                "oggettoRichiesto='" + oggettoRichiesto + '\'' +
+                "} " + super.toString();
     }
 }

@@ -31,7 +31,7 @@ public class App {
                     e.printStackTrace();
                 }
 
-                Utente a = new Utente(7, "utente2", "pass2", "!", "!");
+                Utente a = new Utente(1, "a", "a", "a@a.a", "1234567890");
 
                 Profilo profilo = new Profilo();
                 new ProfiloController(profilo, a);
