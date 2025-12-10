@@ -36,7 +36,9 @@ public class DettaglioAnnuncioController {
     view.setDescrizione(annuncio.getDescrizione());
     view.setCategoria("Categoria: " + annuncio.getCategoria());
     view.setTipo("Tipo: " + annuncio.getTipoAnnuncio().toString());
-    view.setCondizione("Condizioni: " + "Buone"); // Se hai un campo condizioni in Annuncio, usalo qui
+
+    // Nota: Il campo "Condizione" non esiste ancora nel model Annuncio, lascio il placeholder o rimuovilo se non serve.
+    view.setCondizione("Condizioni: Buone");
 
     // 2. Gestione logica Prezzo/Scambio/Regalo
     String prezzoTesto;
@@ -52,6 +54,7 @@ public class DettaglioAnnuncioController {
       prezzoTesto = "IN REGALO";
       prezzoColore = new Color(220, 20, 60); // Rosso/Fucsia
     } else {
+      // Fallback
       if (annuncio.getTipoAnnuncio() == TipoAnnuncio.VENDITA) {
         prezzoTesto = "Prezzo non disponibile";
       } else {
@@ -64,11 +67,15 @@ public class DettaglioAnnuncioController {
     // 3. Recupero Utente (Logica DAO)
     UtenteDAO utenteDAO = new UtenteDAO();
     try {
-      // Logica di recupero nome utente
-      // Esempio: Utente u = utenteDAO.getUtenteById(annuncio.getUtenteID());
-      // String nomePubblicatore = u.getNickname();
-      String nomePubblicatore = "Utente ID " + annuncio.getUtenteID(); // Placeholder
+      // CORREZIONE QUI: Usa getIdUtente() invece di getUtenteID()
+      // In futuro potrai decommentare le righe sotto se implementi il metodo findById in UtenteDAO
+
+      // Utente u = utenteDAO.findById(annuncio.getIdUtente());
+      // String nomePubblicatore = (u != null) ? u.getNome() + " " + u.getCognome() : "Utente sconosciuto";
+
+      String nomePubblicatore = "Utente ID " + annuncio.getIdUtente(); // Placeholder temporaneo
       view.setUtenteInfo("Pubblicato da: " + nomePubblicatore);
+
     } catch (Exception e) {
       view.setUtenteInfo("Utente sconosciuto");
       e.printStackTrace();
@@ -105,14 +112,13 @@ public class DettaglioAnnuncioController {
     }
 
     Immagini imgObj = listaImmagini.get(currentImageIndex);
-    // Logica di conversione byte[] -> ImageIcon
+    // Logica futura per conversione byte[] -> ImageIcon
         /*
         byte[] imgBytes = imgObj.getDati();
         ImageIcon icon = new ImageIcon(imgBytes);
         view.setImmagine(icon);
         */
 
-    // Placeholder per ora
     view.setImmagineTesto("Immagine " + (currentImageIndex + 1));
     view.setContatoreImmagini((currentImageIndex + 1) + "/" + listaImmagini.size());
   }

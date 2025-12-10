@@ -16,33 +16,30 @@ public class AnnuncioDAO {
 
   public AnnuncioDAO() {
     try {
-      // Tentativo di connessione gestendo l'eccezione personalizzata DatabaseException
       this.con = dbConnection.getInstance().getConnection();
     } catch (DatabaseException e) {
       System.err.println("Errore di connessione al database: " + e.getMessage());
-      // In caso di errore la connessione resta null
     }
   }
 
   /**
    * Inserisce un nuovo annuncio nel database.
-   * Gestisce i campi specifici (prezzo, oggetto_richiesto) tramite controlli instanceof.
-   * * @throws DatabaseException se si verifica un errore SQL o di connessione.
+   * Gestisce dinamicamente Vendita (prezzo), Scambio (oggetto richiesto) e Regalo.
    */
   public boolean pubblicaAnnuncio(Annuncio annuncio) throws DatabaseException {
     if (con == null) {
       throw new DatabaseException("Connessione al database non disponibile.");
     }
 
-    // Query generica che include tutti i possibili campi della tabella
-    String sql = "INSERT INTO annuncio (titolo, descrizione, categoria, utente_id, tipo_annuncio, prezzo, oggetto_richiesto) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    // Query unificata con tutti i campi possibili
+    String sql = "INSERT INTO annuncio (titolo, descrizione, categoria, idutente, tipoannuncio, prezzo, oggetto_richiesto, stato) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
       ps.setString(1, annuncio.getTitolo());
       ps.setString(2, annuncio.getDescrizione());
-      ps.setString(3, annuncio.getCategoria().toString());
-      ps.setInt(4, annuncio.getUtenteID());
-      ps.setString(5, annuncio.getTipoAnnuncio().toString());
+      ps.setString(3, annuncio.getCategoria().name()); // Usa name() per l'enum
+      ps.setInt(4, annuncio.getIdUtente());
+      ps.setString(5, annuncio.getTipoAnnuncio().name());
 
       // Gestione PREZZO (Solo per Vendita)
       if (annuncio instanceof Vendita) {
@@ -58,18 +55,19 @@ public class AnnuncioDAO {
         ps.setNull(7, java.sql.Types.VARCHAR);
       }
 
+      // Stato attivo di default (true)
+      ps.setBoolean(8, true);
+
       int rows = ps.executeUpdate();
       return rows > 0;
 
     } catch (SQLException e) {
-      // Lancia l'eccezione personalizzata invece di stampare e ritornare false
       throw new DatabaseException("Errore durante l'inserimento dell'annuncio: " + e.getMessage());
     }
   }
 
   /**
    * Recupera tutti gli annunci dal database.
-   * Ricostruisce l'oggetto corretto (Vendita, Scambio o Regalo) in base alla colonna 'tipo_annuncio'.
    */
   public List<Annuncio> findAll() {
     List<Annuncio> annunci = new ArrayList<>();
@@ -94,67 +92,133 @@ public class AnnuncioDAO {
   }
 
   /**
-   * Recupera un singolo annuncio per ID.
+   * Recupera tutti gli annunci pubblicati da uno specifico utente.
    */
-  public Annuncio findById(int id) {
-    if (con == null) return null;
+  public List<Annuncio> findAllByUtente(int idUtente) throws DatabaseException {
+    String sql = "SELECT * FROM annuncio WHERE idutente = ?";
+    List<Annuncio> annunci = new ArrayList<>();
 
-    String sql = "SELECT * FROM annuncio WHERE id = ?";
-    try (PreparedStatement ps = con.prepareStatement(sql)) {
-      ps.setInt(1, id);
+    try (Connection conn = dbConnection.getInstance().getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+      ps.setInt(1, idUtente);
+
+      try (ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+          Annuncio a = mapResultSetToAnnuncio(rs);
+          if (a != null) annunci.add(a);
+        }
+      }
+    } catch (SQLException e) {
+      throw new DatabaseException("Errore nel recupero annunci utente", e);
+    }
+    return annunci;
+  }
+
+  /**
+   * Recupera un singolo annuncio tramite il suo ID.
+   */
+  public Annuncio findById(int idAnnuncio) throws DatabaseException {
+    String sql = "SELECT * FROM annuncio WHERE idannuncio = ?";
+
+    try (Connection conn = dbConnection.getInstance().getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+      ps.setInt(1, idAnnuncio);
+
       try (ResultSet rs = ps.executeQuery()) {
         if (rs.next()) {
           return mapResultSetToAnnuncio(rs);
         }
       }
     } catch (SQLException e) {
-      System.err.println("Errore durante la ricerca dell'annuncio per ID: " + e.getMessage());
-      e.printStackTrace();
+      throw new DatabaseException("Errore nel recupero dell'annuncio", e);
     }
     return null;
   }
 
   /**
-   * Metodo helper privato per mappare una riga del ResultSet nell'oggetto Java corretto.
+   * Elimina un annuncio dal database.
+   */
+  public boolean deleteAnnuncio(int idAnnuncio) throws DatabaseException {
+    String sql = "DELETE FROM annuncio WHERE idannuncio = ?";
+
+    try (Connection conn = dbConnection.getInstance().getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+      ps.setInt(1, idAnnuncio);
+
+      int rowsAffected = ps.executeUpdate();
+      return rowsAffected > 0;
+
+    } catch (SQLException e) {
+      throw new DatabaseException("Errore durante l'eliminazione dell'annuncio", e);
+    }
+  }
+
+  /**
+   * Metodo helper per mappare una riga del ResultSet nell'oggetto Java corretto.
+   * Gestisce il polimorfismo (Vendita, Scambio, Regalo).
    */
   private Annuncio mapResultSetToAnnuncio(ResultSet rs) throws SQLException {
-    int id = rs.getInt("id");
+    int id = rs.getInt("idannuncio");
     String titolo = rs.getString("titolo");
     String descrizione = rs.getString("descrizione");
+    int idUtente = rs.getInt("idutente");
+    boolean stato = rs.getBoolean("stato");
 
-    // Gestione Enum Categoria con fallback
+    // Gestione Enum Categoria
     Categoria categoria;
     try {
       categoria = Categoria.valueOf(rs.getString("categoria").toUpperCase());
-    } catch (IllegalArgumentException | NullPointerException e) {
+    } catch (Exception e) {
       categoria = Categoria.ALTRO;
     }
 
-    int utenteId = rs.getInt("utente_id");
-    String tipoString = rs.getString("tipo_annuncio");
+    // Gestione Enum TipoAnnuncio
     TipoAnnuncio tipo;
     try {
-      tipo = TipoAnnuncio.valueOf(tipoString.toUpperCase());
-    } catch (IllegalArgumentException | NullPointerException e) {
-      tipo = TipoAnnuncio.VENDITA; // Default fallback
+      tipo = TipoAnnuncio.valueOf(rs.getString("tipoannuncio").toUpperCase());
+    } catch (Exception e) {
+      tipo = TipoAnnuncio.VENDITA; // Default
     }
 
-    // Creazione dell'istanza specifica in base al tipo
+    Annuncio annuncio;
+
+    // Creazione dell'istanza specifica
     switch (tipo) {
       case VENDITA:
         double prezzo = rs.getDouble("prezzo");
-        return new Vendita(id, titolo, descrizione, categoria, utenteId, prezzo);
+        Vendita v = new Vendita();
+        v.setPrezzo(prezzo);
+        annuncio = v;
+        break;
 
       case SCAMBIO:
         String oggettoRichiesto = rs.getString("oggetto_richiesto");
-        return new Scambio(id, titolo, descrizione, categoria, utenteId, oggettoRichiesto);
+        // Nota: Usiamo i setter o un costruttore se disponibile.
+        // Qui uso l'approccio generico + setter specifico per sicurezza.
+        Scambio s = new Scambio(titolo, descrizione, categoria, idUtente, oggettoRichiesto);
+        annuncio = s;
+        break;
 
       case REGALO:
-        return new Regalo(id, titolo, descrizione, categoria, utenteId);
+        annuncio = new Regalo(titolo, descrizione, categoria, idUtente);
+        break;
 
       default:
-        // Fallback di sicurezza
-        return new Vendita(id, titolo, descrizione, categoria, utenteId, 0.0);
+        annuncio = new Annuncio();
     }
+
+    // Popolamento campi comuni (sovrascrive eventuali valori dei costruttori parziali)
+    annuncio.setIdAnnuncio(id);
+    annuncio.setIdUtente(idUtente);
+    annuncio.setTitolo(titolo);
+    annuncio.setDescrizione(descrizione);
+    annuncio.setCategoria(categoria);
+    annuncio.setTipoAnnuncio(tipo);
+    annuncio.setStato(stato);
+
+    return annuncio;
   }
 }

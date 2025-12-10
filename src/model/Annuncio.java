@@ -2,72 +2,127 @@ package model;
 
 import model.enums.Categoria;
 import model.enums.TipoAnnuncio;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Annuncio {
-    private int id;
+    private int idAnnuncio;
+    private int idUtente;
     private String titolo;
     private String descrizione;
     private Categoria categoria;
-    private int utenteID;
     private TipoAnnuncio tipoAnnuncio;
-    private List<Immagini> immagini;
+    private boolean stato; // true = attivo, false = concluso/eliminato
+    private List<Immagini> immagini; // Lista per le immagini associate
 
-    // Costruttore completo (es. dal DB)
-    public Annuncio(int id, String titolo, String descrizione, Categoria categoria, int utenteID, TipoAnnuncio tipoAnnuncio) {
-        this.id = id;
-        this.titolo = titolo;
-        this.descrizione = descrizione;
-        this.categoria = categoria;
-        this.utenteID = utenteID;
-        this.tipoAnnuncio = tipoAnnuncio;
+    public Annuncio() {
         this.immagini = new ArrayList<>();
     }
 
-    // Costruttore per nuovi inserimenti (senza ID)
-    public Annuncio(String titolo, String descrizione, Categoria categoria, int utenteID, TipoAnnuncio tipoAnnuncio) {
+    public Annuncio(int idUtente, String titolo, String descrizione, Categoria categoria, TipoAnnuncio tipoAnnuncio) {
+        this.idUtente = idUtente;
         this.titolo = titolo;
         this.descrizione = descrizione;
         this.categoria = categoria;
-        this.utenteID = utenteID;
         this.tipoAnnuncio = tipoAnnuncio;
+        this.stato = true; // Attivo di default
         this.immagini = new ArrayList<>();
     }
 
-    // Getters e Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    // Costruttore completo (utile per ricostruzione dal DB se necessario, o per le sottoclassi)
+    public Annuncio(int idAnnuncio, String titolo, String descrizione, Categoria categoria, int idUtente, TipoAnnuncio tipoAnnuncio) {
+        this.idAnnuncio = idAnnuncio;
+        this.titolo = titolo;
+        this.descrizione = descrizione;
+        this.categoria = categoria;
+        this.idUtente = idUtente;
+        this.tipoAnnuncio = tipoAnnuncio;
+        this.stato = true;
+        this.immagini = new ArrayList<>();
+    }
 
-    public String getTitolo() { return titolo; }
-    public void setTitolo(String titolo) { this.titolo = titolo; }
+    // --- GETTERS & SETTERS ---
 
-    public String getDescrizione() { return descrizione; }
-    public void setDescrizione(String descrizione) { this.descrizione = descrizione; }
+    public int getIdAnnuncio() {
+        return idAnnuncio;
+    }
 
-    public Categoria getCategoria() { return categoria; }
-    public void setCategoria(Categoria categoria) { this.categoria = categoria; }
+    public void setIdAnnuncio(int idAnnuncio) {
+        this.idAnnuncio = idAnnuncio;
+    }
 
-    public int getUtenteID() { return utenteID; }
-    public void setUtenteID(int utenteID) { this.utenteID = utenteID; }
+    public int getIdUtente() {
+        return idUtente;
+    }
 
-    public TipoAnnuncio getTipoAnnuncio() { return tipoAnnuncio; }
-    public void setTipoAnnuncio(TipoAnnuncio tipoAnnuncio) { this.tipoAnnuncio = tipoAnnuncio; }
+    public void setIdUtente(int idUtente) {
+        this.idUtente = idUtente;
+    }
 
-    public List<Immagini> getImmagini() { return immagini; }
-    public void setImmagini(List<Immagini> immagini) { this.immagini = immagini; }
+    public String getTitolo() {
+        return titolo;
+    }
+
+    public void setTitolo(String titolo) {
+        this.titolo = titolo;
+    }
+
+    public String getDescrizione() {
+        return descrizione;
+    }
+
+    public void setDescrizione(String descrizione) {
+        this.descrizione = descrizione;
+    }
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
+
+    public TipoAnnuncio getTipoAnnuncio() {
+        return tipoAnnuncio;
+    }
+
+    public void setTipoAnnuncio(TipoAnnuncio tipoAnnuncio) {
+        this.tipoAnnuncio = tipoAnnuncio;
+    }
+
+    public boolean isStato() {
+        return stato;
+    }
+
+    public void setStato(boolean stato) {
+        this.stato = stato;
+    }
+
+    public List<Immagini> getImmagini() {
+        return immagini;
+    }
+
+    public void setImmagini(List<Immagini> immagini) {
+        this.immagini = immagini;
+    }
 
     public void addImmagine(Immagini immagine) {
-        if (this.immagini == null) this.immagini = new ArrayList<>();
+        if (this.immagini == null) {
+            this.immagini = new ArrayList<>();
+        }
         this.immagini.add(immagine);
     }
 
     @Override
     public String toString() {
         return "Annuncio{" +
-                "id=" + id +
+                "idAnnuncio=" + idAnnuncio +
+                ", idUtente=" + idUtente +
                 ", titolo='" + titolo + '\'' +
+                ", categoria=" + categoria +
                 ", tipo=" + tipoAnnuncio +
+                ", stato=" + stato +
                 '}';
     }
 }
