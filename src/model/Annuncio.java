@@ -1,34 +1,31 @@
 package model;
 
+import model.enums.Categoria;
 import model.enums.TipoAnnuncio;
 
 public class Annuncio {
-
     private int idAnnuncio;
+    private int idUtente; // Usiamo l'ID per collegarlo all'utente senza caricare tutto l'oggetto
     private String titolo;
     private String descrizione;
-    private boolean stato; // TRUE = disponibile
-    private float prezzo;
+    private Categoria categoria;
     private TipoAnnuncio tipoAnnuncio;
-    private Utente utente;
+    private boolean stato; // true = attivo, false = concluso/eliminato
 
-
-    //costruttore di default
-    public Annuncio() {}
-
-    //costruttore principale
-    public Annuncio(int idAnnuncio, String titolo, String descrizione, boolean stato, float prezzo, TipoAnnuncio tipoAnnuncio, Utente utente) {
-        this.idAnnuncio = idAnnuncio;
-        this.titolo = titolo;
-        this.descrizione = descrizione;
-        this.stato = stato;
-        this.prezzo = prezzo;
-        this.tipoAnnuncio = tipoAnnuncio;
-        this.utente = utente;
+    public Annuncio() {
     }
 
-    //metodi getter e setter
-    // idAnnuncio
+    public Annuncio(int idUtente, String titolo, String descrizione, Categoria categoria, TipoAnnuncio tipoAnnuncio) {
+        this.idUtente = idUtente;
+        this.titolo = titolo;
+        this.descrizione = descrizione;
+        this.categoria = categoria;
+        this.tipoAnnuncio = tipoAnnuncio;
+        this.stato = true; // Attivo di default
+    }
+
+    // --- GETTERS & SETTERS ---
+
     public int getIdAnnuncio() {
         return idAnnuncio;
     }
@@ -37,7 +34,14 @@ public class Annuncio {
         this.idAnnuncio = idAnnuncio;
     }
 
-    // titolo
+    public int getIdUtente() {
+        return idUtente;
+    }
+
+    public void setIdUtente(int idUtente) {
+        this.idUtente = idUtente;
+    }
+
     public String getTitolo() {
         return titolo;
     }
@@ -46,7 +50,6 @@ public class Annuncio {
         this.titolo = titolo;
     }
 
-    // descrizione
     public String getDescrizione() {
         return descrizione;
     }
@@ -55,25 +58,14 @@ public class Annuncio {
         this.descrizione = descrizione;
     }
 
-    // stato
-    public boolean isStato() {
-        return stato;
+    public Categoria getCategoria() {
+        return categoria;
     }
 
-    public void setStato(boolean stato) {
-        this.stato = stato;
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
     }
 
-    // prezzo
-    public float getPrezzo() {
-        return prezzo;
-    }
-
-    public void setPrezzo(float prezzo) {
-        this.prezzo = prezzo;
-    }
-
-    // tipoAnnuncio
     public TipoAnnuncio getTipoAnnuncio() {
         return tipoAnnuncio;
     }
@@ -82,12 +74,22 @@ public class Annuncio {
         this.tipoAnnuncio = tipoAnnuncio;
     }
 
-    // idUtente
-    public Utente getUtente() {
-        return utente;
+    public boolean isStato() {
+        return stato;
     }
 
-    public void setUtente(Utente utente) {
-        this.utente = utente;
+    public void setStato(boolean stato) {
+        this.stato = stato;
+    }
+
+    @Override
+    public String toString() {
+        return "Annuncio{" +
+                "idAnnuncio=" + idAnnuncio +
+                ", idUtente=" + idUtente +
+                ", titolo='" + titolo + '\'' +
+                ", categoria=" + categoria +
+                ", tipo=" + tipoAnnuncio +
+                '}';
     }
 }

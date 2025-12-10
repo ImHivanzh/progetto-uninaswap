@@ -2,7 +2,7 @@ package gui;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader; // Import necessario
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 
 public class Profilo extends BaseFrame {
@@ -12,84 +12,76 @@ public class Profilo extends BaseFrame {
   private JLabel lblEmail;
   private JLabel lblTelefono;
   private JLabel lblMediaVoto;
+  private JTabbedPane tabbedPane;
   private JTable tableRecensioni;
-  private DefaultTableModel tableModel;
+  private JTable tableAnnunci; // Nuova tabella
+
+  private DefaultTableModel modelRecensioni;
+  private DefaultTableModel modelAnnunci;
 
   public Profilo() {
     super("Profilo Utente");
     setContentPane(mainPanel);
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    setMinimumSize(new Dimension(600, 550));
 
-    // Imposto una dimensione minima alla finestra per evitare che si stringa troppo
-    setMinimumSize(new Dimension(550, 450));
-
-    setupTable();
+    setupTables();
 
     pack();
     centraFinestra();
   }
 
-  private void setupTable() {
-    tableModel = new DefaultTableModel(
-            new Object[]{"Voto", "Descrizione"},
-            0
-    ) {
-      @Override
-      public boolean isCellEditable(int row, int column) {
-        return false;
-      }
+  private void setupTables() {
+    // --- Tabella Recensioni ---
+    modelRecensioni = new DefaultTableModel(new Object[]{"Voto", "Descrizione"}, 0) {
+      @Override public boolean isCellEditable(int row, int col) { return false; }
     };
-    tableRecensioni.setModel(tableModel);
-
-    // 1. Imposto larghezza fissa per la colonna Voto
-    tableRecensioni.getColumnModel().getColumn(0).setMinWidth(100);
-    tableRecensioni.getColumnModel().getColumn(0).setMaxWidth(100);
-    tableRecensioni.getColumnModel().getColumn(0).setPreferredWidth(100);
-
-    // 2. Disabilito il ridimensionamento delle colonne dall'header
-    JTableHeader header = tableRecensioni.getTableHeader();
-    header.setResizingAllowed(false); // L'utente non può più trascinare i bordi delle colonne
-
-    // 3. Disabilito lo spostamento delle colonne (opzionale, ma consigliato)
-    header.setReorderingAllowed(false);
-
+    tableRecensioni.setModel(modelRecensioni);
+    tableRecensioni.getColumnModel().getColumn(0).setMaxWidth(80);
     tableRecensioni.setRowHeight(25);
+    tableRecensioni.getTableHeader().setResizingAllowed(false);
+    tableRecensioni.getTableHeader().setReorderingAllowed(false);
+
+    // --- Tabella Annunci ---
+    modelAnnunci = new DefaultTableModel(new Object[]{"Titolo", "Categoria", "Tipo"}, 0) {
+      @Override public boolean isCellEditable(int row, int col) { return false; }
+    };
+    tableAnnunci.setModel(modelAnnunci);
+    tableAnnunci.setRowHeight(25);
+    tableAnnunci.getTableHeader().setResizingAllowed(false);
+    tableAnnunci.getTableHeader().setReorderingAllowed(false);
   }
 
-  // --- SETTERS per aggiornare la UI ---
+  // --- Metodi per Recensioni ---
+  public void aggiungiRecensione(int voto, String descrizione) {
+    String stelle = "★".repeat(voto);
+    modelRecensioni.addRow(new Object[]{stelle, descrizione});
+  }
 
+  public void pulisciTabelle() {
+    modelRecensioni.setRowCount(0);
+    modelAnnunci.setRowCount(0);
+  }
+
+  // --- Metodi per Annunci ---
+  public void aggiungiAnnuncio(String titolo, String categoria, String tipo) {
+    modelAnnunci.addRow(new Object[]{titolo, categoria, tipo});
+  }
+
+  // --- Setters Dati Utente ---
   public void setTitoloProfilo(String titolo) {
     lblTitolo.setText(titolo);
     setTitle(titolo);
   }
-
-  public void setUsername(String username) {
-    lblUsername.setText(username);
-  }
-
-  public void setEmail(String email) {
-    lblEmail.setText(email);
-  }
-
-  public void setTelefono(String telefono) {
-    lblTelefono.setText(telefono);
-  }
+  public void setUsername(String username) { lblUsername.setText(username); }
+  public void setEmail(String email) { lblEmail.setText(email); }
+  public void setTelefono(String telefono) { lblTelefono.setText(telefono); }
 
   public void setMediaVoto(double media) {
     String val = String.format("%.1f / 5", media);
     lblMediaVoto.setText(val);
-
     if (media >= 4) lblMediaVoto.setForeground(new Color(0, 150, 0));
     else if (media >= 2.5) lblMediaVoto.setForeground(new Color(200, 150, 0));
     else lblMediaVoto.setForeground(Color.RED);
-  }
-
-  public void aggiungiRecensione(int voto, String descrizione) {
-    String stelle = "★".repeat(voto);
-    tableModel.addRow(new Object[]{stelle, descrizione});
-  }
-
-  public void pulisciTabella() {
-    tableModel.setRowCount(0);
   }
 }

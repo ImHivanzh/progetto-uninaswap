@@ -2,7 +2,9 @@ package controller;
 
 import gui.Profilo;
 import dao.RecensioneDAO;
+import dao.AnnuncioDAO;
 import model.Recensione;
+import model.Annuncio;
 import model.Utente;
 import utils.SessionManager;
 import exception.DatabaseException;
@@ -13,32 +15,25 @@ public class ProfiloController {
 
   private final Profilo view;
   private final RecensioneDAO recensioneDAO;
-  private final Utente utenteTarget; // L'utente di cui mostriamo il profilo
+  private final AnnuncioDAO annuncioDAO;
+  private final Utente utenteTarget;
+  private boolean mostraDatiSensibili = false;
 
-  /**
-   * Costruttore per visualizzare il PROPRIO profilo (utente loggato).
-   */
   public ProfiloController(Profilo view) {
     this(view, null);
   }
 
-  /**
-   * Costruttore per visualizzare il profilo di UN ALTRO utente (o se null, il proprio).
-   * @param view La vista Profilo.
-   * @param utenteTarget L'utente da visualizzare. Se null, usa l'utente di sessione.
-   */
   public ProfiloController(Profilo view, Utente utenteTarget) {
     this.view = view;
     this.recensioneDAO = new RecensioneDAO();
+    this.annuncioDAO = new AnnuncioDAO();
 
-    // Se non viene passato un utente specifico, prendo quello loggato
     if (utenteTarget == null) {
       this.utenteTarget = SessionManager.getInstance().getUtente();
-      // Titolo per il proprio profilo
       this.view.setTitoloProfilo("Il Mio Profilo");
+      this.mostraDatiSensibili = true;
     } else {
       this.utenteTarget = utenteTarget;
-      // Titolo per il profilo altrui
       this.view.setTitoloProfilo("Profilo di " + utenteTarget.getUsername());
     }
 
@@ -47,28 +42,24 @@ public class ProfiloController {
 
   private void caricaDati() {
     if (utenteTarget == null) {
-      view.mostraErrore("Utente non trovato o non loggato!");
+      view.mostraErrore("Utente non trovato!");
       view.dispose();
       return;
     }
 
-    // 1. Popola Dati Personali
     view.setUsername(utenteTarget.getUsername());
-
-    if(utenteTarget.getIdUtente() == SessionManager.getInstance().getUtente().getIdUtente()) {
+    if(mostraDatiSensibili) {
       view.setEmail(utenteTarget.getEmail());
       view.setTelefono(utenteTarget.getNumeroTelefono());
     } else {
       view.setEmail("Nascosto");
       view.setTelefono("Nascosto");
     }
+    view.pulisciTabelle();
 
-    // 2. Recupera Recensioni e Calcola Media
     try {
+      // 1. Carica Recensioni
       List<Recensione> recensioni = recensioneDAO.getRecensioniRicevute(utenteTarget.getIdUtente());
-
-      view.pulisciTabella();
-
       if (recensioni.isEmpty()) {
         view.setMediaVoto(0.0);
       } else {
@@ -77,12 +68,21 @@ public class ProfiloController {
           view.aggiungiRecensione(r.getVoto(), r.getDescrizione());
           sommaVoti += r.getVoto();
         }
-        double media = sommaVoti / recensioni.size();
-        view.setMediaVoto(media);
+        view.setMediaVoto(sommaVoti / recensioni.size());
+      }
+
+      // 2. Carica Annunci
+      List<Annuncio> annunci = annuncioDAO.findAllByUtente(utenteTarget.getIdUtente());
+      for (Annuncio a : annunci) {
+        view.aggiungiAnnuncio(
+                a.getTitolo(),
+                a.getCategoria() != null ? a.getCategoria().toString() : "N/A",
+                a.getTipoAnnuncio() != null ? a.getTipoAnnuncio().toString() : "N/A"
+        );
       }
 
     } catch (DatabaseException e) {
-      view.mostraErrore("Errore nel caricamento delle recensioni: " + e.getMessage());
+      view.mostraErrore("Errore nel caricamento dati: " + e.getMessage());
       e.printStackTrace();
     }
   }

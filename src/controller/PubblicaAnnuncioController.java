@@ -1,17 +1,16 @@
 package controller;
 
-import gui.PubblicaAnnuncio;
 import dao.AnnuncioDAO;
+import gui.PubblicaAnnuncio;
 import model.Annuncio;
-import model.enums.TipoAnnuncio;
 import model.Utente;
+import model.Vendita;
+import model.enums.Categoria;
+import model.enums.TipoAnnuncio;
 import utils.SessionManager;
 import exception.DatabaseException;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.util.List;
+import javax.swing.*;
 
 public class PubblicaAnnuncioController {
 
@@ -21,73 +20,80 @@ public class PubblicaAnnuncioController {
   public PubblicaAnnuncioController(PubblicaAnnuncio view) {
     this.view = view;
     this.annuncioDAO = new AnnuncioDAO();
-    initListeners();
   }
 
-  private void initListeners() {
-    this.view.addPubblicaListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        gestisciPubblicazione();
-      }
-    });
-  }
-
-  private void gestisciPubblicazione() {
-    Utente utenteLoggato = SessionManager.getInstance().getUtente();
-    if (utenteLoggato == null) {
-      view.mostraErrore("Devi essere loggato per pubblicare un annuncio!");
-      view.dispose();
+  public void pubblica() {
+    Utente utente = SessionManager.getInstance().getUtente();
+    if (utente == null) {
+      JOptionPane.showMessageDialog(view, "Devi essere loggato per pubblicare un annuncio!");
       return;
     }
 
+    // 1. Recupero dati dalla View
     String titolo = view.getTitolo();
     String descrizione = view.getDescrizione();
+    Categoria categoria = view.getCategoriaSelezionata();
+    TipoAnnuncio tipo = view.getTipoSelezionato();
     String prezzoStr = view.getPrezzo();
-    TipoAnnuncio tipo = view.getTipo();
-    String categoria = view.getCategoria();
-    List<File> immagini = view.getImmagini();
 
-    if (titolo.isEmpty() || descrizione.isEmpty()) {
-      view.mostraErrore("Titolo e Descrizione sono obbligatori.");
+    // 2. Validazione base
+    if (titolo.isEmpty() || descrizione.isEmpty() || categoria == null || tipo == null) {
+      JOptionPane.showMessageDialog(view, "Compila tutti i campi obbligatori.", "Errore", JOptionPane.ERROR_MESSAGE);
       return;
     }
 
-    float prezzo = 0.0f;
-    if (tipo != TipoAnnuncio.REGALO) {
-      try {
-        prezzo = Float.parseFloat(prezzoStr);
-        if (prezzo < 0) throw new NumberFormatException();
-      } catch (NumberFormatException ex) {
-        view.mostraErrore("Inserisci un prezzo valido (es. 10.50).");
-        return;
-      }
-    }
-
-    Annuncio nuovoAnnuncio = new Annuncio();
-    nuovoAnnuncio.setTitolo(titolo);
-    nuovoAnnuncio.setDescrizione(descrizione);
-    nuovoAnnuncio.setPrezzo(prezzo);
-    nuovoAnnuncio.setTipoAnnuncio(tipo);
-    nuovoAnnuncio.setUtente(utenteLoggato);
-    nuovoAnnuncio.setStato(true);
-
     try {
+      Annuncio nuovoAnnuncio;
+
+      // 3. Creazione Oggetto (Gestione Polimorfismo CORRETTA)
+      if (tipo == TipoAnnuncio.VENDITA) {
+        // Se è vendita, creo specificamente una Vendita
+        Vendita vendita = new Vendita();
+
+        if (prezzoStr == null || prezzoStr.isEmpty()) {
+          JOptionPane.showMessageDialog(view, "Inserisci un prezzo valido.", "Errore", JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+
+        // Parsing del prezzo
+        try {
+          double prezzo = Double.parseDouble(prezzoStr);
+          vendita.setPrezzo(prezzo); // Qui funziona perché la variabile 'vendita' è di tipo Vendita
+        } catch (NumberFormatException e) {
+          JOptionPane.showMessageDialog(view, "Il prezzo deve essere un numero.", "Errore", JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+
+        nuovoAnnuncio = vendita; // Assegno al padre (Upcasting)
+      } else {
+        // Altrimenti creo un Annuncio generico (Scambio, Regalo, ecc.)
+        nuovoAnnuncio = new Annuncio();
+      }
+
+      // 4. Setto i campi comuni (definiti nella classe padre Annuncio)
+      nuovoAnnuncio.setIdUtente(utente.getIdUtente());
+      nuovoAnnuncio.setTitolo(titolo);
+      nuovoAnnuncio.setDescrizione(descrizione);
+      nuovoAnnuncio.setCategoria(categoria);
+      nuovoAnnuncio.setTipoAnnuncio(tipo);
+      nuovoAnnuncio.setStato(true);
+
+      // 5. Salvataggio nel DB
       boolean successo = annuncioDAO.pubblicaAnnuncio(nuovoAnnuncio);
 
       if (successo) {
-        if (!immagini.isEmpty()) {
-          System.out.println("Devo salvare " + immagini.size() + " immagini per questo annuncio.");
-        }
-
-        view.mostraMessaggio("Annuncio pubblicato con successo!\nCategoria: " + categoria + "\nImmagini: " + immagini.size());
-        view.dispose();
+        JOptionPane.showMessageDialog(view, "Annuncio pubblicato con successo!");
+        view.dispose(); // Chiude la finestra
       } else {
-        view.mostraErrore("Errore durante la pubblicazione.");
+        JOptionPane.showMessageDialog(view, "Errore nel salvataggio dell'annuncio.", "Errore", JOptionPane.ERROR_MESSAGE);
       }
-    } catch (DatabaseException ex) {
-      view.mostraErrore("Errore Database: " + ex.getMessage());
-      ex.printStackTrace();
+
+    } catch (DatabaseException e) {
+      JOptionPane.showMessageDialog(view, "Errore database: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    } catch (Exception e) {
+      JOptionPane.showMessageDialog(view, "Errore generico: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
     }
   }
 }
