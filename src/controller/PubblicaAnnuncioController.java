@@ -1,16 +1,14 @@
 package controller;
 
-import gui.PubblicaAnnuncio;
 import dao.AnnuncioDAO;
-import model.Annuncio;
+import exception.DatabaseException;
+import gui.PubblicaAnnuncio;
+import model.*;
 import model.enums.Categoria;
 import model.enums.TipoAnnuncio;
-import model.Utente;
 import utils.SessionManager;
-import exception.DatabaseException;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import javax.swing.*;
 import java.io.File;
 import java.util.List;
 
@@ -22,76 +20,92 @@ public class PubblicaAnnuncioController {
   public PubblicaAnnuncioController(PubblicaAnnuncio view) {
     this.view = view;
     this.annuncioDAO = new AnnuncioDAO();
-    initListeners();
   }
 
-  private void initListeners() {
-    this.view.addPubblicaListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        gestisciPubblicazione();
-      }
-    });
-  }
-
-  private void gestisciPubblicazione() {
-    Utente utenteLoggato = SessionManager.getInstance().getUtente();
-    if (utenteLoggato == null) {
-      view.mostraErrore("Devi essere loggato per pubblicare un annuncio!");
-      view.dispose();
+  public void pubblica() {
+    Utente utente = SessionManager.getInstance().getUtente();
+    if (utente == null) {
+      JOptionPane.showMessageDialog(view, "Devi essere loggato per pubblicare un annuncio!");
       return;
     }
 
+    // 1. Recupero dati dalla View
     String titolo = view.getTitolo();
     String descrizione = view.getDescrizione();
-    String prezzoStr = view.getPrezzo();
-    TipoAnnuncio tipo = view.getTipo();
-    String categoriaStr = view.getCategoria();
-    Categoria categoria;
+    Categoria categoria = view.getCategoriaSelezionata();
+    TipoAnnuncio tipo = view.getTipoSelezionato();
 
-    try {
-      categoria = Categoria.valueOf(categoriaStr.toUpperCase());
-    } catch (IllegalArgumentException ex) {
-      view.mostraErrore("Categoria non valida selezionata.");
-      return;
-    }
-
+    // Recupero immagini (ora il metodo esiste)
     List<File> immagini = view.getImmagini();
 
-    if (titolo.isEmpty() || descrizione.isEmpty()) {
-      view.mostraErrore("Titolo e Descrizione sono obbligatori.");
+    // 2. Validazione base
+    if (titolo.isEmpty() || descrizione.isEmpty() || categoria == null || tipo == null) {
+      JOptionPane.showMessageDialog(view, "Compila tutti i campi obbligatori.", "Errore", JOptionPane.ERROR_MESSAGE);
       return;
     }
 
-    float prezzo = 0.0f;
-    if (tipo != TipoAnnuncio.REGALO) {
-      try {
-        prezzo = Float.parseFloat(prezzoStr);
-        if (prezzo < 0) throw new NumberFormatException();
-      } catch (NumberFormatException ex) {
-        view.mostraErrore("Inserisci un prezzo valido (es. 10.50).");
-        return;
-      }
-    }
-
-    Annuncio nuovoAnnuncio = new Annuncio(titolo, descrizione, categoria, utenteLoggato.getIdUtente(), tipo);
+    Annuncio nuovoAnnuncio = null;
 
     try {
+      // 3. Creazione dell'Oggetto Specifico (Polimorfismo)
+      switch (tipo) {
+        case VENDITA:
+          Vendita vendita = new Vendita();
+          // Campi comuni
+          vendita.setTitolo(titolo);
+          vendita.setDescrizione(descrizione);
+          vendita.setCategoria(categoria);
+          vendita.setTipoAnnuncio(TipoAnnuncio.VENDITA);
+          vendita.setIdUtente(utente.getIdUtente());
+
+          // Gestione Prezzo
+          String prezzoStr = view.getPrezzo();
+          if (prezzoStr == null || prezzoStr.isEmpty()) {
+            throw new IllegalArgumentException("Inserisci un prezzo valido per la vendita.");
+          }
+          vendita.setPrezzo(Double.parseDouble(prezzoStr));
+
+          nuovoAnnuncio = vendita;
+          break;
+
+        case SCAMBIO:
+          // Se in futuro aggiungi un campo "Oggetto richiesto" nella GUI, recuperalo qui.
+          String oggettoRichiesto = "";
+          nuovoAnnuncio = new Scambio(titolo, descrizione, categoria, utente.getIdUtente(), oggettoRichiesto);
+          break;
+
+        case REGALO:
+          nuovoAnnuncio = new Regalo(titolo, descrizione, categoria, utente.getIdUtente());
+          break;
+
+        default:
+          nuovoAnnuncio = new Annuncio(utente.getIdUtente(), titolo, descrizione, categoria, tipo);
+      }
+
+      // TODO: Qui dovresti implementare la logica per salvare fisicamente le immagini (es. copia in una cartella)
+      // e creare i record nella tabella Immagini, se previsto dal DB.
+      if (!immagini.isEmpty()) {
+        System.out.println("Immagini da caricare: " + immagini.size());
+      }
+
+      // 4. Salvataggio nel DB
       boolean successo = annuncioDAO.pubblicaAnnuncio(nuovoAnnuncio);
 
       if (successo) {
-        if (!immagini.isEmpty()) {
-          System.out.println("Devo salvare " + immagini.size() + " immagini per questo annuncio.");
-        }
-
-        view.mostraMessaggio("Annuncio pubblicato con successo!\nCategoria: " + categoria + "\nImmagini: " + immagini.size());
-        view.dispose();
+        JOptionPane.showMessageDialog(view, "Annuncio pubblicato con successo!");
+        view.dispose(); // Chiude la finestra
       } else {
-        view.mostraErrore("Errore durante la pubblicazione.");
+        JOptionPane.showMessageDialog(view, "Errore nel salvataggio dell'annuncio.", "Errore", JOptionPane.ERROR_MESSAGE);
       }
-    } catch (DatabaseException ex) {
-      view.mostraErrore("Errore Database: " + ex.getMessage());
-      ex.printStackTrace();
+
+    } catch (NumberFormatException e) {
+      JOptionPane.showMessageDialog(view, "Il prezzo deve essere un numero valido (usa il punto per i decimali).", "Errore", JOptionPane.ERROR_MESSAGE);
+    } catch (DatabaseException e) {
+      JOptionPane.showMessageDialog(view, "Errore database: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    } catch (Exception e) {
+      JOptionPane.showMessageDialog(view, "Errore generico: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
     }
   }
 }

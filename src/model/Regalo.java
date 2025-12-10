@@ -5,13 +5,14 @@ import model.enums.TipoAnnuncio;
 
 public class Regalo extends Annuncio {
 
-    // Costruttore completo (dal DB)
+    // Costruttore completo (dal DB) - Questo era già corretto
     public Regalo(int id, String titolo, String descrizione, Categoria categoria, int utenteID) {
         super(id, titolo, descrizione, categoria, utenteID, TipoAnnuncio.REGALO);
     }
 
-    // Costruttore nuovo inserimento
+    // Costruttore nuovo inserimento - CORRETTO
     public Regalo(String titolo, String descrizione, Categoria categoria, int utenteID) {
-        super(titolo, descrizione, categoria, utenteID, TipoAnnuncio.REGALO);
+        // L'ordine corretto è: idUtente, titolo, descrizione, categoria, tipo
+        super(utenteID, titolo, descrizione, categoria, TipoAnnuncio.REGALO);
     }
 }

@@ -5,8 +5,12 @@ import model.enums.Categoria;
 import model.enums.TipoAnnuncio;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PubblicaAnnuncio extends BaseFrame {
   private JPanel mainPanel;
@@ -16,16 +20,17 @@ public class PubblicaAnnuncio extends BaseFrame {
   private JComboBox<TipoAnnuncio> cmbTipo;
   private JTextField txtPrezzo;
   private JButton btnPubblica;
-  private JButton btnCaricaImg; // Aggiunto questo campo mancante per risolvere l'errore di binding
+  private JButton btnCaricaImg;
 
-  // Se nel form hai messo una label specifica per il prezzo (es. "Prezzo (€):"),
-  // puoi aggiungerla qui per nasconderla quando non serve (es. private JLabel lblPrezzo;)
+  // Lista per memorizzare le immagini selezionate dall'utente
+  private List<File> immaginiSelezionate;
 
   public PubblicaAnnuncio() {
     super("Pubblica Annuncio");
     setContentPane(mainPanel);
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+    immaginiSelezionate = new ArrayList<>();
     initUI();
 
     pack();
@@ -33,45 +38,52 @@ public class PubblicaAnnuncio extends BaseFrame {
   }
 
   private void initUI() {
-    // 1. Popolamento ComboBox con i valori degli Enum
+    // 1. Popolamento ComboBox
     cmbCategoria.setModel(new DefaultComboBoxModel<>(Categoria.values()));
     cmbTipo.setModel(new DefaultComboBoxModel<>(TipoAnnuncio.values()));
 
-    // 2. Listener per il bottone Pubblica
-    btnPubblica.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        // Passo 'this' (la vista corrente) al controller
-        PubblicaAnnuncioController controller = new PubblicaAnnuncioController(PubblicaAnnuncio.this);
-        controller.pubblica();
-      }
+    // 2. Listener Pubblica
+    btnPubblica.addActionListener(e -> {
+      PubblicaAnnuncioController controller = new PubblicaAnnuncioController(PubblicaAnnuncio.this);
+      controller.pubblica();
     });
 
-    // 3. Listener per il caricamento immagini (Predisposizione)
+    // 3. Listener Caricamento Immagini
     if (btnCaricaImg != null) {
       btnCaricaImg.addActionListener(e -> {
-        // Qui andrà la logica per aprire il FileChooser
-        JOptionPane.showMessageDialog(this, "Funzionalità caricamento immagini in arrivo!");
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setMultiSelectionEnabled(true); // Permette selezione multipla
+
+        // Filtro per sole immagini
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Immagini (JPG, PNG)", "jpg", "png", "jpeg");
+        fileChooser.setFileFilter(filter);
+
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+          File[] files = fileChooser.getSelectedFiles();
+          for (File file : files) {
+            immaginiSelezionate.add(file);
+          }
+          JOptionPane.showMessageDialog(this, "Hai selezionato " + files.length + " immagini.");
+        }
       });
     }
 
-    // 4. UX: Abilito il campo prezzo solo se il tipo è VENDITA
+    // 4. Gestione campo Prezzo
     cmbTipo.addActionListener(e -> {
       TipoAnnuncio tipo = (TipoAnnuncio) cmbTipo.getSelectedItem();
       boolean isVendita = (tipo == TipoAnnuncio.VENDITA);
-
       txtPrezzo.setEnabled(isVendita);
-      // Opzionale: se non è vendita, pulisco il campo o lo nascondo
       if (!isVendita) {
         txtPrezzo.setText("");
       }
     });
 
-    // Imposto lo stato iniziale corretto
+    // Stato iniziale
     txtPrezzo.setEnabled(cmbTipo.getSelectedItem() == TipoAnnuncio.VENDITA);
   }
 
-  // --- Metodi Getters richiesti dal Controller ---
+  // --- GETTERS ---
 
   public String getTitolo() {
     return txtTitolo.getText();
@@ -91,5 +103,10 @@ public class PubblicaAnnuncio extends BaseFrame {
 
   public String getPrezzo() {
     return txtPrezzo.getText();
+  }
+
+  // Metodo aggiunto per risolvere l'errore nel Controller
+  public List<File> getImmagini() {
+    return immaginiSelezionate;
   }
 }

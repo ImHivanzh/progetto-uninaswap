@@ -14,7 +14,8 @@ public class Scambio extends Annuncio {
 
     // Costruttore nuovo inserimento
     public Scambio(String titolo, String descrizione, Categoria categoria, int utenteID, String oggettoRichiesto) {
-        super(titolo, descrizione, categoria, utenteID, TipoAnnuncio.SCAMBIO);
+        // CORRETTO: idUtente va per primo
+        super(utenteID, titolo, descrizione, categoria, TipoAnnuncio.SCAMBIO);
         this.oggettoRichiesto = oggettoRichiesto;
     }
 
