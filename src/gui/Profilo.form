@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="gui.Profilo">
-  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="5" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="10">
+  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="10">
     <margin top="20" left="20" bottom="20" right="20"/>
     <constraints>
-      <xy x="20" y="20" width="600" height="500"/>
+      <xy x="20" y="20" width="600" height="600"/>
+      <minimum-size width="550" height="500"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
+      <!-- TITOLO -->
       <component id="title" class="javax.swing.JLabel" binding="lblTitolo">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
@@ -18,14 +20,13 @@
         </properties>
       </component>
 
-      <grid id="infoPanel" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="5" vgap="5">
+      <!-- INFO UTENTE -->
+      <grid id="infoPanel" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="5" vgap="5">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties>
-           <border type="titled" title="Dati Personali"/>
-        </properties>
+        <properties/>
         <border type="none" title="Dati Personali"/>
         <children>
           <component id="lblUser" class="javax.swing.JLabel">
@@ -45,7 +46,6 @@
               <text value="-"/>
             </properties>
           </component>
-          
           <component id="lblMail" class="javax.swing.JLabel">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -63,7 +63,6 @@
               <text value="-"/>
             </properties>
           </component>
-
           <component id="lblTel" class="javax.swing.JLabel">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -84,6 +83,7 @@
         </children>
       </grid>
 
+      <!-- STATISTICHE -->
       <grid id="statsPanel" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="15" vgap="5">
          <margin top="0" left="0" bottom="0" right="0"/>
          <constraints>
@@ -94,7 +94,6 @@
         <children>
             <component id="lblMediaT" class="javax.swing.JLabel">
                 <constraints>
-                    <!-- MODIFICATO: hsize-policy="1" (FIXED/CAN_GROW ma non SHRINK) -->
                     <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
@@ -104,7 +103,6 @@
             </component>
             <component id="lblMediaVal" class="javax.swing.JLabel" binding="lblMediaVoto">
                 <constraints>
-                    <!-- MODIFICATO: hsize-policy="1" per evitare compressione -->
                     <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
@@ -121,29 +119,68 @@
         </children>
       </grid>
 
-      <component id="lblRec" class="javax.swing.JLabel">
+      <!-- TABS (Recensioni / Annunci) -->
+      <!-- QUI ERA IL PROBLEMA: Questa struttura è necessaria per l'inizializzazione -->
+      <tabbedpane id="tabPane" binding="tabbedPane">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Recensioni Ricevute:"/>
-        </properties>
-      </component>
-      
-      <scrollpane id="scrollRecensioni">
-        <constraints>
-          <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="-1" height="200"/>
+          <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+             <preferred-size width="-1" height="250"/>
           </grid>
         </constraints>
         <properties/>
         <border type="none"/>
         <children>
-          <component id="tableRecensioni" class="javax.swing.JTable" binding="tableRecensioni">
+          <!-- TAB 1: Recensioni -->
+          <grid id="tabRecensioniPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <tabbedpane title="Recensioni Ricevute"/>
+            </constraints>
             <properties/>
-          </component>
+            <border type="none"/>
+            <children>
+              <scrollpane id="scrollRecensioni">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="tableRecensioni" class="javax.swing.JTable" binding="tableRecensioni">
+                    <properties/>
+                  </component>
+                </children>
+              </scrollpane>
+            </children>
+          </grid>
+          
+          <!-- TAB 2: Annunci -->
+          <grid id="tabAnnunciPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <tabbedpane title="Annunci Pubblicati"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <scrollpane id="scrollAnnunci">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <!-- Questa è la tabella che causava il NullPointerException -->
+                  <component id="tableAnnunci" class="javax.swing.JTable" binding="tableAnnunci">
+                    <properties/>
+                  </component>
+                </children>
+              </scrollpane>
+            </children>
+          </grid>
+
         </children>
-      </scrollpane>
+      </tabbedpane>
 
     </children>
   </grid>

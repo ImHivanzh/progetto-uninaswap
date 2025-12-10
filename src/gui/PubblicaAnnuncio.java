@@ -1,41 +1,30 @@
 package gui;
 
+import controller.PubblicaAnnuncioController;
+import model.enums.Categoria;
 import model.enums.TipoAnnuncio;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PubblicaAnnuncio extends BaseFrame {
   private JPanel mainPanel;
   private JTextField txtTitolo;
-  private JComboBox<TipoAnnuncio> cmbTipo;
-  private JComboBox<String> cmbCategoria; // Stringa per semplicità, o crea enum Categoria
-  private JTextField txtPrezzo;
   private JTextArea txtDescrizione;
-  private JButton btnCaricaImg;
-  private JPanel pnlImmagini;
-  private JPanel pnlButtonContainer; // Contenitore per il bottone custom
+  private JComboBox<Categoria> cmbCategoria;
+  private JComboBox<TipoAnnuncio> cmbTipo;
+  private JTextField txtPrezzo;
+  private JButton btnPubblica;
+  private JButton btnCaricaImg; // Aggiunto questo campo mancante per risolvere l'errore di binding
 
-  // Bottone Custom
-  private JPanel customButton;
-  private JLabel customButtonLabel;
-
-  // Dati
-  private List<File> immaginiSelezionate;
+  // Se nel form hai messo una label specifica per il prezzo (es. "Prezzo (€):"),
+  // puoi aggiungerla qui per nasconderla quando non serve (es. private JLabel lblPrezzo;)
 
   public PubblicaAnnuncio() {
-    super("Pubblica Nuovo Annuncio");
+    super("Pubblica Annuncio");
     setContentPane(mainPanel);
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-    immaginiSelezionate = new ArrayList<>();
 
     initUI();
 
@@ -44,103 +33,63 @@ public class PubblicaAnnuncio extends BaseFrame {
   }
 
   private void initUI() {
-    for (TipoAnnuncio tipo : TipoAnnuncio.values()) {
-      cmbTipo.addItem(tipo);
+    // 1. Popolamento ComboBox con i valori degli Enum
+    cmbCategoria.setModel(new DefaultComboBoxModel<>(Categoria.values()));
+    cmbTipo.setModel(new DefaultComboBoxModel<>(TipoAnnuncio.values()));
+
+    // 2. Listener per il bottone Pubblica
+    btnPubblica.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        // Passo 'this' (la vista corrente) al controller
+        PubblicaAnnuncioController controller = new PubblicaAnnuncioController(PubblicaAnnuncio.this);
+        controller.pubblica();
+      }
+    });
+
+    // 3. Listener per il caricamento immagini (Predisposizione)
+    if (btnCaricaImg != null) {
+      btnCaricaImg.addActionListener(e -> {
+        // Qui andrà la logica per aprire il FileChooser
+        JOptionPane.showMessageDialog(this, "Funzionalità caricamento immagini in arrivo!");
+      });
     }
 
-    String[] categorie = {"Elettronica", "Libri", "Abbigliamento", "Arredamento", "Altro"};
-    for (String cat : categorie) {
-      cmbCategoria.addItem(cat);
-    }
-
-    // 3. Listener Tipo (Disabilita prezzo se Regalo)
+    // 4. UX: Abilito il campo prezzo solo se il tipo è VENDITA
     cmbTipo.addActionListener(e -> {
-      if (cmbTipo.getSelectedItem() == TipoAnnuncio.REGALO) {
-        txtPrezzo.setText("0.0");
-        txtPrezzo.setEnabled(false);
-      } else {
-        txtPrezzo.setEnabled(true);
-        if(txtPrezzo.getText().equals("0.0")) txtPrezzo.setText("");
+      TipoAnnuncio tipo = (TipoAnnuncio) cmbTipo.getSelectedItem();
+      boolean isVendita = (tipo == TipoAnnuncio.VENDITA);
+
+      txtPrezzo.setEnabled(isVendita);
+      // Opzionale: se non è vendita, pulisco il campo o lo nascondo
+      if (!isVendita) {
+        txtPrezzo.setText("");
       }
     });
 
-    // 4. Listener Immagini
-    btnCaricaImg.addActionListener(e -> selezionaImmagini());
-
-    // 5. Crea Bottone Custom
-    creaBottoneCustom();
+    // Imposto lo stato iniziale corretto
+    txtPrezzo.setEnabled(cmbTipo.getSelectedItem() == TipoAnnuncio.VENDITA);
   }
 
-  private void creaBottoneCustom() {
-    customButton = new JPanel();
-    customButton.setBackground(new Color(34, 139, 34)); // Verde Foresta
-    customButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-    customButton.setLayout(new GridBagLayout()); // Per centrare il testo
-    customButton.setPreferredSize(new Dimension(200, 50));
+  // --- Metodi Getters richiesti dal Controller ---
 
-    customButtonLabel = new JLabel("PUBBLICA ORA");
-    customButtonLabel.setForeground(Color.WHITE);
-    customButtonLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
-
-    customButton.add(customButtonLabel);
-
-    // Effetto Hover
-    customButton.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseEntered(MouseEvent e) {
-        customButton.setBackground(new Color(0, 100, 0)); // Verde scuro
-      }
-      @Override
-      public void mouseExited(MouseEvent e) {
-        customButton.setBackground(new Color(34, 139, 34)); // Verde originale
-      }
-    });
-
-    pnlButtonContainer.add(customButton, BorderLayout.CENTER);
+  public String getTitolo() {
+    return txtTitolo.getText();
   }
 
-  private void selezionaImmagini() {
-    JFileChooser chooser = new JFileChooser();
-    chooser.setMultiSelectionEnabled(true);
-    chooser.setFileFilter(new FileNameExtensionFilter("Immagini", "jpg", "png", "jpeg"));
-
-    int result = chooser.showOpenDialog(this);
-    if (result == JFileChooser.APPROVE_OPTION) {
-      File[] files = chooser.getSelectedFiles();
-      for (File file : files) {
-        immaginiSelezionate.add(file);
-        aggiungiAnteprima(file);
-      }
-      // Ridisegna il pannello
-      pnlImmagini.revalidate();
-      pnlImmagini.repaint();
-    }
+  public String getDescrizione() {
+    return txtDescrizione.getText();
   }
 
-  private void aggiungiAnteprima(File file) {
-    JLabel lblIcon = new JLabel(file.getName());
-    lblIcon.setToolTipText(file.getAbsolutePath());
-    lblIcon.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-    lblIcon.setPreferredSize(new Dimension(100, 30)); // Semplice etichetta per ora
-    lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
-    // Se volessi l'icona vera:
-    // ImageIcon icon = new ImageIcon(new ImageIcon(file.getPath()).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
-    // lblIcon.setIcon(icon);
-
-    pnlImmagini.add(lblIcon);
+  public Categoria getCategoriaSelezionata() {
+    return (Categoria) cmbCategoria.getSelectedItem();
   }
 
-  // --- GETTERS ---
-  public String getTitolo() { return txtTitolo.getText(); }
-  public String getDescrizione() { return txtDescrizione.getText(); }
-  public String getPrezzo() { return txtPrezzo.getText(); }
-  public TipoAnnuncio getTipo() { return (TipoAnnuncio) cmbTipo.getSelectedItem(); }
-  public String getCategoria() { return (String) cmbCategoria.getSelectedItem(); }
-  public List<File> getImmagini() { return immaginiSelezionate; }
+  public TipoAnnuncio getTipoSelezionato() {
+    return (TipoAnnuncio) cmbTipo.getSelectedItem();
+  }
 
-  // --- LISTENER CUSTOM ---
-  // Non usiamo più ActionListener standard perché è un JPanel
-  public void addPubblicaListener(MouseAdapter listener) {
-    customButton.addMouseListener(listener);
+  public String getPrezzo() {
+    return txtPrezzo.getText();
   }
 }
