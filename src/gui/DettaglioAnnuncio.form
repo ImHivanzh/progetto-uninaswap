@@ -41,7 +41,7 @@
             </properties>
           </component>
           <component id="lblTipo" class="javax.swing.JLabel" binding="lblTipo">
-             <constraints>
+            <constraints>
               <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
@@ -60,7 +60,6 @@
         </constraints>
         <properties>
           <background color="-2105377"/>
-          <border type="line"/>
         </properties>
         <border type="none"/>
         <children>
@@ -90,7 +89,7 @@
             </properties>
           </component>
           <component id="lblContatore" class="javax.swing.JLabel" binding="lblContatoreImmagini">
-             <constraints>
+            <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
@@ -118,7 +117,7 @@
               <text value="Categoria: Elettronica"/>
             </properties>
           </component>
-          <scrollpane id="scrollDesc" class="javax.swing.JScrollPane">
+          <scrollpane id="scrollDesc">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -126,12 +125,13 @@
             <border type="none"/>
             <children>
               <component id="txtDescrizione" class="javax.swing.JTextArea" binding="txtDescrizione">
+                <constraints/>
                 <properties>
                   <editable value="false"/>
-                  <lineWrap value="true"/>
-                  <wrapStyleWord value="true"/>
                   <font size="14"/>
+                  <lineWrap value="true"/>
                   <text value="Descrizione dettagliata dell'annuncio..."/>
+                  <wrapStyleWord value="true"/>
                 </properties>
               </component>
             </children>
@@ -144,7 +144,7 @@
               <text value="Descrizione:"/>
             </properties>
           </component>
-           <component id="lblCondizione" class="javax.swing.JLabel" binding="lblCondizione">
+          <component id="lblCondizione" class="javax.swing.JLabel" binding="lblCondizione">
             <constraints>
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -169,7 +169,6 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <icon value="img/logo.png"/> 
               <text value="Pubblicato da: Username"/>
             </properties>
           </component>

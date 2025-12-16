@@ -1,5 +1,6 @@
 package controller;
 
+import gui.DettaglioAnnuncio; // [Import necessario]
 import gui.Profilo;
 import dao.RecensioneDAO;
 import dao.AnnuncioDAO;
@@ -9,6 +10,9 @@ import model.Utente;
 import utils.SessionManager;
 import exception.DatabaseException;
 
+import javax.swing.*;
+import java.awt.event.MouseAdapter; // [Nuovi Import]
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class ProfiloController {
@@ -18,6 +22,9 @@ public class ProfiloController {
   private final AnnuncioDAO annuncioDAO;
   private final Utente utenteTarget;
   private boolean mostraDatiSensibili = false;
+
+  // [NUOVO CAMPO] Per tenere traccia degli oggetti Annuncio visualizzati nella tabella
+  private List<Annuncio> listaAnnunci;
 
   public ProfiloController(Profilo view) {
     this(view, null);
@@ -38,6 +45,29 @@ public class ProfiloController {
     }
 
     caricaDati();
+    setupInteraction(); // [NUOVA CHIAMATA]
+  }
+
+  // [NUOVO METODO] Gestisce il doppio click sulla tabella
+  private void setupInteraction() {
+    view.addTableAnnunciListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2) { // Rileva doppio click
+          JTable table = (JTable) e.getSource();
+          int selectedRow = table.getSelectedRow();
+
+          // Verifica che la selezione sia valida e che abbiamo i dati sincronizzati
+          if (selectedRow != -1 && listaAnnunci != null && selectedRow < listaAnnunci.size()) {
+            Annuncio annuncioSelezionato = listaAnnunci.get(selectedRow);
+
+            // Apre la finestra di dettaglio
+            DettaglioAnnuncio dettaglioFrame = new DettaglioAnnuncio(annuncioSelezionato);
+            dettaglioFrame.setVisible(true);
+          }
+        }
+      }
+    });
   }
 
   private void caricaDati() {
@@ -72,8 +102,10 @@ public class ProfiloController {
       }
 
       // 2. Carica Annunci
-      List<Annuncio> annunci = annuncioDAO.findAllByUtente(utenteTarget.getIdUtente());
-      for (Annuncio a : annunci) {
+      // [MODIFICATO] Salviamo la lista nel campo di classe invece che in una variabile locale
+      this.listaAnnunci = annuncioDAO.findAllByUtente(utenteTarget.getIdUtente());
+
+      for (Annuncio a : listaAnnunci) {
         view.aggiungiAnnuncio(
                 a.getTitolo(),
                 a.getCategoria() != null ? a.getCategoria().toString() : "N/A",
