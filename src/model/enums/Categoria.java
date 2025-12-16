@@ -1,12 +1,23 @@
 package model.enums;
 
 public enum Categoria {
-    CARTOLERIA,
-    ELETTRONICA,
-    DISPENSE_E_APPUNTI,
-    SPORT,
-    MUSICA,
-    ABBIGLIAMENTO,
-    LIBRI,
-    ALTRO
+    CARTOLERIA("Cartoleria"),
+    ELETTRONICA("Elettronica"),
+    DISPENSE_E_APPUNTI("Dispense e Appunti"),
+    SPORT("Sport"),
+    MUSICA("Musica"),
+    ABBIGLIAMENTO("Abbigliamento"),
+    LIBRI("Libri"),
+    ALTRO("Altro");
+
+    private final String descrizione;
+
+    Categoria(String descrizione) {
+        this.descrizione = descrizione;
+    }
+
+    @Override
+    public String toString() {
+        return descrizione;
+    }
 }
