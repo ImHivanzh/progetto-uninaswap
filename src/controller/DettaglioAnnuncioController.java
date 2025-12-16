@@ -1,12 +1,14 @@
 package controller;
 
 import dao.ImmaginiDAO;
+import dao.PropostaDAO;
 import dao.UtenteDAO;
 import exception.DatabaseException;
 import gui.DettaglioAnnuncio;
 import gui.FaiPropostaDialog;
 import model.*;
 import model.enums.TipoAnnuncio;
+import utils.SessionManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -114,23 +116,45 @@ public class DettaglioAnnuncioController {
 
       // 4. Logica di persistenza
       salvaProposta(annuncio.getIdAnnuncio(), prezzo, descrizione, immagine);
-
-      JOptionPane.showMessageDialog(view,
-              "Proposta inviata con successo!",
-              "Conferma",
-              JOptionPane.INFORMATION_MESSAGE);
     }
   }
 
   private void salvaProposta(int idAnnuncio, Double prezzo, String descrizione, byte[] immagine) {
-    // TODO: Qui va inserita la chiamata al PropostaDAO.insert(...)
-    System.out.println("--- SIMULAZIONE SALVATAGGIO PROPOSTA ---");
-    System.out.println("Annuncio ID: " + idAnnuncio);
-    System.out.println("Tipo Annuncio: " + annuncio.getTipoAnnuncio());
-    if (prezzo != null) System.out.println("Offerta Economica: " + prezzo);
-    System.out.println("Descrizione/Messaggio: " + descrizione);
-    System.out.println("Immagine presente: " + (immagine != null));
-    System.out.println("----------------------------------------");
+    PropostaDAO propostaDAO = new PropostaDAO();
+    int idUtenteLoggato = SessionManager.getInstance().getUtente().getIdUtente(); // Sostituisci con SessionManager.getInstance().getCurrentUser().getIdUtente()
+
+    // Controllo che l'utente non stia facendo una proposta al suo stesso annuncio
+    if (idUtenteLoggato != annuncio.getIdUtente()) {
+      JOptionPane.showMessageDialog(view, "Non puoi fare una proposta al tuo stesso annuncio!", "Errore", JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+
+    try {
+      boolean successo = false;
+      switch (annuncio.getTipoAnnuncio()) {
+        case VENDITA:
+          if (prezzo != null) {
+            successo = propostaDAO.inserisciPropostaVendita(idAnnuncio, idUtenteLoggato, prezzo);
+          }
+          break;
+        case SCAMBIO:
+          successo = propostaDAO.inserisciPropostaScambio(idAnnuncio, idUtenteLoggato, descrizione, immagine);
+          break;
+        case REGALO:
+          successo = propostaDAO.inserisciRichiestaRegalo(idAnnuncio, idUtenteLoggato, descrizione);
+          break;
+      }
+
+      if (successo) {
+        JOptionPane.showMessageDialog(view, "Proposta inviata con successo!", "Conferma", JOptionPane.INFORMATION_MESSAGE);
+      } else {
+        JOptionPane.showMessageDialog(view, "Errore nell'invio della proposta.", "Errore", JOptionPane.ERROR_MESSAGE);
+      }
+
+    } catch (DatabaseException e) {
+      JOptionPane.showMessageDialog(view, "Errore Database: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+      e.printStackTrace();
+    }
   }
 
   private void aggiornaVistaImmagine() {
