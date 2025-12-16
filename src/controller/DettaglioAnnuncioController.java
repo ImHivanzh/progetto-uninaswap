@@ -1,6 +1,8 @@
 package controller;
 
+import dao.ImmaginiDAO;
 import dao.UtenteDAO;
+import exception.DatabaseException;
 import gui.DettaglioAnnuncio;
 import model.*;
 import model.enums.TipoAnnuncio;
@@ -14,47 +16,48 @@ public class DettaglioAnnuncioController {
 
   private final DettaglioAnnuncio view;
   private final Annuncio annuncio;
+  private final ImmaginiDAO immaginiDAO;
   private List<Immagini> listaImmagini;
   private int currentImageIndex = 0;
 
   public DettaglioAnnuncioController(DettaglioAnnuncio view, Annuncio annuncio) {
     this.view = view;
     this.annuncio = annuncio;
+    this.immaginiDAO = new ImmaginiDAO();
     this.listaImmagini = new ArrayList<>();
 
-    // TODO: Recuperare immagini reali se disponibili
-    // if (annuncio.getImmagini() != null) {
-    //     this.listaImmagini = annuncio.getImmagini();
-    // }
-
-    inizializzaDati();
+    caricaDati();
   }
 
-  private void inizializzaDati() {
-    // 1. Imposta dati testuali base
+  private void caricaDati() {
+    // 1. Recupero Immagini dal DB
+    try {
+      this.listaImmagini = immaginiDAO.getImmaginiByAnnuncio(annuncio.getIdAnnuncio());
+    } catch (Exception e) {
+      System.err.println("Errore caricamento immagini: " + e.getMessage());
+    }
+
+    // 2. Imposta dati testuali base
     view.setTitolo(annuncio.getTitolo());
     view.setDescrizione(annuncio.getDescrizione());
     view.setCategoria("Categoria: " + annuncio.getCategoria());
     view.setTipo("Tipo: " + annuncio.getTipoAnnuncio().toString());
-
-    // Nota: Il campo "Condizione" non esiste ancora nel model Annuncio, lascio il placeholder o rimuovilo se non serve.
     view.setCondizione("Condizioni: Buone");
 
-    // 2. Gestione logica Prezzo/Scambio/Regalo
+    // 3. Gestione logica Prezzo/Scambio/Regalo
     String prezzoTesto;
     Color prezzoColore;
 
     if (annuncio instanceof Vendita) {
       prezzoTesto = String.format("€ %.2f", ((Vendita) annuncio).getPrezzo());
-      prezzoColore = new Color(34, 139, 34); // Verde soldi
+      prezzoColore = new Color(34, 139, 34);
     } else if (annuncio instanceof Scambio) {
       prezzoTesto = "Scambia con: " + ((Scambio) annuncio).getOggettoRichiesto();
-      prezzoColore = new Color(255, 140, 0); // Arancione
+      prezzoColore = new Color(255, 140, 0);
     } else if (annuncio instanceof Regalo) {
       prezzoTesto = "IN REGALO";
-      prezzoColore = new Color(220, 20, 60); // Rosso/Fucsia
+      prezzoColore = new Color(220, 20, 60);
     } else {
-      // Fallback
       if (annuncio.getTipoAnnuncio() == TipoAnnuncio.VENDITA) {
         prezzoTesto = "Prezzo non disponibile";
       } else {
@@ -64,24 +67,19 @@ public class DettaglioAnnuncioController {
     }
     view.setPrezzoInfo(prezzoTesto, prezzoColore);
 
-    // 3. Recupero Utente (Logica DAO)
+    // 4. Recupero Utente
+    view.setUtenteInfo("Pubblicato da: Utente ID " + annuncio.getIdUtente());
+
     UtenteDAO utenteDAO = new UtenteDAO();
     try {
-      // CORREZIONE QUI: Usa getIdUtente() invece di getUtenteID()
-      // In futuro potrai decommentare le righe sotto se implementi il metodo findById in UtenteDAO
-
-      // Utente u = utenteDAO.findById(annuncio.getIdUtente());
-      // String nomePubblicatore = (u != null) ? u.getNome() + " " + u.getCognome() : "Utente sconosciuto";
-
-      String nomePubblicatore = "Utente ID " + annuncio.getIdUtente(); // Placeholder temporaneo
-      view.setUtenteInfo("Pubblicato da: " + nomePubblicatore);
-
-    } catch (Exception e) {
-      view.setUtenteInfo("Utente sconosciuto");
-      e.printStackTrace();
+      this.view.setUtenteInfo("Caricamento info utente...");
+      Utente pubblicatore = utenteDAO.getUserByID(annuncio.getIdUtente());
+      view.setUtenteInfo("Pubblicato da: " + pubblicatore.getUsername());
+    } catch (DatabaseException e) {
+      System.err.println("Errore caricamento info utente: " + e.getMessage());
     }
 
-    // 4. Aggiorna prima immagine
+    // 5. Aggiorna vista immagini
     aggiornaVistaImmagine();
   }
 
@@ -100,26 +98,43 @@ public class DettaglioAnnuncioController {
   }
 
   public void azioneContatta() {
-    // Qui gestisci la logica di apertura chat o invio email
-    JOptionPane.showMessageDialog(view, "Funzionalità chat in arrivo per l'annuncio: " + annuncio.getTitolo(), "Contatta Utente", JOptionPane.INFORMATION_MESSAGE);
+    if(annuncio instanceof Vendita) {
+      JOptionPane.showMessageDialog(view,
+              "Contatta il venditore tramite il sistema di messaggistica interna.",
+              "Contatta Venditore",
+              JOptionPane.INFORMATION_MESSAGE);
+    } else if(annuncio instanceof Scambio) {
+      JOptionPane.showMessageDialog(view,
+              "Proponi uno scambio al proprietario tramite il sistema di messaggistica interna.",
+              "Proponi Scambio",
+              JOptionPane.INFORMATION_MESSAGE);
+    } else if(annuncio instanceof Regalo) {
+      JOptionPane.showMessageDialog(view,
+              "Contatta il donatore tramite il sistema di messaggistica interna.",
+              "Contatta Donatore",
+              JOptionPane.INFORMATION_MESSAGE);
+    }
   }
 
   private void aggiornaVistaImmagine() {
+    // [CORRETTO] Se non ci sono immagini, nascondiamo il pannello usando il metodo esistente
     if (listaImmagini == null || listaImmagini.isEmpty()) {
-      view.mostraImmaginePlaceholder();
-      view.setContatoreImmagini("0/0");
+      view.nascondiPannelloImmagini();
       return;
     }
 
-    Immagini imgObj = listaImmagini.get(currentImageIndex);
-    // Logica futura per conversione byte[] -> ImageIcon
-        /*
-        byte[] imgBytes = imgObj.getDati();
-        ImageIcon icon = new ImageIcon(imgBytes);
-        view.setImmagine(icon);
-        */
+    // Se ci sono immagini, assicuriamoci che il pannello sia visibile
+    view.mostraPannelloImmagini();
 
-    view.setImmagineTesto("Immagine " + (currentImageIndex + 1));
-    view.setContatoreImmagini((currentImageIndex + 1) + "/" + listaImmagini.size());
+    Immagini imgObj = listaImmagini.get(currentImageIndex);
+
+    if (imgObj.getImmagine() != null && imgObj.getImmagine().length > 0) {
+      // Crea l'ImageIcon dai byte
+      ImageIcon icon = new ImageIcon(imgObj.getImmagine());
+      view.setImmagine(icon);
+      view.setContatoreImmagini((currentImageIndex + 1) + "/" + listaImmagini.size());
+    } else {
+      view.setImmagineTesto("Errore img");
+    }
   }
 }

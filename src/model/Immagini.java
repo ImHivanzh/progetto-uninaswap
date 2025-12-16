@@ -2,26 +2,26 @@ package model;
 
 public class Immagini {
     private int idImmagine;
-    private String immagine;
+    private byte[] immagine; // [IMPORTANTE] Deve essere byte[], non String!
     private Annuncio annuncio;
     private Scambio scambio;
 
-    //costruttore di default
     public Immagini() {
     }
 
-
-    //costruttore
-    public Immagini(int idImmagine, String immagine, Annuncio annuncio, Scambio scambio) {
+    public Immagini(int idImmagine, byte[] immagine, Annuncio annuncio, Scambio scambio) {
         this.idImmagine = idImmagine;
         this.immagine = immagine;
-        this.annuncio=annuncio;
-        this.scambio= scambio;
+        this.annuncio = annuncio;
+        this.scambio = scambio;
     }
 
-    // metodi getter e setter
+    // Costruttore semplificato
+    public Immagini(byte[] immagine, Annuncio annuncio) {
+        this.immagine = immagine;
+        this.annuncio = annuncio;
+    }
 
-    // idImmagine
     public int getIdImmagine() {
         return idImmagine;
     }
@@ -30,25 +30,22 @@ public class Immagini {
         this.idImmagine = idImmagine;
     }
 
-    // immagine
-    public String getImmagine() {
+    public byte[] getImmagine() {
         return immagine;
     }
 
-    public void setImmagine(String immagine) {
+    public void setImmagine(byte[] immagine) {
         this.immagine = immagine;
     }
 
-    // idAnnuncio
     public Annuncio getAnnuncio() {
         return annuncio;
     }
 
-    public void setIdAnnuncio(Annuncio annuncio) {
+    public void setAnnuncio(Annuncio annuncio) {
         this.annuncio = annuncio;
     }
 
-    // idScambio
     public Scambio getScambio() {
         return scambio;
     }

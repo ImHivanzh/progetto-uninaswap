@@ -23,18 +23,15 @@ public class DettaglioAnnuncio extends JFrame {
   private JPanel imagePanel;
   private JLabel lblContatoreImmagini;
 
-  // Riferimento al controller
   private DettaglioAnnuncioController controller;
 
   public DettaglioAnnuncio(Annuncio annuncio) {
-    // Configurazione Frame
     setContentPane(mainPanel);
     setTitle("UninaSwap - Dettaglio Annuncio");
     setSize(800, 600);
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     setLocationRelativeTo(null);
 
-    // Inizializza il controller passando questa vista e il modello
     this.controller = new DettaglioAnnuncioController(this, annuncio);
 
     setupListeners();
@@ -42,54 +39,37 @@ public class DettaglioAnnuncio extends JFrame {
 
   private void setupListeners() {
     btnIndietro.addActionListener(e -> dispose());
-
     btnContatta.addActionListener(e -> controller.azioneContatta());
-
     btnPrecedente.addActionListener(e -> controller.azionePrecedente());
-
     btnSuccessivo.addActionListener(e -> controller.azioneSuccessiva());
   }
 
-  // --- Metodi Setter per la Vista (usati dal Controller) ---
-
-  public void setTitolo(String titolo) {
-    lblTitolo.setText(titolo);
-  }
-
-  public void setDescrizione(String descrizione) {
-    txtDescrizione.setText(descrizione);
-  }
-
-  public void setCategoria(String testo) {
-    lblCategoria.setText(testo);
-  }
-
-  public void setTipo(String testo) {
-    lblTipo.setText(testo);
-  }
-
-  public void setCondizione(String testo) {
-    lblCondizione.setText(testo);
-  }
+  public void setTitolo(String titolo) { lblTitolo.setText(titolo); }
+  public void setDescrizione(String descrizione) { txtDescrizione.setText(descrizione); }
+  public void setCategoria(String testo) { lblCategoria.setText(testo); }
+  public void setTipo(String testo) { lblTipo.setText(testo); }
+  public void setCondizione(String testo) { lblCondizione.setText(testo); }
 
   public void setPrezzoInfo(String testo, Color colore) {
     lblPrezzo.setText(testo);
     lblPrezzo.setForeground(colore);
   }
+  public void setUtenteInfo(String testo) { lblUtente.setText(testo); }
+  public void setContatoreImmagini(String testo) { lblContatoreImmagini.setText(testo); }
 
-  public void setUtenteInfo(String testo) {
-    lblUtente.setText(testo);
-  }
-
-  public void setContatoreImmagini(String testo) {
-    lblContatoreImmagini.setText(testo);
-  }
-
+  // [FIX WIDTH 0] Gestisce il ridimensionamento sicuro
   public void setImmagine(ImageIcon icon) {
-    // Ridimensiona e setta l'icona
-    Image img = icon.getImage().getScaledInstance(lblImmagine.getWidth(), lblImmagine.getHeight(), Image.SCALE_SMOOTH);
+    int w = lblImmagine.getWidth();
+    int h = lblImmagine.getHeight();
+
+    if (w <= 0 || h <= 0) {
+      w = 400; // Dimensioni di default
+      h = 300;
+    }
+
+    Image img = icon.getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH);
     lblImmagine.setIcon(new ImageIcon(img));
-    lblImmagine.setText(""); // Rimuove testo se c'è immagine
+    lblImmagine.setText("");
   }
 
   public void setImmagineTesto(String testo) {
@@ -97,13 +77,14 @@ public class DettaglioAnnuncio extends JFrame {
     lblImmagine.setText(testo);
   }
 
-  public void mostraImmaginePlaceholder() {
-    lblImmagine.setIcon(null);
-    lblImmagine.setText("Nessuna immagine disponibile");
+  // Metodi per gestire la visibilità del pannello immagini
+  public void nascondiPannelloImmagini() {
+    if (imagePanel != null) imagePanel.setVisible(false);
   }
 
-  // Metodo necessario per il GUI Designer
-  private void createUIComponents() {
-    // TODO: place custom component creation code here
+  public void mostraPannelloImmagini() {
+    if (imagePanel != null) imagePanel.setVisible(true);
   }
+
+  private void createUIComponents() { }
 }

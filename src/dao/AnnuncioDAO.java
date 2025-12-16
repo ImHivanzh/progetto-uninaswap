@@ -24,42 +24,48 @@ public class AnnuncioDAO {
 
   /**
    * Inserisce un nuovo annuncio nel database.
-   * Gestisce dinamicamente Vendita (prezzo), Scambio (oggetto richiesto) e Regalo.
+   * Restituisce l'ID generato (o -1 in caso di errore).
    */
-  public boolean pubblicaAnnuncio(Annuncio annuncio) throws DatabaseException {
+  public int pubblicaAnnuncio(Annuncio annuncio) throws DatabaseException {
     if (con == null) {
       throw new DatabaseException("Connessione al database non disponibile.");
     }
 
-    // Query unificata con tutti i campi possibili
+    // Query con RETURN_GENERATED_KEYS
     String sql = "INSERT INTO annuncio (titolo, descrizione, categoria, idutente, tipoannuncio, prezzo, oggetto_richiesto, stato) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-    try (PreparedStatement ps = con.prepareStatement(sql)) {
+    // NOTA: Qui usiamo 'con' direttamente. Chiudiamo solo il PreparedStatement 'ps'.
+    try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
       ps.setString(1, annuncio.getTitolo());
       ps.setString(2, annuncio.getDescrizione());
-      ps.setString(3, annuncio.getCategoria().name()); // Usa name() per l'enum
+      ps.setString(3, annuncio.getCategoria().name());
       ps.setInt(4, annuncio.getIdUtente());
       ps.setString(5, annuncio.getTipoAnnuncio().name());
 
-      // Gestione PREZZO (Solo per Vendita)
       if (annuncio instanceof Vendita) {
         ps.setDouble(6, ((Vendita) annuncio).getPrezzo());
       } else {
         ps.setNull(6, java.sql.Types.DOUBLE);
       }
 
-      // Gestione OGGETTO RICHIESTO (Solo per Scambio)
       if (annuncio instanceof Scambio) {
         ps.setString(7, ((Scambio) annuncio).getOggettoRichiesto());
       } else {
         ps.setNull(7, java.sql.Types.VARCHAR);
       }
 
-      // Stato attivo di default (true)
       ps.setBoolean(8, true);
 
       int rows = ps.executeUpdate();
-      return rows > 0;
+
+      if (rows > 0) {
+        try (ResultSet rs = ps.getGeneratedKeys()) {
+          if (rs.next()) {
+            return rs.getInt(1); // Ritorna il NUOVO ID
+          }
+        }
+      }
+      return -1; // Fallito
 
     } catch (SQLException e) {
       throw new DatabaseException("Errore durante l'inserimento dell'annuncio: " + e.getMessage());
@@ -92,15 +98,15 @@ public class AnnuncioDAO {
   }
 
   /**
-   * Recupera tutti gli annunci pubblicati da uno specifico utente.
+   * Recupera tutti gli annunci di un utente.
+   * [CORRETTO] Usa la connessione condivisa senza chiuderla.
    */
   public List<Annuncio> findAllByUtente(int idUtente) throws DatabaseException {
     String sql = "SELECT * FROM annuncio WHERE idutente = ?";
     List<Annuncio> annunci = new ArrayList<>();
 
-    try (Connection conn = dbConnection.getInstance().getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
-
+    // CORREZIONE IMPORTANTE: Non usiamo 'try (Connection conn = ...)' qui!
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
       ps.setInt(1, idUtente);
 
       try (ResultSet rs = ps.executeQuery()) {
@@ -116,14 +122,13 @@ public class AnnuncioDAO {
   }
 
   /**
-   * Recupera un singolo annuncio tramite il suo ID.
+   * Recupera un annuncio per ID.
+   * [CORRETTO] Usa la connessione condivisa senza chiuderla.
    */
   public Annuncio findById(int idAnnuncio) throws DatabaseException {
     String sql = "SELECT * FROM annuncio WHERE idannuncio = ?";
 
-    try (Connection conn = dbConnection.getInstance().getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
-
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
       ps.setInt(1, idAnnuncio);
 
       try (ResultSet rs = ps.executeQuery()) {
@@ -138,28 +143,20 @@ public class AnnuncioDAO {
   }
 
   /**
-   * Elimina un annuncio dal database.
+   * Elimina un annuncio.
+   * [CORRETTO] Usa la connessione condivisa senza chiuderla.
    */
   public boolean deleteAnnuncio(int idAnnuncio) throws DatabaseException {
     String sql = "DELETE FROM annuncio WHERE idannuncio = ?";
 
-    try (Connection conn = dbConnection.getInstance().getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
-
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
       ps.setInt(1, idAnnuncio);
-
-      int rowsAffected = ps.executeUpdate();
-      return rowsAffected > 0;
-
+      return ps.executeUpdate() > 0;
     } catch (SQLException e) {
       throw new DatabaseException("Errore durante l'eliminazione dell'annuncio", e);
     }
   }
 
-  /**
-   * Metodo helper per mappare una riga del ResultSet nell'oggetto Java corretto.
-   * Gestisce il polimorfismo (Vendita, Scambio, Regalo).
-   */
   private Annuncio mapResultSetToAnnuncio(ResultSet rs) throws SQLException {
     int id = rs.getInt("idannuncio");
     String titolo = rs.getString("titolo");
@@ -167,7 +164,6 @@ public class AnnuncioDAO {
     int idUtente = rs.getInt("idutente");
     boolean stato = rs.getBoolean("stato");
 
-    // Gestione Enum Categoria
     Categoria categoria;
     try {
       categoria = Categoria.valueOf(rs.getString("categoria").toUpperCase());
@@ -175,17 +171,15 @@ public class AnnuncioDAO {
       categoria = Categoria.ALTRO;
     }
 
-    // Gestione Enum TipoAnnuncio
     TipoAnnuncio tipo;
     try {
       tipo = TipoAnnuncio.valueOf(rs.getString("tipoannuncio").toUpperCase());
     } catch (Exception e) {
-      tipo = TipoAnnuncio.VENDITA; // Default
+      tipo = TipoAnnuncio.VENDITA;
     }
 
     Annuncio annuncio;
 
-    // Creazione dell'istanza specifica
     switch (tipo) {
       case VENDITA:
         double prezzo = rs.getDouble("prezzo");
@@ -193,24 +187,18 @@ public class AnnuncioDAO {
         v.setPrezzo(prezzo);
         annuncio = v;
         break;
-
       case SCAMBIO:
         String oggettoRichiesto = rs.getString("oggetto_richiesto");
-        // Nota: Usiamo i setter o un costruttore se disponibile.
-        // Qui uso l'approccio generico + setter specifico per sicurezza.
         Scambio s = new Scambio(titolo, descrizione, categoria, idUtente, oggettoRichiesto);
         annuncio = s;
         break;
-
       case REGALO:
         annuncio = new Regalo(titolo, descrizione, categoria, idUtente);
         break;
-
       default:
         annuncio = new Annuncio();
     }
 
-    // Popolamento campi comuni (sovrascrive eventuali valori dei costruttori parziali)
     annuncio.setIdAnnuncio(id);
     annuncio.setIdUtente(idUtente);
     annuncio.setTitolo(titolo);

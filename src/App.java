@@ -1,42 +1,43 @@
 import com.formdev.flatlaf.FlatLightLaf;
 import controller.ProfiloController;
-import controller.PubblicaAnnuncioController;
-import controller.ScriviRecensioneController;
 import dao.UtenteDAO;
-import gui.*;
-import controller.LoginController; // Ho aggiunto l'import del controller
+import gui.Profilo;
+import gui.PubblicaAnnuncio;
 import model.Utente;
 import utils.SessionManager;
 
 import javax.swing.SwingUtilities;
 
 public class App {
-    static void main(String[] args) {
+    public static void main(String[] args) { // Ricorda "public"
 
         FlatLightLaf.setup();
-        // FlatDarkLaf.setup();
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                //LoginForm loginPage = new LoginForm();
-                //new LoginController(loginPage);
 
-                //loginPage.setVisible(true);
+                // --- 1. LOGIN SIMULATO (Necessario) ---
                 try {
                     UtenteDAO utenteDAO = new UtenteDAO();
+                    // Assicurati che l'utente "a" con password "a" esista nel tuo DB
+                    // Altrimenti l'app si aprirà ma non potrai pubblicare
                     Utente utente = utenteDAO.autenticaUtente("a", "a");
-                    SessionManager.getInstance().login(utente);
+
+                    if (utente != null) {
+                        SessionManager.getInstance().login(utente);
+                        System.out.println("Login simulato effettuato come: " + utente.getUsername());
+                    } else {
+                        System.err.println("Utente non trovato nel DB! La pubblicazione fallirà.");
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                Utente a = new Utente(1, "a", "a", "a@a.a", "1234567890");
-
-                //Profilo profilo = new Profilo();
-                //new ProfiloController(profilo, a);
-
-                //profilo.setVisible(true);
+                // --- 2. APERTURA PUBBLICA ANNUNCIO ---
+                Profilo frame = new Profilo();
+                ProfiloController controller = new ProfiloController(frame);
+                frame.setVisible(true);
             }
         });
     }

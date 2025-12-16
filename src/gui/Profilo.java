@@ -2,8 +2,8 @@ package gui;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.awt.event.MouseListener; // [Nuovo Import]
 
 public class Profilo extends BaseFrame {
   private JPanel mainPanel;
@@ -14,7 +14,7 @@ public class Profilo extends BaseFrame {
   private JLabel lblMediaVoto;
   private JTabbedPane tabbedPane;
   private JTable tableRecensioni;
-  private JTable tableAnnunci; // Nuova tabella
+  private JTable tableAnnunci;
 
   private DefaultTableModel modelRecensioni;
   private DefaultTableModel modelAnnunci;
@@ -50,6 +50,11 @@ public class Profilo extends BaseFrame {
     tableAnnunci.setRowHeight(25);
     tableAnnunci.getTableHeader().setResizingAllowed(false);
     tableAnnunci.getTableHeader().setReorderingAllowed(false);
+  }
+
+  // [NUOVO METODO] Permette al Controller di ascoltare i click sulla tabella
+  public void addTableAnnunciListener(MouseListener listener) {
+    tableAnnunci.addMouseListener(listener);
   }
 
   // --- Metodi per Recensioni ---

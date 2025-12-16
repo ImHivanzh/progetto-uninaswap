@@ -1,6 +1,7 @@
 package controller;
 
 import dao.AnnuncioDAO;
+import dao.ImmaginiDAO;
 import exception.DatabaseException;
 import gui.PubblicaAnnuncio;
 import model.*;
@@ -10,16 +11,20 @@ import utils.SessionManager;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 public class PubblicaAnnuncioController {
 
   private final PubblicaAnnuncio view;
   private final AnnuncioDAO annuncioDAO;
+  private final ImmaginiDAO immaginiDAO;
 
   public PubblicaAnnuncioController(PubblicaAnnuncio view) {
     this.view = view;
     this.annuncioDAO = new AnnuncioDAO();
+    this.immaginiDAO = new ImmaginiDAO();
   }
 
   public void pubblica() {
@@ -35,8 +40,8 @@ public class PubblicaAnnuncioController {
     Categoria categoria = view.getCategoriaSelezionata();
     TipoAnnuncio tipo = view.getTipoSelezionato();
 
-    // Recupero immagini (ora il metodo esiste)
-    List<File> immagini = view.getImmagini();
+    // Recupero file immagini
+    List<File> immaginiFiles = view.getImmagini();
 
     // 2. Validazione base
     if (titolo.isEmpty() || descrizione.isEmpty() || categoria == null || tipo == null) {
@@ -51,14 +56,12 @@ public class PubblicaAnnuncioController {
       switch (tipo) {
         case VENDITA:
           Vendita vendita = new Vendita();
-          // Campi comuni
           vendita.setTitolo(titolo);
           vendita.setDescrizione(descrizione);
           vendita.setCategoria(categoria);
           vendita.setTipoAnnuncio(TipoAnnuncio.VENDITA);
           vendita.setIdUtente(utente.getIdUtente());
 
-          // Gestione Prezzo
           String prezzoStr = view.getPrezzo();
           if (prezzoStr == null || prezzoStr.isEmpty()) {
             throw new IllegalArgumentException("Inserisci un prezzo valido per la vendita.");
@@ -69,7 +72,7 @@ public class PubblicaAnnuncioController {
           break;
 
         case SCAMBIO:
-          // Se in futuro aggiungi un campo "Oggetto richiesto" nella GUI, recuperalo qui.
+          // Se la GUI non ha ancora un campo per l'oggetto richiesto, mettiamo un placeholder o stringa vuota
           String oggettoRichiesto = "";
           nuovoAnnuncio = new Scambio(titolo, descrizione, categoria, utente.getIdUtente(), oggettoRichiesto);
           break;
@@ -82,16 +85,18 @@ public class PubblicaAnnuncioController {
           nuovoAnnuncio = new Annuncio(utente.getIdUtente(), titolo, descrizione, categoria, tipo);
       }
 
-      // TODO: Qui dovresti implementare la logica per salvare fisicamente le immagini (es. copia in una cartella)
-      // e creare i record nella tabella Immagini, se previsto dal DB.
-      if (!immagini.isEmpty()) {
-        System.out.println("Immagini da caricare: " + immagini.size());
-      }
+      // 4. Salvataggio nel DB (Ora riceviamo l'ID generato, non un boolean)
+      int idAnnuncioCreato = annuncioDAO.pubblicaAnnuncio(nuovoAnnuncio);
 
-      // 4. Salvataggio nel DB
-      boolean successo = annuncioDAO.pubblicaAnnuncio(nuovoAnnuncio);
+      if (idAnnuncioCreato > 0) {
+        // Impostiamo l'ID appena generato nell'oggetto annuncio
+        nuovoAnnuncio.setIdAnnuncio(idAnnuncioCreato);
 
-      if (successo) {
+        // 5. Salvataggio Immagini (Se presenti)
+        if (immaginiFiles != null && !immaginiFiles.isEmpty()) {
+          salvaImmaginiPerAnnuncio(nuovoAnnuncio, immaginiFiles);
+        }
+
         JOptionPane.showMessageDialog(view, "Annuncio pubblicato con successo!");
         view.dispose(); // Chiude la finestra
       } else {
@@ -106,6 +111,32 @@ public class PubblicaAnnuncioController {
     } catch (Exception e) {
       JOptionPane.showMessageDialog(view, "Errore generico: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
       e.printStackTrace();
+    }
+  }
+
+  /**
+   * Converte i file in byte[] e li salva nel DB collegandoli all'annuncio.
+   */
+  private void salvaImmaginiPerAnnuncio(Annuncio annuncio, List<File> files) throws DatabaseException {
+    try {
+      for (File file : files) {
+        // Legge i byte del file
+        byte[] contenutoFile = Files.readAllBytes(file.toPath());
+
+        // Crea il model Immagini
+        Immagini imgModel = new Immagini();
+        imgModel.setImmagine(contenutoFile);
+        imgModel.setAnnuncio(annuncio); // L'annuncio ora ha l'ID corretto setttato al punto 4
+
+        // Chiama il DAO
+        immaginiDAO.salvaImmagine(imgModel);
+      }
+      System.out.println("Salvate " + files.size() + " immagini per annuncio ID: " + annuncio.getIdAnnuncio());
+
+    } catch (IOException e) {
+      System.err.println("Errore durante la lettura del file immagine: " + e.getMessage());
+      e.printStackTrace();
+      // Opzionale: Lanciare un'eccezione o mostrare un warning, ma non blocchiamo la pubblicazione per questo
     }
   }
 }

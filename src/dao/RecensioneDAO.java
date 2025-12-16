@@ -13,16 +13,27 @@ import java.util.List;
 
 public class RecensioneDAO {
 
-  public RecensioneDAO() {}
+  private Connection con;
+
+  public RecensioneDAO() {
+    try {
+      // Otteniamo la connessione condivisa all'avvio
+      this.con = dbConnection.getInstance().getConnection();
+    } catch (DatabaseException e) {
+      System.err.println("Errore di connessione al database in RecensioneDAO: " + e.getMessage());
+    }
+  }
 
   /**
    * Inserisce una nuova recensione nel database.
    */
   public boolean inserisciRecensione(Recensione recensione) throws DatabaseException {
+    if (con == null) throw new DatabaseException("Connessione DB non disponibile.");
+
     String sql = "INSERT INTO recensione (idutente, idutenterecensito, voto, descrizione) VALUES (?, ?, ?, ?)";
 
-    try (Connection conn = dbConnection.getInstance().getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+    // CORRETTO: Usiamo 'this.con' e chiudiamo solo il PreparedStatement
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
 
       ps.setInt(1, recensione.getIdUtente());
       ps.setInt(2, recensione.getIdUtenteRecensito());
@@ -38,22 +49,21 @@ public class RecensioneDAO {
 
   /**
    * Recupera la lista delle recensioni ricevute da un determinato utente.
-   * @param idUtenteRecensito L'ID dell'utente di cui visualizzare le recensioni.
-   * @return Lista di oggetti Recensione.
    */
   public List<Recensione> getRecensioniRicevute(int idUtenteRecensito) throws DatabaseException {
     String sql = "SELECT * FROM recensione WHERE idutenterecensito = ?";
     List<Recensione> recensioni = new ArrayList<>();
 
-    try (Connection conn = dbConnection.getInstance().getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+    if (con == null) return recensioni;
+
+    // CORRETTO: Usiamo 'this.con' senza chiuderla
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
 
       ps.setInt(1, idUtenteRecensito);
 
       try (ResultSet rs = ps.executeQuery()) {
         while (rs.next()) {
           Recensione r = new Recensione();
-          // Nota: idutente qui è chi HA SCRITTO la recensione
           r.setIdUtente(rs.getInt("idutente"));
           r.setIdUtenteRecensito(rs.getInt("idutenterecensito"));
           r.setVoto(rs.getInt("voto"));
