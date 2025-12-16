@@ -4,6 +4,7 @@ import dao.ImmaginiDAO;
 import dao.UtenteDAO;
 import exception.DatabaseException;
 import gui.DettaglioAnnuncio;
+import gui.FaiPropostaDialog;
 import model.*;
 import model.enums.TipoAnnuncio;
 
@@ -72,7 +73,6 @@ public class DettaglioAnnuncioController {
 
     UtenteDAO utenteDAO = new UtenteDAO();
     try {
-      this.view.setUtenteInfo("Caricamento info utente...");
       Utente pubblicatore = utenteDAO.getUserByID(annuncio.getIdUtente());
       view.setUtenteInfo("Pubblicato da: " + pubblicatore.getUsername());
     } catch (DatabaseException e) {
@@ -98,38 +98,52 @@ public class DettaglioAnnuncioController {
   }
 
   public void azioneContatta() {
-    if(annuncio instanceof Vendita) {
+    // 1. Crea e mostra la Dialog (View)
+    // La Dialog al suo interno inizializzerà il suo Controller
+    FaiPropostaDialog dialog = new FaiPropostaDialog(view, annuncio.getTipoAnnuncio());
+    dialog.setVisible(true); // Blocca l'esecuzione finché la dialog non viene chiusa
+
+    // 2. Recupera il controller della dialog per esaminare i risultati
+    FaiPropostaController dialogController = dialog.getController();
+
+    if (dialogController != null && dialogController.isConfermato()) {
+      // 3. Estrai i dati validati
+      Double prezzo = dialogController.getOffertaPrezzo();
+      String descrizione = dialogController.getDescrizioneProposta();
+      byte[] immagine = dialogController.getImmagineProposta();
+
+      // 4. Logica di persistenza
+      salvaProposta(annuncio.getIdAnnuncio(), prezzo, descrizione, immagine);
+
       JOptionPane.showMessageDialog(view,
-              "Contatta il venditore tramite il sistema di messaggistica interna.",
-              "Contatta Venditore",
-              JOptionPane.INFORMATION_MESSAGE);
-    } else if(annuncio instanceof Scambio) {
-      JOptionPane.showMessageDialog(view,
-              "Proponi uno scambio al proprietario tramite il sistema di messaggistica interna.",
-              "Proponi Scambio",
-              JOptionPane.INFORMATION_MESSAGE);
-    } else if(annuncio instanceof Regalo) {
-      JOptionPane.showMessageDialog(view,
-              "Contatta il donatore tramite il sistema di messaggistica interna.",
-              "Contatta Donatore",
+              "Proposta inviata con successo!",
+              "Conferma",
               JOptionPane.INFORMATION_MESSAGE);
     }
   }
 
+  private void salvaProposta(int idAnnuncio, Double prezzo, String descrizione, byte[] immagine) {
+    // TODO: Qui va inserita la chiamata al PropostaDAO.insert(...)
+    System.out.println("--- SIMULAZIONE SALVATAGGIO PROPOSTA ---");
+    System.out.println("Annuncio ID: " + idAnnuncio);
+    System.out.println("Tipo Annuncio: " + annuncio.getTipoAnnuncio());
+    if (prezzo != null) System.out.println("Offerta Economica: " + prezzo);
+    System.out.println("Descrizione/Messaggio: " + descrizione);
+    System.out.println("Immagine presente: " + (immagine != null));
+    System.out.println("----------------------------------------");
+  }
+
   private void aggiornaVistaImmagine() {
-    // [CORRETTO] Se non ci sono immagini, nascondiamo il pannello usando il metodo esistente
     if (listaImmagini == null || listaImmagini.isEmpty()) {
       view.nascondiPannelloImmagini();
       return;
     }
 
-    // Se ci sono immagini, assicuriamoci che il pannello sia visibile
     view.mostraPannelloImmagini();
 
     Immagini imgObj = listaImmagini.get(currentImageIndex);
 
     if (imgObj.getImmagine() != null && imgObj.getImmagine().length > 0) {
-      // Crea l'ImageIcon dai byte
       ImageIcon icon = new ImageIcon(imgObj.getImmagine());
       view.setImmagine(icon);
       view.setContatoreImmagini((currentImageIndex + 1) + "/" + listaImmagini.size());
