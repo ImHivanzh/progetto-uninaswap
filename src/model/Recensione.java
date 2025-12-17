@@ -4,6 +4,7 @@ public class Recensione {
     private int voto;
     private String descrizione;
     private int idUtente; // ID dell'utente che scrive la recensione
+    private String nomeUtente; // Nome utente del recensore
     private int idUtenteRecensito; // ID dell'utente che riceve la recensione
 
     // Costruttore di default
@@ -45,6 +46,14 @@ public class Recensione {
 
     public void setIdUtente(int idUtente) {
         this.idUtente = idUtente;
+    }
+
+    public String getNomeUtente() {
+        return nomeUtente;
+    }
+
+    public void setNomeUtente(String nomeUtente) {
+        this.nomeUtente = nomeUtente;
     }
 
     // idUtenteRecensito (Destinatario)
