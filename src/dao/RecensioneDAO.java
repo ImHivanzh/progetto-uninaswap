@@ -51,7 +51,9 @@ public class RecensioneDAO {
    * Recupera la lista delle recensioni ricevute da un determinato utente.
    */
   public List<Recensione> getRecensioniRicevute(int idUtenteRecensito) throws DatabaseException {
-    String sql = "SELECT * FROM recensione WHERE idutenterecensito = ?";
+    String sql = "SELECT r.idutente, r.idutenterecensito, r.voto, r.descrizione, u.nomeutente "
+            + "FROM recensione r LEFT JOIN utente u ON u.idutente = r.idutente "
+            + "WHERE r.idutenterecensito = ?";
     List<Recensione> recensioni = new ArrayList<>();
 
     if (con == null) return recensioni;
@@ -68,6 +70,7 @@ public class RecensioneDAO {
           r.setIdUtenteRecensito(rs.getInt("idutenterecensito"));
           r.setVoto(rs.getInt("voto"));
           r.setDescrizione(rs.getString("descrizione"));
+          r.setNomeUtente(rs.getString("nomeutente"));
           recensioni.add(r);
         }
       }
