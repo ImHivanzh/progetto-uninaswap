@@ -13,12 +13,20 @@ public class PassDimenticataController {
     private final PassDimenticataForm view;
     private final UtenteDAO utenteDAO;
 
+    /**
+     * Creates the controller and registers listeners.
+     *
+     * @param view password recovery view
+     */
     public PassDimenticataController(PassDimenticataForm view) {
         this.view = view;
         this.utenteDAO = new UtenteDAO();
         initListeners();
     }
 
+    /**
+     * Registers UI listeners for the password recovery view.
+     */
     private void initListeners() {
         this.view.addInvioListener(new ActionListener() {
             @Override
@@ -28,6 +36,9 @@ public class PassDimenticataController {
         });
     }
 
+    /**
+     * Validates input and updates the user's password.
+     */
     private void gestisciCambioPassword() {
         String username = view.getUsername();
         String nuovaPass = view.getNuovaPassword();

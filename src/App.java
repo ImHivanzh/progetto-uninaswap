@@ -9,7 +9,12 @@ import utils.SessionManager;
 import javax.swing.SwingUtilities;
 
 public class App {
-    public static void main(String[] args) { // Ricorda "public"
+    /**
+     * Starts the application and shows the profile window on the EDT.
+     *
+     * @param args command-line arguments
+     */
+    public static void main(String[] args) {
 
         FlatLightLaf.setup();
 
@@ -17,24 +22,20 @@ public class App {
             @Override
             public void run() {
 
-                // --- 1. LOGIN SIMULATO (Necessario) ---
                 try {
                     UtenteDAO utenteDAO = new UtenteDAO();
-                    // Assicurati che l'utente "a" con password "a" esista nel tuo DB
-                    // Altrimenti l'app si aprirà ma non potrai pubblicare
                     Utente utente = utenteDAO.autenticaUtente("a", "a");
 
                     if (utente != null) {
                         SessionManager.getInstance().login(utente);
                         System.out.println("Login simulato effettuato come: " + utente.getUsername());
                     } else {
-                        System.err.println("Utente non trovato nel DB! La pubblicazione fallirà.");
+                        System.err.println("Utente non trovato nel DB! La pubblicazione fallira.");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                // --- 2. APERTURA PUBBLICA ANNUNCIO ---
                 Profilo frame = new Profilo();
                 ProfiloController controller = new ProfiloController(frame);
                 frame.setVisible(true);

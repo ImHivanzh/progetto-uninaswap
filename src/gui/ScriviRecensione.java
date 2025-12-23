@@ -8,44 +8,47 @@ import java.awt.event.MouseEvent;
 
 public class ScriviRecensione extends BaseFrame {
     private JPanel mainPanel;
-    private JPanel pnlStelle; // Contenitore per le stelle
+    private JPanel pnlStelle;
     private JTextArea txtDescrizione;
     private JButton btnInvia;
 
-    // Array per gestire i pulsanti delle stelle
     private final JButton[] stelleButtons = new JButton[5];
-    // Variabile per tenere traccia del voto (default 5)
     private int votoCorrente = 5;
 
-    // Colori per le stelle
-    private final Color COLORE_PIENA = new Color(255, 200, 0); // Oro/Arancione
+    private final Color COLORE_PIENA = new Color(255, 200, 0);
     private final Color COLORE_VUOTA = Color.LIGHT_GRAY;
 
+    /**
+     * Creates the review form.
+     */
     public ScriviRecensione() {
         super("Scrivi Recensione");
         setContentPane(mainPanel);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        inizializzaStelle(); // Crea i pulsanti a stella
+        inizializzaStelle();
 
         pack();
         centraFinestra();
     }
 
+    /**
+     * Initializes the star buttons and listeners.
+     */
     private void inizializzaStelle() {
         pnlStelle.removeAll();
 
         for (int i = 0; i < 5; i++) {
-            JButton stella = new JButton("★"); // Simbolo stella unicode
-            stella.setFont(new Font("SansSerif", Font.BOLD, 24)); // Font grande
-            stella.setForeground(COLORE_PIENA); // Colore iniziale
+            JButton stella = new JButton("★");
+            stella.setFont(new Font("SansSerif", Font.BOLD, 24));
+            stella.setForeground(COLORE_PIENA);
 
             stella.setBorderPainted(false);
             stella.setContentAreaFilled(false);
             stella.setFocusPainted(false);
             stella.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-            final int votoStella = i + 1; // Voto da 1 a 5
+            final int votoStella = i + 1;
 
             stella.addActionListener(e -> {
                 setVoto(votoStella);
@@ -59,7 +62,9 @@ public class ScriviRecensione extends BaseFrame {
     }
 
     /**
-     * Imposta il voto e aggiorna la visualizzazione
+     * Sets the rating and updates the UI.
+     *
+     * @param voto rating value
      */
     private void setVoto(int voto) {
         this.votoCorrente = voto;
@@ -67,8 +72,7 @@ public class ScriviRecensione extends BaseFrame {
     }
 
     /**
-     * Ricolora le stelle in base al voto corrente.
-     * Es: se voto è 3, le prime 3 sono Oro, le altre 2 Grigie.
+     * Updates star colors based on the current rating.
      */
     private void aggiornaGraficaStelle() {
         for (int i = 0; i < 5; i++) {
@@ -76,25 +80,36 @@ public class ScriviRecensione extends BaseFrame {
                 stelleButtons[i].setText("★");
                 stelleButtons[i].setForeground(COLORE_PIENA);
             } else {
-                stelleButtons[i].setText("☆"); // O lascia ★ ma cambia solo colore
+                stelleButtons[i].setText("☆");
                 stelleButtons[i].setForeground(COLORE_VUOTA);
             }
         }
         pnlStelle.repaint();
     }
 
-    // --- GETTERS ---
-
+    /**
+     * Returns the current rating.
+     *
+     * @return rating value
+     */
     public int getVoto() {
         return votoCorrente;
     }
 
+    /**
+     * Returns the review text.
+     *
+     * @return review text
+     */
     public String getDescrizione() {
         return txtDescrizione.getText();
     }
 
-    // --- LISTENERS ---
-
+    /**
+     * Adds the submit action listener.
+     *
+     * @param listener action listener
+     */
     public void addInviaListener(ActionListener listener) {
         btnInvia.addActionListener(listener);
     }

@@ -25,6 +25,11 @@ public class DettaglioAnnuncio extends JFrame {
 
   private DettaglioAnnuncioController controller;
 
+  /**
+   * Creates the listing detail frame.
+   *
+   * @param annuncio listing to display
+   */
   public DettaglioAnnuncio(Annuncio annuncio) {
     setContentPane(mainPanel);
     setTitle("UninaSwap - Dettaglio Annuncio");
@@ -37,6 +42,9 @@ public class DettaglioAnnuncio extends JFrame {
     setupListeners();
   }
 
+  /**
+   * Registers button listeners for the view.
+   */
   private void setupListeners() {
     btnIndietro.addActionListener(e -> dispose());
     btnContatta.addActionListener(e -> controller.azioneContatta());
@@ -44,26 +52,77 @@ public class DettaglioAnnuncio extends JFrame {
     btnSuccessivo.addActionListener(e -> controller.azioneSuccessiva());
   }
 
+  /**
+   * Sets the title label text.
+   *
+   * @param titolo title text
+   */
   public void setTitolo(String titolo) { lblTitolo.setText(titolo); }
+
+  /**
+   * Sets the description text.
+   *
+   * @param descrizione description text
+   */
   public void setDescrizione(String descrizione) { txtDescrizione.setText(descrizione); }
+
+  /**
+   * Sets the category label text.
+   *
+   * @param testo category text
+   */
   public void setCategoria(String testo) { lblCategoria.setText(testo); }
+
+  /**
+   * Sets the type label text.
+   *
+   * @param testo type text
+   */
   public void setTipo(String testo) { lblTipo.setText(testo); }
+
+  /**
+   * Sets the condition label text.
+   *
+   * @param testo condition text
+   */
   public void setCondizione(String testo) { lblCondizione.setText(testo); }
 
+  /**
+   * Sets the price label text and color.
+   *
+   * @param testo price text
+   * @param colore label color
+   */
   public void setPrezzoInfo(String testo, Color colore) {
     lblPrezzo.setText(testo);
     lblPrezzo.setForeground(colore);
   }
+
+  /**
+   * Sets the user info label text.
+   *
+   * @param testo user info text
+   */
   public void setUtenteInfo(String testo) { lblUtente.setText(testo); }
+
+  /**
+   * Sets the image counter label text.
+   *
+   * @param testo counter text
+   */
   public void setContatoreImmagini(String testo) { lblContatoreImmagini.setText(testo); }
 
-  // [FIX WIDTH 0] Gestisce il ridimensionamento sicuro
+  /**
+   * Sets the image icon, scaling it to the label size.
+   *
+   * @param icon image icon
+   */
   public void setImmagine(ImageIcon icon) {
     int w = lblImmagine.getWidth();
     int h = lblImmagine.getHeight();
 
     if (w <= 0 || h <= 0) {
-      w = 400; // Dimensioni di default
+      w = 400;
       h = 300;
     }
 
@@ -72,19 +131,32 @@ public class DettaglioAnnuncio extends JFrame {
     lblImmagine.setText("");
   }
 
+  /**
+   * Clears the image icon and sets placeholder text.
+   *
+   * @param testo placeholder text
+   */
   public void setImmagineTesto(String testo) {
     lblImmagine.setIcon(null);
     lblImmagine.setText(testo);
   }
 
-  // Metodi per gestire la visibilità del pannello immagini
+  /**
+   * Hides the image panel.
+   */
   public void nascondiPannelloImmagini() {
     if (imagePanel != null) imagePanel.setVisible(false);
   }
 
+  /**
+   * Shows the image panel.
+   */
   public void mostraPannelloImmagini() {
     if (imagePanel != null) imagePanel.setVisible(true);
   }
 
+  /**
+   * Initializes custom UI components.
+   */
   private void createUIComponents() { }
 }

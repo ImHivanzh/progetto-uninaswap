@@ -6,29 +6,25 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-/**
- * Classe singleton per la gestione della connessione al database PostgreSQL.
- * Gestisce automaticamente la riconnessione se la connessione viene chiusa.
- */
 public class dbConnection {
 
     private static dbConnection instance;
     private Connection connection;
 
-    // Costanti di configurazione del Database
     private static final String NOME = "postgres.wzzmgxzgtpsvazdwdbqr";
-    private static final String PASSWORD = "UninaSwapDB"; // Lascia vuoto se non hai password locale
+    private static final String PASSWORD = "UninaSwapDB";
     private static final String URL = "jdbc:postgresql://aws-1-eu-west-1.pooler.supabase.com:5432/postgres";
 
     /**
-     * Costruttore privato per impedire l'istanziazione diretta.
+     * Prevents direct instantiation of the singleton.
      */
     private dbConnection() {
-        // Lazy Loading
     }
 
     /**
-     * Restituisce l'istanza singleton della classe Manager.
+     * Returns the shared connection manager instance.
+     *
+     * @return singleton instance
      */
     public static synchronized dbConnection getInstance() {
         if (instance == null) {
@@ -38,24 +34,26 @@ public class dbConnection {
     }
 
     /**
-     * Restituisce l'oggetto {@code Connection} attivo.
-     * @throws DatabaseException se la connessione non può essere stabilita.
+     * Returns an active connection, opening it when needed.
+     *
+     * @return active JDBC connection
+     * @throws DatabaseException when a connection cannot be established
      */
     public Connection getConnection() throws DatabaseException {
         try {
             if (connection == null || connection.isClosed()) {
-                // Utilizzo le costanti definite in alto
                 connection = DriverManager.getConnection(URL, NOME, PASSWORD);
             }
             return connection;
         } catch (SQLException e) {
-            // Avvolgiamo l'eccezione SQL nella nostra eccezione personalizzata
             throw new DatabaseException("Errore durante la connessione al Database: " + e.getMessage(), e);
         }
     }
 
     /**
-     * Chiude la connessione al database se aperta.
+     * Closes the active connection if open.
+     *
+     * @throws DatabaseException when closing the connection fails
      */
     public void closeConnection() throws DatabaseException {
         try {

@@ -23,6 +23,12 @@ public class DettaglioAnnuncioController {
   private List<Immagini> listaImmagini;
   private int currentImageIndex = 0;
 
+  /**
+   * Creates the controller for the listing detail view.
+   *
+   * @param view detail view
+   * @param annuncio listing to display
+   */
   public DettaglioAnnuncioController(DettaglioAnnuncio view, Annuncio annuncio) {
     this.view = view;
     this.annuncio = annuncio;
@@ -32,22 +38,22 @@ public class DettaglioAnnuncioController {
     caricaDati();
   }
 
+  /**
+   * Loads listing data and populates the view.
+   */
   private void caricaDati() {
-    // 1. Recupero Immagini dal DB
     try {
       this.listaImmagini = immaginiDAO.getImmaginiByAnnuncio(annuncio.getIdAnnuncio());
     } catch (Exception e) {
       System.err.println("Errore caricamento immagini: " + e.getMessage());
     }
 
-    // 2. Imposta dati testuali base
     view.setTitolo(annuncio.getTitolo());
     view.setDescrizione(annuncio.getDescrizione());
     view.setCategoria("Categoria: " + annuncio.getCategoria());
     view.setTipo("Tipo: " + annuncio.getTipoAnnuncio().toString());
     view.setCondizione("Condizioni: Buone");
 
-    // 3. Gestione logica Prezzo/Scambio/Regalo
     String prezzoTesto;
     Color prezzoColore;
 
@@ -70,7 +76,6 @@ public class DettaglioAnnuncioController {
     }
     view.setPrezzoInfo(prezzoTesto, prezzoColore);
 
-    // 4. Recupero Utente
     view.setUtenteInfo("Pubblicato da: Utente ID " + annuncio.getIdUtente());
 
     UtenteDAO utenteDAO = new UtenteDAO();
@@ -81,10 +86,12 @@ public class DettaglioAnnuncioController {
       System.err.println("Errore caricamento info utente: " + e.getMessage());
     }
 
-    // 5. Aggiorna vista immagini
     aggiornaVistaImmagine();
   }
 
+  /**
+   * Advances to the next image in the carousel.
+   */
   public void azioneSuccessiva() {
     if (listaImmagini != null && !listaImmagini.isEmpty()) {
       currentImageIndex = (currentImageIndex + 1) % listaImmagini.size();
@@ -92,6 +99,9 @@ public class DettaglioAnnuncioController {
     }
   }
 
+  /**
+   * Moves to the previous image in the carousel.
+   */
   public void azionePrecedente() {
     if (listaImmagini != null && !listaImmagini.isEmpty()) {
       currentImageIndex = (currentImageIndex - 1 + listaImmagini.size()) % listaImmagini.size();
@@ -99,26 +109,32 @@ public class DettaglioAnnuncioController {
     }
   }
 
+  /**
+   * Opens the proposal dialog and persists a proposal if confirmed.
+   */
   public void azioneContatta() {
-    // 1. Crea e mostra la Dialog (View)
-    // La Dialog al suo interno inizializzerà il suo Controller
     FaiPropostaDialog dialog = new FaiPropostaDialog(view, annuncio.getTipoAnnuncio());
-    dialog.setVisible(true); // Blocca l'esecuzione finché la dialog non viene chiusa
+    dialog.setVisible(true);
 
-    // 2. Recupera il controller della dialog per esaminare i risultati
     FaiPropostaController dialogController = dialog.getController();
 
     if (dialogController != null && dialogController.isConfermato()) {
-      // 3. Estrai i dati validati
       Double prezzo = dialogController.getOffertaPrezzo();
       String descrizione = dialogController.getDescrizioneProposta();
       byte[] immagine = dialogController.getImmagineProposta();
 
-      // 4. Logica di persistenza
       salvaProposta(annuncio.getIdAnnuncio(), prezzo, descrizione, immagine);
     }
   }
 
+  /**
+   * Persists a proposal for the current listing.
+   *
+   * @param idAnnuncio listing id
+   * @param prezzo proposed price
+   * @param descrizione proposal description
+   * @param immagine proposal image
+   */
   private void salvaProposta(int idAnnuncio, Double prezzo, String descrizione, byte[] immagine) {
     Utente utenteCorrente = SessionManager.getInstance().getUtente();
 
@@ -182,6 +198,9 @@ public class DettaglioAnnuncioController {
     }
   }
 
+  /**
+   * Updates the image view based on the current index.
+   */
   private void aggiornaVistaImmagine() {
     if (listaImmagini == null || listaImmagini.isEmpty()) {
       view.nascondiPannelloImmagini();
