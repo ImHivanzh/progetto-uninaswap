@@ -18,12 +18,20 @@ public class LoginController {
   private final LoginForm view;
   private final UtenteDAO utenteDAO;
 
+  /**
+   * Creates the controller and registers listeners.
+   *
+   * @param view login view
+   */
   public LoginController(LoginForm view) {
     this.view = view;
     this.utenteDAO = new UtenteDAO();
     initListeners();
   }
 
+  /**
+   * Registers UI listeners for the login view.
+   */
   private void initListeners() {
     this.view.addLoginListener(new ActionListener() {
       @Override
@@ -51,6 +59,9 @@ public class LoginController {
     });
   }
 
+  /**
+   * Validates user input and performs authentication.
+   */
   private void controllaLogin() {
     String user = view.getUsername();
     String password = view.getPassword();
@@ -67,7 +78,6 @@ public class LoginController {
         SessionManager.getInstance().login(utente);
         view.mostraMessaggio("Login effettuato con successo!");
         view.dispose();
-        // new MainApp().setVisible(true);
       } else {
         view.mostraErrore("Username o Password errati");
       }

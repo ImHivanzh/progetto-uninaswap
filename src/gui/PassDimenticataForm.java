@@ -8,39 +8,69 @@ public class PassDimenticataForm extends JFrame {
     private JTextField UserField;
     private JPasswordField NPassField;
     private JPasswordField CPassField;
-    private JButton loginButton; // Questo è il tasto "Invio"
+    private JButton loginButton;
 
+    /**
+     * Creates the password recovery form.
+     */
     public PassDimenticataForm() {
         setContentPane(mainPanel);
         setTitle("Recupero Password");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
-        setLocationRelativeTo(null); // Centra la finestra
+        setLocationRelativeTo(null);
     }
 
-    // --- GETTERS ---
+    /**
+     * Returns the username input.
+     *
+     * @return username
+     */
     public String getUsername() {
         return UserField.getText();
     }
 
+    /**
+     * Returns the new password input.
+     *
+     * @return new password
+     */
     public String getNuovaPassword() {
         return new String(NPassField.getPassword());
     }
 
+    /**
+     * Returns the confirmation password input.
+     *
+     * @return confirmation password
+     */
     public String getConfermaPassword() {
         return new String(CPassField.getPassword());
     }
 
-    // --- LISTENERS ---
+    /**
+     * Adds the submit action listener.
+     *
+     * @param listener action listener
+     */
     public void addInvioListener(ActionListener listener) {
         loginButton.addActionListener(listener);
     }
 
-    // --- METODI UTILI ---
+    /**
+     * Shows an informational message dialog.
+     *
+     * @param messaggio message text
+     */
     public void mostraMessaggio(String messaggio) {
         JOptionPane.showMessageDialog(this, messaggio, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Shows an error message dialog.
+     *
+     * @param errore error text
+     */
     public void mostraErrore(String errore) {
         JOptionPane.showMessageDialog(this, errore, "Errore", JOptionPane.ERROR_MESSAGE);
     }

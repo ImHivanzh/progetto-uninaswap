@@ -12,6 +12,11 @@ public class RegistrazioneController {
   private final RegistrazioneForm view;
   private final UtenteDAO utenteDAO;
 
+  /**
+   * Creates the controller and registers listeners.
+   *
+   * @param view registration view
+   */
   public RegistrazioneController(RegistrazioneForm view) {
     this.view = view;
     this.utenteDAO = new UtenteDAO();
@@ -19,6 +24,9 @@ public class RegistrazioneController {
     initListeners();
   }
 
+  /**
+   * Registers UI listeners for the registration view.
+   */
   private void initListeners() {
     this.view.addRegistraListener(new ActionListener() {
       @Override
@@ -28,6 +36,9 @@ public class RegistrazioneController {
     });
   }
 
+  /**
+   * Validates input and submits a new registration.
+   */
   private void registraUtente() {
     String username = view.getUsername();
     String mail = view.getMail();
@@ -39,18 +50,17 @@ public class RegistrazioneController {
       return;
     }
 
-    // 2. Logica di Business / DB
     try {
       boolean successo = utenteDAO.registraUtente(new Utente(0, username, password, mail, telefono));
 
       if (successo) {
         view.mostraMessaggio("Registrazione completata per: " + username);
-        view.dispose(); // Chiude la finestra di registrazione
+        view.dispose();
       } else {
-        view.mostraErrore("Errore durante la registrazione (es. utente già esistente)");
+        view.mostraErrore("Errore durante la registrazione (es. utente gia esistente)");
       }
 
-    } catch (Exception ex) { // Cattura generica o SQLException
+    } catch (Exception ex) {
       view.mostraErrore("Errore tecnico: " + ex.getMessage());
       ex.printStackTrace();
     }

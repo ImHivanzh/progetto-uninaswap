@@ -15,9 +15,11 @@ public class RecensioneDAO {
 
   private Connection con;
 
+  /**
+   * Creates the DAO and initializes the database connection.
+   */
   public RecensioneDAO() {
     try {
-      // Otteniamo la connessione condivisa all'avvio
       this.con = dbConnection.getInstance().getConnection();
     } catch (DatabaseException e) {
       System.err.println("Errore di connessione al database in RecensioneDAO: " + e.getMessage());
@@ -25,14 +27,17 @@ public class RecensioneDAO {
   }
 
   /**
-   * Inserisce una nuova recensione nel database.
+   * Inserts a review into the database.
+   *
+   * @param recensione review to insert
+   * @return true when the insert succeeds
+   * @throws DatabaseException when the insert fails
    */
   public boolean inserisciRecensione(Recensione recensione) throws DatabaseException {
     if (con == null) throw new DatabaseException("Connessione DB non disponibile.");
 
     String sql = "INSERT INTO recensione (idutente, idutenterecensito, voto, descrizione) VALUES (?, ?, ?, ?)";
 
-    // CORRETTO: Usiamo 'this.con' e chiudiamo solo il PreparedStatement
     try (PreparedStatement ps = con.prepareStatement(sql)) {
 
       ps.setInt(1, recensione.getIdUtente());
@@ -48,7 +53,11 @@ public class RecensioneDAO {
   }
 
   /**
-   * Recupera la lista delle recensioni ricevute da un determinato utente.
+   * Returns the reviews received by a specific user.
+   *
+   * @param idUtenteRecensito reviewed user id
+   * @return list of reviews
+   * @throws DatabaseException when the query fails
    */
   public List<Recensione> getRecensioniRicevute(int idUtenteRecensito) throws DatabaseException {
     String sql = "SELECT r.idutente, r.idutenterecensito, r.voto, r.descrizione, u.nomeutente "
@@ -58,7 +67,6 @@ public class RecensioneDAO {
 
     if (con == null) return recensioni;
 
-    // CORRETTO: Usiamo 'this.con' senza chiuderla
     try (PreparedStatement ps = con.prepareStatement(sql)) {
 
       ps.setInt(1, idUtenteRecensito);

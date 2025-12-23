@@ -5,19 +5,26 @@ import java.awt.*;
 
 public class BaseFrame extends JFrame {
 
+    /**
+     * Creates a frame with a title and sets the icon.
+     *
+     * @param titolo frame title
+     */
     public BaseFrame(String titolo) {
         super(titolo);
         setFrameIcon();
     }
 
+    /**
+     * Creates a frame and sets the icon.
+     */
     public BaseFrame() {
         super();
         setFrameIcon();
     }
 
     /**
-     * Carica l'immagine e la imposta sia come icona della finestra (Windows/Linux)
-     * che come icona del Dock (macOS).
+     * Loads the app icon and applies it to the window and taskbar when supported.
      */
     private void setFrameIcon() {
         try {
@@ -43,14 +50,27 @@ public class BaseFrame extends JFrame {
         }
     }
 
+    /**
+     * Shows an informational message dialog.
+     *
+     * @param messaggio message text
+     */
     public void mostraMessaggio(String messaggio) {
         JOptionPane.showMessageDialog(this, messaggio, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Shows an error message dialog.
+     *
+     * @param errore error text
+     */
     public void mostraErrore(String errore) {
         JOptionPane.showMessageDialog(this, errore, "Errore", JOptionPane.ERROR_MESSAGE);
     }
 
+    /**
+     * Centers the window on screen.
+     */
     public void centraFinestra() {
         setLocationRelativeTo(null);
     }

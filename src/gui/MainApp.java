@@ -6,32 +6,34 @@ import java.awt.*;
 public class MainApp {
   private JPanel mainPanel;
 
-  // Header Components
-  private JButton btnBacheca;      // Ex btnAnn1
-  private JButton btnPubblica;     // Ex btnAnn2
-  private JButton btnMieiAnnunci;  // Nuovo bottone
+  private JButton btnBacheca;
+  private JButton btnPubblica;
+  private JButton btnMieiAnnunci;
 
-  // Sidebar Components
   private JList categoryList;
   private JRadioButton radioTutti;
   private JRadioButton radioScambio;
   private JRadioButton radioVendita;
   private JRadioButton radioRegalo;
-  private JTextField txtPrezzoMax; // Nuovo campo filtro
+  private JTextField txtPrezzoMax;
 
-  // Content Components
   private JTextField searchField;
   private JButton searchButton;
 
-  // Card Example Buttons
   private JButton btnView1;
   private JButton btnView2;
 
+  /**
+   * Creates the main app UI container.
+   */
   public MainApp() {
-    // Qui andrebbero i listener per gestire i filtri
-    // Esempio: Click su "Pubblica" apre un dialog per creare un annuncio
   }
 
+  /**
+   * Launches a standalone demo frame for the main app layout.
+   *
+   * @param args command-line arguments
+   */
   public static void main(String[] args) {
     JFrame frame = new JFrame("EcoMarket - Compra, Vendi, Scambia");
     frame.setContentPane(new MainApp().mainPanel);

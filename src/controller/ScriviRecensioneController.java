@@ -16,6 +16,12 @@ public class ScriviRecensioneController {
   private final RecensioneDAO recensioneDAO;
   private final int idUtenteDestinatario;
 
+  /**
+   * Creates the controller and registers listeners.
+   *
+   * @param view review view
+   * @param idUtenteDestinatario reviewed user id
+   */
   public ScriviRecensioneController(ScriviRecensione view, int idUtenteDestinatario) {
     this.view = view;
     this.idUtenteDestinatario = idUtenteDestinatario;
@@ -23,6 +29,9 @@ public class ScriviRecensioneController {
     initListeners();
   }
 
+  /**
+   * Registers UI listeners for the review form.
+   */
   private void initListeners() {
     this.view.addInviaListener(new ActionListener() {
       @Override
@@ -32,6 +41,9 @@ public class ScriviRecensioneController {
     });
   }
 
+  /**
+   * Validates input and sends the review.
+   */
   private void inviaRecensione() {
     String descrizione = view.getDescrizione();
     int voto = view.getVoto();

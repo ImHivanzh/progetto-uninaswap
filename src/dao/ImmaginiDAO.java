@@ -13,6 +13,9 @@ public class ImmaginiDAO {
 
   private Connection con;
 
+  /**
+   * Creates the DAO and initializes the database connection.
+   */
   public ImmaginiDAO() {
     try {
       this.con = dbConnection.getInstance().getConnection();
@@ -21,19 +24,23 @@ public class ImmaginiDAO {
     }
   }
 
+  /**
+   * Persists an image linked to a listing.
+   *
+   * @param immagine image entity
+   * @return true when the insert succeeds
+   * @throws DatabaseException when the insert fails
+   */
   public boolean salvaImmagine(Immagini immagine) throws DatabaseException {
-    // Assicurati che i nomi delle colonne coincidano col tuo DB
     String sql = "INSERT INTO immagini (immagine, idannuncio) VALUES (?, ?)";
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
-      // 1. Setta il BLOB (byte array)
       if (immagine.getImmagine() != null) {
         ps.setBytes(1, immagine.getImmagine());
       } else {
         ps.setNull(1, Types.BINARY);
       }
 
-      // 2. Setta la Foreign Key
       if (immagine.getAnnuncio() != null) {
         ps.setInt(2, immagine.getAnnuncio().getIdAnnuncio());
       } else {
@@ -47,6 +54,12 @@ public class ImmaginiDAO {
     }
   }
 
+  /**
+   * Returns all images for a specific listing.
+   *
+   * @param idAnnuncio listing id
+   * @return list of images
+   */
   public List<Immagini> getImmaginiByAnnuncio(int idAnnuncio) {
     List<Immagini> lista = new ArrayList<>();
     String sql = "SELECT * FROM immagini WHERE idannuncio = ?";
@@ -58,11 +71,8 @@ public class ImmaginiDAO {
         while (rs.next()) {
           Immagini img = new Immagini();
           img.setIdImmagine(rs.getInt("idimmagine"));
-
-          // Recupera il BLOB come byte[]
           img.setImmagine(rs.getBytes("immagine"));
 
-          // Ricostruisce riferimento annuncio
           Annuncio a = new Annuncio();
           a.setIdAnnuncio(idAnnuncio);
           img.setAnnuncio(a);

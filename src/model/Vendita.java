@@ -1,26 +1,47 @@
 package model;
 
-import model.enums.Categoria;
-import model.enums.TipoAnnuncio;
-
 public class Vendita extends Annuncio {
     private double prezzo;
 
-    // Costruttore completo (dal DB)
-    public Vendita(int id, String titolo, String descrizione, Categoria categoria, int utenteID, double prezzo) {
-        super(id, titolo, descrizione, categoria, utenteID, TipoAnnuncio.VENDITA);
+    /**
+     * Creates an empty sale listing.
+     */
+    public Vendita() {
+        super();
+    }
+
+    /**
+     * Creates a sale listing with the provided price.
+     *
+     * @param prezzo price value
+     */
+    public Vendita(double prezzo) {
         this.prezzo = prezzo;
     }
 
-    // Costruttore nuovo inserimento
-    public Vendita(String titolo, String descrizione, Categoria categoria, int utenteID, double prezzo) {
-        super(titolo, descrizione, categoria, utenteID, TipoAnnuncio.VENDITA);
+    /**
+     * Returns the price.
+     *
+     * @return price value
+     */
+    public double getPrezzo() {
+        return prezzo;
+    }
+
+    /**
+     * Sets the price.
+     *
+     * @param prezzo price value
+     */
+    public void setPrezzo(double prezzo) {
         this.prezzo = prezzo;
     }
 
-    public double getPrezzo() { return prezzo; }
-    public void setPrezzo(double prezzo) { this.prezzo = prezzo; }
-
+    /**
+     * Returns a string representation of the sale listing.
+     *
+     * @return string representation
+     */
     @Override
     public String toString() {
         return "Vendita{" +

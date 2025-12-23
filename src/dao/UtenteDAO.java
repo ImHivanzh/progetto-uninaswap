@@ -14,6 +14,9 @@ public class UtenteDAO {
 
     private Connection con;
 
+    /**
+     * Creates the DAO and initializes the database connection.
+     */
     public UtenteDAO() {
         try {
             this.con = dbConnection.getInstance().getConnection();
@@ -22,8 +25,18 @@ public class UtenteDAO {
         }
     }
 
-    public boolean registraUtente(String username, String email, String password, String numeroTelefono) throws DatabaseException {
-        // Validazioni
+    /**
+     * Registers a new user after validating the input.
+     *
+     * @param username username
+     * @param email email address
+     * @param password password
+     * @param numeroTelefono phone number
+     * @return true when the insert succeeds
+     * @throws DatabaseException when the insert fails
+     */
+    public boolean registraUtente(String username, String email, String password, String numeroTelefono)
+            throws DatabaseException {
         if (email != null) email = email.trim();
         if (username != null) username = username.trim();
         if (numeroTelefono != null) numeroTelefono = numeroTelefono.trim();
@@ -31,7 +44,7 @@ public class UtenteDAO {
         if (!DataCheck.isValidEmail(email)) throw new IllegalArgumentException("Formato email non valido.");
         if (!DataCheck.isValidPhoneNumber(numeroTelefono)) throw new IllegalArgumentException("Numero di telefono non valido (richieste 10 cifre).");
         if (!DataCheck.isStrongPassword(password)) throw new IllegalArgumentException("Password debole: serve min. 8 caratteri, una maiuscola, un numero e un carattere speciale.");
-        if (esisteUtente(username)) throw new IllegalArgumentException("L'username '" + username + "' è già in uso.");
+        if (esisteUtente(username)) throw new IllegalArgumentException("L'username '" + username + "' e gia in uso.");
 
         if (con == null) throw new DatabaseException("Connessione non disponibile");
 
@@ -48,10 +61,25 @@ public class UtenteDAO {
         }
     }
 
+    /**
+     * Registers a user using a model instance.
+     *
+     * @param utente user instance
+     * @return true when the insert succeeds
+     * @throws DatabaseException when the insert fails
+     */
     public boolean registraUtente(Utente utente) throws DatabaseException {
         return registraUtente(utente.getUsername(), utente.getEmail(), utente.getPassword(), utente.getNumeroTelefono());
     }
 
+    /**
+     * Authenticates a user by username and password.
+     *
+     * @param username username
+     * @param password password
+     * @return user instance when found, otherwise null
+     * @throws DatabaseException when the query fails
+     */
     public Utente autenticaUtente(String username, String password) throws DatabaseException {
         String sql = "SELECT * FROM utente WHERE nomeutente = ? AND password = ?";
 
@@ -78,7 +106,13 @@ public class UtenteDAO {
         return null;
     }
 
-    // --- NUOVO METODO AGGIUNTO ---
+    /**
+     * Returns a user by id.
+     *
+     * @param id user id
+     * @return user instance or null
+     * @throws DatabaseException when the query fails
+     */
     public Utente getUserByID(int id) throws DatabaseException {
         String sql = "SELECT * FROM utente WHERE idutente = ?";
 
@@ -103,8 +137,14 @@ public class UtenteDAO {
         }
         return null;
     }
-    // -----------------------------
 
+    /**
+     * Checks if a username already exists.
+     *
+     * @param username username to check
+     * @return true when the user exists
+     * @throws DatabaseException when the query fails
+     */
     public boolean esisteUtente(String username) throws DatabaseException {
         String sql = "SELECT 1 FROM utente WHERE nomeutente = ?";
         if (con == null) return false;
@@ -119,6 +159,14 @@ public class UtenteDAO {
         }
     }
 
+    /**
+     * Updates a user's password after validation.
+     *
+     * @param username username
+     * @param nuovaPassword new password
+     * @return true when the update succeeds
+     * @throws DatabaseException when the update fails
+     */
     public boolean aggiornaPassword(String username, String nuovaPassword) throws DatabaseException {
         if (!esisteUtente(username)) throw new IllegalArgumentException("Utente non trovato: " + username);
         if (!DataCheck.isStrongPassword(nuovaPassword)) throw new IllegalArgumentException("La nuova password non rispetta i criteri di sicurezza.");

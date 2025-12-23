@@ -6,8 +6,6 @@ import model.enums.TipoAnnuncio;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +20,11 @@ public class PubblicaAnnuncio extends BaseFrame {
   private JButton btnPubblica;
   private JButton btnCaricaImg;
 
-  // Lista per memorizzare le immagini selezionate dall'utente
   private List<File> immaginiSelezionate;
 
+  /**
+   * Creates the publish listing form.
+   */
   public PubblicaAnnuncio() {
     super("Pubblica Annuncio");
     setContentPane(mainPanel);
@@ -37,24 +37,23 @@ public class PubblicaAnnuncio extends BaseFrame {
     centraFinestra();
   }
 
+  /**
+   * Initializes UI state and listeners.
+   */
   private void initUI() {
-    // 1. Popolamento ComboBox
     cmbCategoria.setModel(new DefaultComboBoxModel<>(Categoria.values()));
     cmbTipo.setModel(new DefaultComboBoxModel<>(TipoAnnuncio.values()));
 
-    // 2. Listener Pubblica
     btnPubblica.addActionListener(e -> {
       PubblicaAnnuncioController controller = new PubblicaAnnuncioController(PubblicaAnnuncio.this);
       controller.pubblica();
     });
 
-    // 3. Listener Caricamento Immagini
     if (btnCaricaImg != null) {
       btnCaricaImg.addActionListener(e -> {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setMultiSelectionEnabled(true); // Permette selezione multipla
+        fileChooser.setMultiSelectionEnabled(true);
 
-        // Filtro per sole immagini
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Immagini (JPG, PNG)", "jpg", "png", "jpeg");
         fileChooser.setFileFilter(filter);
 
@@ -69,7 +68,6 @@ public class PubblicaAnnuncio extends BaseFrame {
       });
     }
 
-    // 4. Gestione campo Prezzo
     cmbTipo.addActionListener(e -> {
       TipoAnnuncio tipo = (TipoAnnuncio) cmbTipo.getSelectedItem();
       boolean isVendita = (tipo == TipoAnnuncio.VENDITA);
@@ -79,33 +77,59 @@ public class PubblicaAnnuncio extends BaseFrame {
       }
     });
 
-    // Stato iniziale
     txtPrezzo.setEnabled(cmbTipo.getSelectedItem() == TipoAnnuncio.VENDITA);
   }
 
-  // --- GETTERS ---
-
+  /**
+   * Returns the title input.
+   *
+   * @return title
+   */
   public String getTitolo() {
     return txtTitolo.getText();
   }
 
+  /**
+   * Returns the description input.
+   *
+   * @return description
+   */
   public String getDescrizione() {
     return txtDescrizione.getText();
   }
 
+  /**
+   * Returns the selected category.
+   *
+   * @return selected category
+   */
   public Categoria getCategoriaSelezionata() {
     return (Categoria) cmbCategoria.getSelectedItem();
   }
 
+  /**
+   * Returns the selected listing type.
+   *
+   * @return selected type
+   */
   public TipoAnnuncio getTipoSelezionato() {
     return (TipoAnnuncio) cmbTipo.getSelectedItem();
   }
 
+  /**
+   * Returns the price input.
+   *
+   * @return price text
+   */
   public String getPrezzo() {
     return txtPrezzo.getText();
   }
 
-  // Metodo aggiunto per risolvere l'errore nel Controller
+  /**
+   * Returns the selected image files.
+   *
+   * @return image file list
+   */
   public List<File> getImmagini() {
     return immaginiSelezionate;
   }

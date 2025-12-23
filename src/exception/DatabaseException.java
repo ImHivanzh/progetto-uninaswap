@@ -1,12 +1,22 @@
-package exception; // O nel package che preferisci
+package exception;
 
 public class DatabaseException extends Exception {
 
-  // Costruttore con messaggio personalizzato
+  /**
+   * Creates an exception with a message.
+   *
+   * @param message error message
+   */
   public DatabaseException(String message) {
     super(message);
   }
 
+  /**
+   * Creates an exception with a message and cause.
+   *
+   * @param message error message
+   * @param cause root cause
+   */
   public DatabaseException(String message, Throwable cause) {
     super(message, cause);
   }
