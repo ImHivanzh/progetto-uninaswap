@@ -7,14 +7,14 @@ public class SessionManager {
   private static SessionManager instance;
   private Utente utenteCorrente;
   /**
-   * Prevents direct instantiation of the singleton.
+   * Impedisce diretto istanziazione di singleton.
    */
   private SessionManager() {}
 
   /**
-   * Returns the shared session manager instance.
+   * Restituisce condiviso sessione manager istanza.
    *
-   * @return singleton instance
+   * @return singleton istanza
    */
   public static SessionManager getInstance() {
     if (instance == null) {
@@ -24,25 +24,25 @@ public class SessionManager {
   }
 
   /**
-   * Stores the currently authenticated user.
+   * Memorizza attualmente autenticato utente.
    *
-   * @param utente authenticated user
+   * @param utente autenticato utente
    */
   public void login(Utente utente) {
     this.utenteCorrente = utente;
   }
 
   /**
-   * Clears the current session.
+   * Cancella sessione corrente.
    */
   public void logout() {
     this.utenteCorrente = null;
   }
 
   /**
-   * Returns the currently logged-in user.
+   * Restituisce attualmente loggato-in utente.
    *
-   * @return current user or null if not logged in
+   * @return utente corrente o null se non loggato
    */
   public Utente getUtente() {
     return utenteCorrente;

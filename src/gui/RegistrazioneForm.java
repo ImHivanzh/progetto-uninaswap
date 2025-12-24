@@ -12,7 +12,7 @@ public class RegistrazioneForm extends BaseFrame {
     private JButton btnRegistra;
 
     /**
-     * Creates the registration form.
+     * Crea form registrazione.
      */
     public RegistrazioneForm() {
         super("Registrazione");
@@ -25,7 +25,7 @@ public class RegistrazioneForm extends BaseFrame {
     }
 
     /**
-     * Returns the username input.
+     * Restituisce username input.
      *
      * @return username
      */
@@ -34,7 +34,7 @@ public class RegistrazioneForm extends BaseFrame {
     }
 
     /**
-     * Returns the email input.
+     * Restituisce input email.
      *
      * @return email
      */
@@ -43,7 +43,7 @@ public class RegistrazioneForm extends BaseFrame {
     }
 
     /**
-     * Returns the password input.
+     * Restituisce input password.
      *
      * @return password
      */
@@ -52,18 +52,18 @@ public class RegistrazioneForm extends BaseFrame {
     }
 
     /**
-     * Returns the phone number input.
+     * Restituisce numero telefono input.
      *
-     * @return phone number
+     * @return numero telefono
      */
     public String getTelefono() {
         return txtTelefono.getText();
     }
 
     /**
-     * Adds the registration action listener.
+     * Aggiunge registrazione azione listener.
      *
-     * @param listener action listener
+     * @param listener azione listener
      */
     public void addRegistraListener(ActionListener listener) {
         btnRegistra.addActionListener(listener);

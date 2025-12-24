@@ -6,25 +6,25 @@ import model.enums.TipoAnnuncio;
 public class Regalo extends Annuncio {
 
     /**
-     * Creates a gift listing with an explicit id.
+     * Crea regalo annuncio con esplicito id.
      *
-     * @param id listing id
-     * @param titolo title
-     * @param descrizione description
-     * @param categoria category
-     * @param utenteID owner id
+     * @param id id annuncio
+     * @param titolo titolo
+     * @param descrizione descrizione
+     * @param categoria categoria
+     * @param utenteID proprietario id
      */
     public Regalo(int id, String titolo, String descrizione, Categoria categoria, int utenteID) {
         super(id, titolo, descrizione, categoria, utenteID, TipoAnnuncio.REGALO);
     }
 
     /**
-     * Creates a gift listing for new insertion.
+     * Crea regalo annuncio per nuovo inserimento.
      *
-     * @param titolo title
-     * @param descrizione description
-     * @param categoria category
-     * @param utenteID owner id
+     * @param titolo titolo
+     * @param descrizione descrizione
+     * @param categoria categoria
+     * @param utenteID proprietario id
      */
     public Regalo(String titolo, String descrizione, Categoria categoria, int utenteID) {
         super(utenteID, titolo, descrizione, categoria, TipoAnnuncio.REGALO);

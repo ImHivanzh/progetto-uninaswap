@@ -3,19 +3,19 @@ package exception;
 public class DatabaseException extends Exception {
 
   /**
-   * Creates an exception with a message.
+   * Crea eccezione con messaggio.
    *
-   * @param message error message
+   * @param message errore messaggio
    */
   public DatabaseException(String message) {
     super(message);
   }
 
   /**
-   * Creates an exception with a message and cause.
+   * Crea eccezione con messaggio e causa.
    *
-   * @param message error message
-   * @param cause root cause
+   * @param message errore messaggio
+   * @param cause causa principale
    */
   public DatabaseException(String message, Throwable cause) {
     super(message, cause);

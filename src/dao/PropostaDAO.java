@@ -70,9 +70,9 @@ public class PropostaDAO {
             "ORDER BY titolo";
 
     /**
-     * Creates the DAO and initializes the database connection.
+     * Crea DAO e inizializza database connessione.
      *
-     * @throws DatabaseException when the database is unavailable
+     * @throws DatabaseException quando database e non disponibile
      */
     public PropostaDAO() throws DatabaseException {
         this.con = dbConnection.getInstance().getConnection();
@@ -82,13 +82,13 @@ public class PropostaDAO {
     }
 
     /**
-     * Inserts a sales proposal for a listing.
+     * Inserisce vendite proposta per annuncio.
      *
-     * @param idUtente proposer user id
-     * @param idAnnuncio listing id
-     * @param controOfferta counter offer
-     * @return true when the insert succeeds
-     * @throws DatabaseException when the insert fails
+     * @param idUtente proponente utente id
+     * @param idAnnuncio id annuncio
+     * @param controOfferta contatore offerta
+     * @return true quando inserimento riesce
+     * @throws DatabaseException quando inserimento fallisce
      */
     public boolean inserisciPropostaVendita(int idUtente, int idAnnuncio, double controOfferta)
             throws DatabaseException {
@@ -106,13 +106,13 @@ public class PropostaDAO {
     }
 
     /**
-     * Inserts an exchange proposal for a listing.
+     * Inserisce scambio proposta per annuncio.
      *
-     * @param idUtente proposer user id
-     * @param idAnnuncio listing id
-     * @param propScambio exchange description
-     * @return true when the insert succeeds
-     * @throws DatabaseException when the insert fails
+     * @param idUtente proponente utente id
+     * @param idAnnuncio id annuncio
+     * @param propScambio scambio descrizione
+     * @return true quando inserimento riesce
+     * @throws DatabaseException quando inserimento fallisce
      */
     public boolean inserisciPropostaScambio(int idUtente, int idAnnuncio, String propScambio)
             throws DatabaseException {
@@ -120,14 +120,14 @@ public class PropostaDAO {
     }
 
     /**
-     * Inserts an exchange proposal with optional image.
+     * Inserisce scambio proposta con facoltativo immagine.
      *
-     * @param idUtente proposer user id
-     * @param idAnnuncio listing id
-     * @param propScambio exchange description
-     * @param immagine optional image bytes
-     * @return true when the insert succeeds
-     * @throws DatabaseException when the insert fails
+     * @param idUtente proponente utente id
+     * @param idAnnuncio id annuncio
+     * @param propScambio scambio descrizione
+     * @param immagine facoltativo byte immagine
+     * @return true quando inserimento riesce
+     * @throws DatabaseException quando inserimento fallisce
      */
     public boolean inserisciPropostaScambio(
             int idUtente, int idAnnuncio, String propScambio, byte[] immagine)
@@ -152,12 +152,12 @@ public class PropostaDAO {
     }
 
     /**
-     * Inserts a gift request for a listing.
+     * Inserisce regalo richiesta per annuncio.
      *
-     * @param idUtente requester user id
-     * @param idAnnuncio listing id
-     * @return true when the insert succeeds
-     * @throws DatabaseException when the insert fails
+     * @param idUtente richiedente utente id
+     * @param idAnnuncio id annuncio
+     * @return true quando inserimento riesce
+     * @throws DatabaseException quando inserimento fallisce
      */
     public boolean inserisciPropostaRegalo(int idUtente, int idAnnuncio) throws DatabaseException {
         String sql = "INSERT INTO regalo(dataprenotazione, accettato, idutente, idannuncio) VALUES (?, ?, ?, ?)";
@@ -175,34 +175,34 @@ public class PropostaDAO {
     }
 
     /**
-     * Returns proposals received for listings owned by the user.
+     * Restituisce proposte ricevute per annunci posseduto da utente.
      *
-     * @param idUtente user id
-     * @return list of proposals
-     * @throws DatabaseException when the query fails
+     * @param idUtente utente id
+     * @return lista di proposte
+     * @throws DatabaseException quando query fallisce
      */
     public List<PropostaRiepilogo> getProposteRicevute(int idUtente) throws DatabaseException {
         return getProposte(idUtente, SQL_PROPOSTE_RICEVUTE);
     }
 
     /**
-     * Returns proposals sent by the user.
+     * Restituisce proposte inviate da utente.
      *
-     * @param idUtente user id
-     * @return list of proposals
-     * @throws DatabaseException when the query fails
+     * @param idUtente utente id
+     * @return lista di proposte
+     * @throws DatabaseException quando query fallisce
      */
     public List<PropostaRiepilogo> getProposteInviate(int idUtente) throws DatabaseException {
         return getProposte(idUtente, SQL_PROPOSTE_INVIATE);
     }
 
     /**
-     * Executes the proposal list query and maps results.
+     * Esegue query lista proposte e mappa risultati.
      *
-     * @param idUtente user id
+     * @param idUtente utente id
      * @param query SQL query
-     * @return list of proposals
-     * @throws DatabaseException when the query fails
+     * @return lista di proposte
+     * @throws DatabaseException quando query fallisce
      */
     private List<PropostaRiepilogo> getProposte(int idUtente, String query) throws DatabaseException {
         List<PropostaRiepilogo> proposte = new ArrayList<>();
@@ -236,15 +236,15 @@ public class PropostaDAO {
     }
 
     /**
-     * Updates the proposal status for a listing.
+     * Aggiorna stato proposta per annuncio.
      *
-     * @param idAnnuncio listing id
-     * @param tipoAnnuncio listing type
-     * @param usernameProponente proposer username
-     * @param accettata accepted flag
-     * @param inattesa pending flag
-     * @return true when the update succeeds
-     * @throws DatabaseException when the update fails
+     * @param idAnnuncio id annuncio
+     * @param tipoAnnuncio tipo annuncio
+     * @param usernameProponente proponente username
+     * @param accettata accettata flag
+     * @param inattesa in attesa flag
+     * @return true quando aggiorna riesce
+     * @throws DatabaseException quando aggiorna fallisce
      */
     public boolean aggiornaEsitoProposta(
             int idAnnuncio, String tipoAnnuncio, String usernameProponente, boolean accettata, boolean inattesa)
@@ -273,13 +273,13 @@ public class PropostaDAO {
     }
 
     /**
-     * Deletes a proposal for a listing.
+     * Elimina proposta per annuncio.
      *
-     * @param idAnnuncio listing id
-     * @param tipoAnnuncio listing type
-     * @param usernameProponente proposer username
-     * @return true when the delete succeeds
-     * @throws DatabaseException when the delete fails
+     * @param idAnnuncio id annuncio
+     * @param tipoAnnuncio tipo annuncio
+     * @param usernameProponente proponente username
+     * @return true quando elimina riesce
+     * @throws DatabaseException quando elimina fallisce
      */
     public boolean eliminaProposta(int idAnnuncio, String tipoAnnuncio, String usernameProponente)
             throws DatabaseException {
@@ -304,10 +304,10 @@ public class PropostaDAO {
     }
 
     /**
-     * Resolves the table name for the listing type.
+     * Risolve nome tabella per tipo annuncio.
      *
-     * @param tipoAnnuncio listing type
-     * @return table name or null when unknown
+     * @param tipoAnnuncio tipo annuncio
+     * @return nome tabella o null quando sconosciuto
      */
     private String resolveTabellaProposta(String tipoAnnuncio) {
         if (tipoAnnuncio == null) {

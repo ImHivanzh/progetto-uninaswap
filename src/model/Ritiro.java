@@ -11,21 +11,21 @@ public class Ritiro {
     private Annuncio annuncio;
 
     /**
-     * Creates an empty pickup record.
+     * Crea vuoto record ritiro.
      */
     public Ritiro() {
     }
 
     /**
-     * Creates a pickup record with the provided fields.
+     * Crea record ritiro con fornito campi.
      *
-     * @param idRitiro pickup id
-     * @param sede pickup location
-     * @param orario pickup time
-     * @param data pickup date
-     * @param numeroTelefono contact phone number
-     * @param ritirato pickup completion flag
-     * @param annuncio related listing
+     * @param idRitiro id ritiro
+     * @param sede luogo ritiro
+     * @param orario orario ritiro
+     * @param data data ritiro
+     * @param numeroTelefono numero telefono contatto
+     * @param ritirato flag completamento ritiro
+     * @param annuncio collegato annuncio
      */
     public Ritiro(int idRitiro, String sede, String orario, Date data, String numeroTelefono,
                   boolean ritirato, Annuncio annuncio) {
@@ -39,100 +39,100 @@ public class Ritiro {
     }
 
     /**
-     * Returns the pickup id.
+     * Restituisce id ritiro.
      *
-     * @return pickup id
+     * @return id ritiro
      */
     public int getIdRitiro() { return idRitiro; }
 
     /**
-     * Sets the pickup id.
+     * Imposta id ritiro.
      *
-     * @param idRitiro pickup id
+     * @param idRitiro id ritiro
      */
     public void setIdRitiro(int idRitiro) { this.idRitiro = idRitiro; }
 
     /**
-     * Returns the pickup location.
+     * Restituisce luogo ritiro.
      *
-     * @return pickup location
+     * @return luogo ritiro
      */
     public String getSede() { return sede; }
 
     /**
-     * Sets the pickup location.
+     * Imposta luogo ritiro.
      *
-     * @param sede pickup location
+     * @param sede luogo ritiro
      */
     public void setSede(String sede) { this.sede = sede; }
 
     /**
-     * Returns the pickup time.
+     * Restituisce orario ritiro.
      *
-     * @return pickup time
+     * @return orario ritiro
      */
     public String getOrario() { return orario; }
 
     /**
-     * Sets the pickup time.
+     * Imposta orario ritiro.
      *
-     * @param orario pickup time
+     * @param orario orario ritiro
      */
     public void setOrario(String orario) { this.orario = orario; }
 
     /**
-     * Returns the pickup date.
+     * Restituisce data ritiro.
      *
-     * @return pickup date
+     * @return data ritiro
      */
     public Date getData() { return data; }
 
     /**
-     * Sets the pickup date.
+     * Imposta data ritiro.
      *
-     * @param data pickup date
+     * @param data data ritiro
      */
     public void setData(Date data) { this.data = data; }
 
     /**
-     * Returns the contact phone number.
+     * Restituisce numero telefono contatto.
      *
-     * @return contact phone number
+     * @return numero telefono contatto
      */
     public String getNumeroTelefono() { return numeroTelefono; }
 
     /**
-     * Sets the contact phone number.
+     * Imposta numero telefono contatto.
      *
-     * @param numeroTelefono contact phone number
+     * @param numeroTelefono numero telefono contatto
      */
     public void setNumeroTelefono(String numeroTelefono) { this.numeroTelefono = numeroTelefono; }
 
     /**
-     * Returns whether the pickup is completed.
+     * Restituisce se ritiro e completato.
      *
-     * @return true when completed
+     * @return true quando completato
      */
     public boolean isRitirato() { return ritirato; }
 
     /**
-     * Sets the pickup completion flag.
+     * Imposta flag completamento ritiro.
      *
-     * @param ritirato completion flag
+     * @param ritirato completamento flag
      */
     public void setRitirato(boolean ritirato) { this.ritirato = ritirato; }
 
     /**
-     * Returns the related listing.
+     * Restituisce collegato annuncio.
      *
-     * @return related listing
+     * @return collegato annuncio
      */
     public Annuncio getAnnuncio() { return annuncio; }
 
     /**
-     * Sets the related listing.
+     * Imposta collegato annuncio.
      *
-     * @param annuncio related listing
+     * @param annuncio collegato annuncio
      */
     public void setAnnuncio(Annuncio annuncio) { this.annuncio = annuncio; }
 }

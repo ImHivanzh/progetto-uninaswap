@@ -15,7 +15,7 @@ public class UtenteDAO {
     private Connection con;
 
     /**
-     * Creates the DAO and initializes the database connection.
+     * Crea DAO e inizializza database connessione.
      */
     public UtenteDAO() {
         try {
@@ -26,14 +26,14 @@ public class UtenteDAO {
     }
 
     /**
-     * Registers a new user after validating the input.
+     * Registra nuovo utente dopo validando input.
      *
      * @param username username
-     * @param email email address
+     * @param email email indirizzo
      * @param password password
-     * @param numeroTelefono phone number
-     * @return true when the insert succeeds
-     * @throws DatabaseException when the insert fails
+     * @param numeroTelefono numero telefono
+     * @return true quando inserimento riesce
+     * @throws DatabaseException quando inserimento fallisce
      */
     public boolean registraUtente(String username, String email, String password, String numeroTelefono)
             throws DatabaseException {
@@ -62,23 +62,23 @@ public class UtenteDAO {
     }
 
     /**
-     * Registers a user using a model instance.
+     * Registra utente usando modello istanza.
      *
-     * @param utente user instance
-     * @return true when the insert succeeds
-     * @throws DatabaseException when the insert fails
+     * @param utente utente istanza
+     * @return true quando inserimento riesce
+     * @throws DatabaseException quando inserimento fallisce
      */
     public boolean registraUtente(Utente utente) throws DatabaseException {
         return registraUtente(utente.getUsername(), utente.getEmail(), utente.getPassword(), utente.getNumeroTelefono());
     }
 
     /**
-     * Authenticates a user by username and password.
+     * Autentica utente da username e password.
      *
      * @param username username
      * @param password password
-     * @return user instance when found, otherwise null
-     * @throws DatabaseException when the query fails
+     * @return utente istanza quando trovato, altrimenti null
+     * @throws DatabaseException quando query fallisce
      */
     public Utente autenticaUtente(String username, String password) throws DatabaseException {
         String sql = "SELECT * FROM utente WHERE nomeutente = ? AND password = ?";
@@ -107,11 +107,11 @@ public class UtenteDAO {
     }
 
     /**
-     * Returns a user by id.
+     * Restituisce utente da id.
      *
-     * @param id user id
-     * @return user instance or null
-     * @throws DatabaseException when the query fails
+     * @param id utente id
+     * @return utente istanza o null
+     * @throws DatabaseException quando query fallisce
      */
     public Utente getUserByID(int id) throws DatabaseException {
         String sql = "SELECT * FROM utente WHERE idutente = ?";
@@ -139,11 +139,43 @@ public class UtenteDAO {
     }
 
     /**
-     * Checks if a username already exists.
+     * Restituisce utente da username.
      *
-     * @param username username to check
-     * @return true when the user exists
-     * @throws DatabaseException when the query fails
+     * @param username username
+     * @return utente istanza o null
+     * @throws DatabaseException quando query fallisce
+     */
+    public Utente getUserByUsername(String username) throws DatabaseException {
+        String sql = "SELECT * FROM utente WHERE nomeutente = ?";
+
+        if (con == null) throw new DatabaseException("Connessione non disponibile");
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, username);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Utente(
+                            rs.getInt("idutente"),
+                            rs.getString("nomeutente"),
+                            rs.getString("password"),
+                            rs.getString("mail"),
+                            rs.getString("numerotelefono")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Errore durante il recupero dell'utente per username", e);
+        }
+        return null;
+    }
+
+    /**
+     * Verifica se username gia esiste.
+     *
+     * @param username username a verifica
+     * @return true quando utente esiste
+     * @throws DatabaseException quando query fallisce
      */
     public boolean esisteUtente(String username) throws DatabaseException {
         String sql = "SELECT 1 FROM utente WHERE nomeutente = ?";
@@ -160,12 +192,12 @@ public class UtenteDAO {
     }
 
     /**
-     * Updates a user's password after validation.
+     * Aggiorna dell'utente password dopo validazione.
      *
      * @param username username
-     * @param nuovaPassword new password
-     * @return true when the update succeeds
-     * @throws DatabaseException when the update fails
+     * @param nuovaPassword nuovo password
+     * @return true quando aggiorna riesce
+     * @throws DatabaseException quando aggiorna fallisce
      */
     public boolean aggiornaPassword(String username, String nuovaPassword) throws DatabaseException {
         if (!esisteUtente(username)) throw new IllegalArgumentException("Utente non trovato: " + username);

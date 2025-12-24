@@ -16,7 +16,7 @@ public class RecensioneDAO {
   private Connection con;
 
   /**
-   * Creates the DAO and initializes the database connection.
+   * Crea DAO e inizializza database connessione.
    */
   public RecensioneDAO() {
     try {
@@ -27,11 +27,11 @@ public class RecensioneDAO {
   }
 
   /**
-   * Inserts a review into the database.
+   * Inserisce recensione in database.
    *
-   * @param recensione review to insert
-   * @return true when the insert succeeds
-   * @throws DatabaseException when the insert fails
+   * @param recensione recensione a inserimento
+   * @return true quando inserimento riesce
+   * @throws DatabaseException quando inserimento fallisce
    */
   public boolean inserisciRecensione(Recensione recensione) throws DatabaseException {
     if (con == null) throw new DatabaseException("Connessione DB non disponibile.");
@@ -53,11 +53,11 @@ public class RecensioneDAO {
   }
 
   /**
-   * Returns the reviews received by a specific user.
+   * Restituisce recensioni ricevute da specifico utente.
    *
-   * @param idUtenteRecensito reviewed user id
-   * @return list of reviews
-   * @throws DatabaseException when the query fails
+   * @param idUtenteRecensito id utente recensito
+   * @return lista di recensioni
+   * @throws DatabaseException quando query fallisce
    */
   public List<Recensione> getRecensioniRicevute(int idUtenteRecensito) throws DatabaseException {
     String sql = "SELECT r.idutente, r.idutenterecensito, r.voto, r.descrizione, u.nomeutente "
@@ -86,5 +86,47 @@ public class RecensioneDAO {
       throw new DatabaseException("Errore durante il recupero delle recensioni", e);
     }
     return recensioni;
+  }
+
+  /**
+   * Verifica se due utenti hanno completato una transazione tra vendita o scambio.
+   *
+   * @param idUtenteA primo utente id
+   * @param idUtenteB secondo utente id
+   * @return true quando esiste transazione completata
+   * @throws DatabaseException quando query fallisce
+   */
+  public boolean hannoTransazioneCompletata(int idUtenteA, int idUtenteB) throws DatabaseException {
+    if (con == null) {
+      throw new DatabaseException("Connessione DB non disponibile.");
+    }
+
+    String sql = "SELECT 1 FROM vendita v "
+            + "JOIN annuncio a ON v.idannuncio = a.idannuncio "
+            + "WHERE v.accettato = TRUE "
+            + "AND ((v.idutente = ? AND a.idutente = ?) OR (v.idutente = ? AND a.idutente = ?)) "
+            + "UNION ALL "
+            + "SELECT 1 FROM scambio s "
+            + "JOIN annuncio a ON s.idannuncio = a.idannuncio "
+            + "WHERE s.accettato = TRUE "
+            + "AND ((s.idutente = ? AND a.idutente = ?) OR (s.idutente = ? AND a.idutente = ?)) "
+            + "LIMIT 1";
+
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
+      ps.setInt(1, idUtenteA);
+      ps.setInt(2, idUtenteB);
+      ps.setInt(3, idUtenteB);
+      ps.setInt(4, idUtenteA);
+      ps.setInt(5, idUtenteA);
+      ps.setInt(6, idUtenteB);
+      ps.setInt(7, idUtenteB);
+      ps.setInt(8, idUtenteA);
+
+      try (ResultSet rs = ps.executeQuery()) {
+        return rs.next();
+      }
+    } catch (SQLException e) {
+      throw new DatabaseException("Errore durante la verifica della transazione completata", e);
+    }
   }
 }

@@ -13,7 +13,7 @@ public class LoginForm extends BaseFrame {
     private JLabel forgotPassLabel;
 
     /**
-     * Creates the login form frame.
+     * Crea form login finestra.
      */
     public LoginForm() {
         super("Login");
@@ -26,7 +26,7 @@ public class LoginForm extends BaseFrame {
     }
 
     /**
-     * Returns the username input.
+     * Restituisce username input.
      *
      * @return username
      */
@@ -35,25 +35,25 @@ public class LoginForm extends BaseFrame {
     }
 
     /**
-     * Returns the password input.
+     * Restituisce input password.
      *
-     * @return password text
+     * @return password testo
      */
     public String getPassword() {
         return new String(passField.getPassword());
     }
 
     /**
-     * Adds the login action listener.
+     * Aggiunge login azione listener.
      *
-     * @param listener action listener
+     * @param listener azione listener
      */
     public void addLoginListener(ActionListener listener) {
         loginButton.addActionListener(listener);
     }
 
     /**
-     * Adds the registration mouse listener.
+     * Aggiunge registrazione mouse listener.
      *
      * @param listener mouse listener
      */
@@ -62,7 +62,7 @@ public class LoginForm extends BaseFrame {
     }
 
     /**
-     * Adds the forgot password mouse listener.
+     * Aggiunge dimenticata password mouse listener.
      *
      * @param listener mouse listener
      */

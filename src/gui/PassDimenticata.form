@@ -41,7 +41,6 @@
           <text value="Nuova Password:"/>
         </properties>
       </component>
-      <!-- QUI ERA L'ERRORE: Ora è JPasswordField -->
       <component id="d49f2" class="javax.swing.JPasswordField" binding="NPassField">
         <constraints>
           <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
@@ -58,7 +57,6 @@
           <text value="Conferma Password:"/>
         </properties>
       </component>
-      <!-- QUI ERA L'ERRORE: Ora è JPasswordField -->
       <component id="fa51d" class="javax.swing.JPasswordField" binding="CPassField">
         <constraints>
           <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">

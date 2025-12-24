@@ -2,10 +2,10 @@ package utils;
 
 public class DataCheck {
     /**
-     * Validates an email address against a basic regex pattern.
+     * Valida email indirizzo contro base regex pattern.
      *
-     * @param email email address to validate
-     * @return true when the email matches the expected format
+     * @param email email indirizzo a valida
+     * @return true quando email corrisponde atteso formato
      */
     public static boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
@@ -13,10 +13,10 @@ public class DataCheck {
     }
 
     /**
-     * Validates a phone number as a 10-digit numeric string.
+     * Valida numero telefono come 10-cifra numerico stringa.
      *
-     * @param phoneNumber phone number to validate
-     * @return true when the value is a 10-digit number
+     * @param phoneNumber numero telefono a valida
+     * @return true quando valore e numero 10 cifre
      */
     public static boolean isValidPhoneNumber(String phoneNumber) {
         String phoneRegex = "^[0-9]{10}$";
@@ -24,10 +24,10 @@ public class DataCheck {
     }
 
     /**
-     * Checks that a password is strong enough for registration.
+     * Verifica che password e forte sufficiente per registrazione.
      *
-     * @param password password to validate
-     * @return true when it has length >= 8, upper, lower, digit, and special char
+     * @param password password a valida
+     * @return true quando ha lunghezza >= 8, maiuscola, minuscola, cifra, e speciale carattere
      */
     public static boolean isStrongPassword(String password) {
         if (password == null || password.length() < 8) {

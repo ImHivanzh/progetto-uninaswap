@@ -7,18 +7,18 @@ public class Immagini {
     private Scambio scambio;
 
     /**
-     * Creates an empty image container.
+     * Crea vuoto immagine contenitore.
      */
     public Immagini() {
     }
 
     /**
-     * Creates an image container with all fields.
+     * Crea immagine contenitore con tutti campi.
      *
-     * @param idImmagine image id
-     * @param immagine image bytes
-     * @param annuncio related listing
-     * @param scambio related exchange
+     * @param idImmagine immagine id
+     * @param immagine byte immagine
+     * @param annuncio collegato annuncio
+     * @param scambio collegato scambio
      */
     public Immagini(int idImmagine, byte[] immagine, Annuncio annuncio, Scambio scambio) {
         this.idImmagine = idImmagine;
@@ -28,10 +28,10 @@ public class Immagini {
     }
 
     /**
-     * Creates an image container with listing linkage.
+     * Crea immagine contenitore con annuncio collegamento.
      *
-     * @param immagine image bytes
-     * @param annuncio related listing
+     * @param immagine byte immagine
+     * @param annuncio collegato annuncio
      */
     public Immagini(byte[] immagine, Annuncio annuncio) {
         this.immagine = immagine;
@@ -39,72 +39,72 @@ public class Immagini {
     }
 
     /**
-     * Returns the image id.
+     * Restituisce immagine id.
      *
-     * @return image id
+     * @return immagine id
      */
     public int getIdImmagine() {
         return idImmagine;
     }
 
     /**
-     * Sets the image id.
+     * Imposta immagine id.
      *
-     * @param idImmagine image id
+     * @param idImmagine immagine id
      */
     public void setIdImmagine(int idImmagine) {
         this.idImmagine = idImmagine;
     }
 
     /**
-     * Returns the image bytes.
+     * Restituisce byte immagine.
      *
-     * @return image bytes
+     * @return byte immagine
      */
     public byte[] getImmagine() {
         return immagine;
     }
 
     /**
-     * Sets the image bytes.
+     * Imposta byte immagine.
      *
-     * @param immagine image bytes
+     * @param immagine byte immagine
      */
     public void setImmagine(byte[] immagine) {
         this.immagine = immagine;
     }
 
     /**
-     * Returns the related listing.
+     * Restituisce collegato annuncio.
      *
-     * @return related listing
+     * @return collegato annuncio
      */
     public Annuncio getAnnuncio() {
         return annuncio;
     }
 
     /**
-     * Sets the related listing.
+     * Imposta collegato annuncio.
      *
-     * @param annuncio related listing
+     * @param annuncio collegato annuncio
      */
     public void setAnnuncio(Annuncio annuncio) {
         this.annuncio = annuncio;
     }
 
     /**
-     * Returns the related exchange.
+     * Restituisce collegato scambio.
      *
-     * @return related exchange
+     * @return collegato scambio
      */
     public Scambio getScambio() {
         return scambio;
     }
 
     /**
-     * Sets the related exchange.
+     * Imposta collegato scambio.
      *
-     * @param scambio related exchange
+     * @param scambio collegato scambio
      */
     public void setScambio(Scambio scambio) {
         this.scambio = scambio;

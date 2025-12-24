@@ -21,10 +21,10 @@ public class FaiPropostaDialog extends JDialog {
   private FaiPropostaController controller;
 
   /**
-   * Creates the proposal dialog for a given listing type.
+   * Crea dialogo proposta per fornito tipo annuncio.
    *
-   * @param owner parent frame
-   * @param tipoAnnuncio listing type
+   * @param owner padre finestra
+   * @param tipoAnnuncio tipo annuncio
    */
   public FaiPropostaDialog(Frame owner, TipoAnnuncio tipoAnnuncio) {
     super(owner, "Fai una Proposta", true);
@@ -40,9 +40,9 @@ public class FaiPropostaDialog extends JDialog {
   }
 
   /**
-   * Configures the UI based on the listing type.
+   * Configura UI basato in tipo annuncio.
    *
-   * @param tipo listing type
+   * @param tipo tipo annuncio
    */
   private void configuraInterfaccia(TipoAnnuncio tipo) {
     pnlPrezzo.setVisible(tipo == TipoAnnuncio.VENDITA);
@@ -57,7 +57,7 @@ public class FaiPropostaDialog extends JDialog {
   }
 
   /**
-   * Registers dialog button listeners.
+   * Registra dialogo pulsante listener.
    */
   private void setupListeners() {
     btnInvia.addActionListener(e -> controller.azioneConferma());
@@ -66,27 +66,27 @@ public class FaiPropostaDialog extends JDialog {
   }
 
   /**
-   * Returns the price input text.
+   * Restituisce input prezzo testo.
    *
-   * @return price input
+   * @return input prezzo
    */
   public String getPrezzoInput() {
     return txtPrezzo.getText();
   }
 
   /**
-   * Returns the description input text.
+   * Restituisce input descrizione testo.
    *
-   * @return description input
+   * @return input descrizione
    */
   public String getDescrizioneInput() {
     return txtDescrizione.getText();
   }
 
   /**
-   * Updates the image preview area.
+   * Aggiorna area anteprima immagine.
    *
-   * @param imgData image bytes
+   * @param imgData byte immagine
    */
   public void aggiornaAnteprimaImmagine(byte[] imgData) {
     if (imgData != null) {
@@ -98,16 +98,16 @@ public class FaiPropostaDialog extends JDialog {
   }
 
   /**
-   * Shows an error dialog.
+   * Mostra errore dialogo.
    *
-   * @param messaggio error text
+   * @param messaggio errore testo
    */
   public void mostraErrore(String messaggio) {
     JOptionPane.showMessageDialog(this, messaggio, "Errore", JOptionPane.ERROR_MESSAGE);
   }
 
   /**
-   * Returns the controller instance.
+   * Restituisce controller istanza.
    *
    * @return controller
    */

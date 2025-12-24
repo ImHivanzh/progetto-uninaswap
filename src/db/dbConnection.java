@@ -16,15 +16,15 @@ public class dbConnection {
     private static final String URL = "jdbc:postgresql://aws-1-eu-west-1.pooler.supabase.com:5432/postgres";
 
     /**
-     * Prevents direct instantiation of the singleton.
+     * Impedisce diretto istanziazione di singleton.
      */
     private dbConnection() {
     }
 
     /**
-     * Returns the shared connection manager instance.
+     * Restituisce condiviso connessione manager istanza.
      *
-     * @return singleton instance
+     * @return singleton istanza
      */
     public static synchronized dbConnection getInstance() {
         if (instance == null) {
@@ -34,10 +34,10 @@ public class dbConnection {
     }
 
     /**
-     * Returns an active connection, opening it when needed.
+     * Restituisce attivo connessione, aprendola quando necessario.
      *
-     * @return active JDBC connection
-     * @throws DatabaseException when a connection cannot be established
+     * @return attivo JDBC connessione
+     * @throws DatabaseException quando connessione non puo essere stabilita
      */
     public Connection getConnection() throws DatabaseException {
         try {
@@ -51,9 +51,9 @@ public class dbConnection {
     }
 
     /**
-     * Closes the active connection if open.
+     * Chiude attivo connessione se aperto.
      *
-     * @throws DatabaseException when closing the connection fails
+     * @throws DatabaseException quando chiusura connessione fallisce
      */
     public void closeConnection() throws DatabaseException {
         try {

@@ -24,7 +24,7 @@ public class Profilo extends BaseFrame {
   private DefaultTableModel modelProposteInviate;
 
   /**
-   * Creates the profile view frame.
+   * Crea vista profilo finestra.
    */
   public Profilo() {
     super("Profilo Utente");
@@ -39,7 +39,7 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Initializes table models and table settings.
+   * Inizializza tabella modelli e tabella impostazioni.
    */
   private void setupTables() {
     modelRecensioni = new DefaultTableModel(new Object[]{"Nome utente", "Voto", "Descrizione"}, 0) {
@@ -79,7 +79,7 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Adds a mouse listener for the listings table.
+   * Aggiunge mouse listener per tabella annunci.
    *
    * @param listener mouse listener
    */
@@ -88,7 +88,7 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Adds a mouse listener for the received proposals table.
+   * Aggiunge mouse listener per ricevute proposte tabella.
    *
    * @param listener mouse listener
    */
@@ -97,7 +97,7 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Adds a mouse listener for the sent proposals table.
+   * Aggiunge mouse listener per inviate proposte tabella.
    *
    * @param listener mouse listener
    */
@@ -106,11 +106,11 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Adds a review row to the reviews table.
+   * Aggiunge recensione riga a recensioni tabella.
    *
-   * @param nomeUtente reviewer name
-   * @param voto rating value
-   * @param descrizione review text
+   * @param nomeUtente recensore nome
+   * @param voto valutazione valore
+   * @param descrizione testo recensione
    */
   public void aggiungiRecensione(String nomeUtente, int voto, String descrizione) {
     String stelle = "★".repeat(voto);
@@ -118,7 +118,7 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Clears all table rows.
+   * Cancella tutti tabella righe.
    */
   public void pulisciTabelle() {
     modelRecensioni.setRowCount(0);
@@ -128,46 +128,46 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Adds a listing row to the listings table.
+   * Aggiunge annuncio riga a tabella annunci.
    *
-   * @param titolo listing title
-   * @param categoria listing category
-   * @param tipo listing type
+   * @param titolo annuncio titolo
+   * @param categoria annuncio categoria
+   * @param tipo tipo annuncio
    */
   public void aggiungiAnnuncio(String titolo, String categoria, String tipo) {
     modelAnnunci.addRow(new Object[]{titolo, categoria, tipo});
   }
 
   /**
-   * Adds a received proposal row to the table.
+   * Aggiunge ricevute proposta riga a tabella.
    *
-   * @param utente proposer user
-   * @param annuncio listing title
-   * @param tipo listing type
-   * @param dettaglio detail text
-   * @param stato status text
+   * @param utente proponente utente
+   * @param annuncio annuncio titolo
+   * @param tipo tipo annuncio
+   * @param dettaglio dettaglio testo
+   * @param stato testo stato
    */
   public void aggiungiPropostaRicevuta(String utente, String annuncio, String tipo, String dettaglio, String stato) {
     modelProposteRicevute.addRow(new Object[]{utente, annuncio, tipo, dettaglio, stato});
   }
 
   /**
-   * Adds a sent proposal row to the table.
+   * Aggiunge inviate proposta riga a tabella.
    *
-   * @param utente recipient user
-   * @param annuncio listing title
-   * @param tipo listing type
-   * @param dettaglio detail text
-   * @param stato status text
+   * @param utente destinatario utente
+   * @param annuncio annuncio titolo
+   * @param tipo tipo annuncio
+   * @param dettaglio dettaglio testo
+   * @param stato testo stato
    */
   public void aggiungiPropostaInviata(String utente, String annuncio, String tipo, String dettaglio, String stato) {
     modelProposteInviate.addRow(new Object[]{utente, annuncio, tipo, dettaglio, stato});
   }
 
   /**
-   * Sets the profile title in the view and window.
+   * Imposta profilo titolo in vista e finestra.
    *
-   * @param titolo profile title
+   * @param titolo profilo titolo
    */
   public void setTitoloProfilo(String titolo) {
     lblTitolo.setText(titolo);
@@ -175,30 +175,41 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Sets the username label.
+   * Nasconde tab delle proposte dal profilo.
+   */
+  public void nascondiTabProposte() {
+    if (tabbedPane == null) {
+      return;
+    }
+    rimuoviTabSePresente("Proposte Ricevute");
+    rimuoviTabSePresente("Proposte Inviate");
+  }
+
+  /**
+   * Imposta username etichetta.
    *
    * @param username username
    */
   public void setUsername(String username) { lblUsername.setText(username); }
 
   /**
-   * Sets the email label.
+   * Imposta email etichetta.
    *
-   * @param email email address
+   * @param email email indirizzo
    */
   public void setEmail(String email) { lblEmail.setText(email); }
 
   /**
-   * Sets the phone label.
+   * Imposta telefono etichetta.
    *
-   * @param telefono phone number
+   * @param telefono numero telefono
    */
   public void setTelefono(String telefono) { lblTelefono.setText(telefono); }
 
   /**
-   * Sets the average rating label and color.
+   * Imposta valutazione media etichetta e colore.
    *
-   * @param media average rating
+   * @param media valutazione media
    */
   public void setMediaVoto(double media) {
     String val = String.format("%.1f / 5", media);
@@ -206,5 +217,13 @@ public class Profilo extends BaseFrame {
     if (media >= 4) lblMediaVoto.setForeground(new Color(0, 150, 0));
     else if (media >= 2.5) lblMediaVoto.setForeground(new Color(200, 150, 0));
     else lblMediaVoto.setForeground(Color.RED);
+  }
+
+  private void rimuoviTabSePresente(String titolo) {
+    for (int i = tabbedPane.getTabCount() - 1; i >= 0; i--) {
+      if (titolo.equals(tabbedPane.getTitleAt(i))) {
+        tabbedPane.removeTabAt(i);
+      }
+    }
   }
 }

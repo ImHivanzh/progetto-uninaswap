@@ -8,18 +8,18 @@ public class Recensione {
     private int idUtenteRecensito;
 
     /**
-     * Creates an empty review.
+     * Crea vuoto recensione.
      */
     public Recensione() {
     }
 
     /**
-     * Creates a review with core fields.
+     * Crea recensione con principali campi.
      *
-     * @param voto rating value
-     * @param descrizione review text
-     * @param idUtente reviewer id
-     * @param idUtenteRecensito reviewed user id
+     * @param voto valutazione valore
+     * @param descrizione testo recensione
+     * @param idUtente recensore id
+     * @param idUtenteRecensito id utente recensito
      */
     public Recensione(int voto, String descrizione, int idUtente, int idUtenteRecensito) {
         this.voto = voto;
@@ -29,90 +29,90 @@ public class Recensione {
     }
 
     /**
-     * Returns the rating value.
+     * Restituisce valutazione valore.
      *
-     * @return rating value
+     * @return valutazione valore
      */
     public int getVoto() {
         return voto;
     }
 
     /**
-     * Sets the rating value.
+     * Imposta valutazione valore.
      *
-     * @param voto rating value
+     * @param voto valutazione valore
      */
     public void setVoto(int voto) {
         this.voto = voto;
     }
 
     /**
-     * Returns the review text.
+     * Restituisce testo recensione.
      *
-     * @return review text
+     * @return testo recensione
      */
     public String getDescrizione() {
         return descrizione;
     }
 
     /**
-     * Sets the review text.
+     * Imposta testo recensione.
      *
-     * @param descrizione review text
+     * @param descrizione testo recensione
      */
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
     }
 
     /**
-     * Returns the reviewer user id.
+     * Restituisce id utente recensore.
      *
-     * @return reviewer id
+     * @return recensore id
      */
     public int getIdUtente() {
         return idUtente;
     }
 
     /**
-     * Sets the reviewer user id.
+     * Imposta id utente recensore.
      *
-     * @param idUtente reviewer id
+     * @param idUtente recensore id
      */
     public void setIdUtente(int idUtente) {
         this.idUtente = idUtente;
     }
 
     /**
-     * Returns the reviewer username when available.
+     * Restituisce username recensore quando disponibile.
      *
-     * @return reviewer username
+     * @return username recensore
      */
     public String getNomeUtente() {
         return nomeUtente;
     }
 
     /**
-     * Sets the reviewer username.
+     * Imposta username recensore.
      *
-     * @param nomeUtente reviewer username
+     * @param nomeUtente username recensore
      */
     public void setNomeUtente(String nomeUtente) {
         this.nomeUtente = nomeUtente;
     }
 
     /**
-     * Returns the reviewed user id.
+     * Restituisce id utente recensito.
      *
-     * @return reviewed user id
+     * @return id utente recensito
      */
     public int getIdUtenteRecensito() {
         return idUtenteRecensito;
     }
 
     /**
-     * Sets the reviewed user id.
+     * Imposta id utente recensito.
      *
-     * @param idUtenteRecensito reviewed user id
+     * @param idUtenteRecensito id utente recensito
      */
     public void setIdUtenteRecensito(int idUtenteRecensito) {
         this.idUtenteRecensito = idUtenteRecensito;

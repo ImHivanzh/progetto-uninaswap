@@ -17,10 +17,10 @@ public class ScriviRecensioneController {
   private final int idUtenteDestinatario;
 
   /**
-   * Creates the controller and registers listeners.
+   * Crea controller e registra listener.
    *
-   * @param view review view
-   * @param idUtenteDestinatario reviewed user id
+   * @param view recensione vista
+   * @param idUtenteDestinatario id utente recensito
    */
   public ScriviRecensioneController(ScriviRecensione view, int idUtenteDestinatario) {
     this.view = view;
@@ -30,7 +30,7 @@ public class ScriviRecensioneController {
   }
 
   /**
-   * Registers UI listeners for the review form.
+   * Registra UI listener per form recensione.
    */
   private void initListeners() {
     this.view.addInviaListener(new ActionListener() {
@@ -42,7 +42,7 @@ public class ScriviRecensioneController {
   }
 
   /**
-   * Validates input and sends the review.
+   * Valida input e invia recensione.
    */
   private void inviaRecensione() {
     String descrizione = view.getDescrizione();
@@ -62,6 +62,18 @@ public class ScriviRecensioneController {
 
     if (utenteLoggato == null) {
       view.mostraErrore("Utente non loggato.");
+      return;
+    }
+
+    try {
+      boolean transazioneOk =
+              recensioneDAO.hannoTransazioneCompletata(utenteLoggato.getIdUtente(), idUtenteDestinatario);
+      if (!transazioneOk) {
+        view.mostraErrore("Puoi lasciare una recensione solo dopo una transazione completata.");
+        return;
+      }
+    } catch (DatabaseException ex) {
+      view.mostraErrore("Errore durante la verifica della transazione: " + ex.getMessage());
       return;
     }
 

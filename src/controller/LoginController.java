@@ -1,6 +1,7 @@
 package controller;
 
 import gui.LoginForm;
+import gui.MainApp;
 import gui.PassDimenticataForm;
 import gui.RegistrazioneForm;
 import dao.UtenteDAO;
@@ -17,20 +18,32 @@ public class LoginController {
 
   private final LoginForm view;
   private final UtenteDAO utenteDAO;
+  private final Runnable onLoginSuccess;
 
   /**
-   * Creates the controller and registers listeners.
+   * Crea controller e registra listener.
    *
-   * @param view login view
+   * @param view vista login
    */
   public LoginController(LoginForm view) {
+    this(view, null);
+  }
+
+  /**
+   * Crea controller e registra listener.
+   *
+   * @param view vista login
+   * @param onLoginSuccess callback eseguita dopo riuscito login
+   */
+  public LoginController(LoginForm view, Runnable onLoginSuccess) {
     this.view = view;
     this.utenteDAO = new UtenteDAO();
+    this.onLoginSuccess = onLoginSuccess;
     initListeners();
   }
 
   /**
-   * Registers UI listeners for the login view.
+   * Registra UI listener per vista login.
    */
   private void initListeners() {
     this.view.addLoginListener(new ActionListener() {
@@ -60,7 +73,7 @@ public class LoginController {
   }
 
   /**
-   * Validates user input and performs authentication.
+   * Valida input utente e esegue autenticazione.
    */
   private void controllaLogin() {
     String user = view.getUsername();
@@ -78,11 +91,25 @@ public class LoginController {
         SessionManager.getInstance().login(utente);
         view.mostraMessaggio("Login effettuato con successo!");
         view.dispose();
+        avviaMainApp();
       } else {
         view.mostraErrore("Username o Password errati");
       }
     } catch (DatabaseException ex) {
       view.mostraErrore("Errore di connessione al Database: " + ex.getMessage());
     }
+  }
+
+  /**
+   * Apre app principale dopo login successo.
+   */
+  private void avviaMainApp() {
+    if (onLoginSuccess != null) {
+      onLoginSuccess.run();
+      return;
+    }
+    MainApp mainApp = new MainApp();
+    MainController controller = new MainController(mainApp);
+    controller.avvia();
   }
 }

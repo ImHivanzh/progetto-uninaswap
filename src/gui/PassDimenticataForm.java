@@ -11,7 +11,7 @@ public class PassDimenticataForm extends JFrame {
     private JButton loginButton;
 
     /**
-     * Creates the password recovery form.
+     * Crea form recupero password.
      */
     public PassDimenticataForm() {
         setContentPane(mainPanel);
@@ -22,7 +22,7 @@ public class PassDimenticataForm extends JFrame {
     }
 
     /**
-     * Returns the username input.
+     * Restituisce username input.
      *
      * @return username
      */
@@ -31,45 +31,45 @@ public class PassDimenticataForm extends JFrame {
     }
 
     /**
-     * Returns the new password input.
+     * Restituisce nuovo input password.
      *
-     * @return new password
+     * @return nuovo password
      */
     public String getNuovaPassword() {
         return new String(NPassField.getPassword());
     }
 
     /**
-     * Returns the confirmation password input.
+     * Restituisce conferma input password.
      *
-     * @return confirmation password
+     * @return conferma password
      */
     public String getConfermaPassword() {
         return new String(CPassField.getPassword());
     }
 
     /**
-     * Adds the submit action listener.
+     * Aggiunge invia azione listener.
      *
-     * @param listener action listener
+     * @param listener azione listener
      */
     public void addInvioListener(ActionListener listener) {
         loginButton.addActionListener(listener);
     }
 
     /**
-     * Shows an informational message dialog.
+     * Mostra informativo messaggio dialogo.
      *
-     * @param messaggio message text
+     * @param messaggio messaggio testo
      */
     public void mostraMessaggio(String messaggio) {
         JOptionPane.showMessageDialog(this, messaggio, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
-     * Shows an error message dialog.
+     * Mostra errore messaggio dialogo.
      *
-     * @param errore error text
+     * @param errore errore testo
      */
     public void mostraErrore(String errore) {
         JOptionPane.showMessageDialog(this, errore, "Errore", JOptionPane.ERROR_MESSAGE);

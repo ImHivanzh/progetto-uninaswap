@@ -19,7 +19,7 @@ public class ScriviRecensione extends BaseFrame {
     private final Color COLORE_VUOTA = Color.LIGHT_GRAY;
 
     /**
-     * Creates the review form.
+     * Crea form recensione.
      */
     public ScriviRecensione() {
         super("Scrivi Recensione");
@@ -33,7 +33,7 @@ public class ScriviRecensione extends BaseFrame {
     }
 
     /**
-     * Initializes the star buttons and listeners.
+     * Inizializza stella pulsanti e listener.
      */
     private void inizializzaStelle() {
         pnlStelle.removeAll();
@@ -62,9 +62,9 @@ public class ScriviRecensione extends BaseFrame {
     }
 
     /**
-     * Sets the rating and updates the UI.
+     * Imposta valutazione e aggiorna UI.
      *
-     * @param voto rating value
+     * @param voto valutazione valore
      */
     private void setVoto(int voto) {
         this.votoCorrente = voto;
@@ -72,7 +72,7 @@ public class ScriviRecensione extends BaseFrame {
     }
 
     /**
-     * Updates star colors based on the current rating.
+     * Aggiorna stella colori basato in valutazione corrente.
      */
     private void aggiornaGraficaStelle() {
         for (int i = 0; i < 5; i++) {
@@ -88,27 +88,27 @@ public class ScriviRecensione extends BaseFrame {
     }
 
     /**
-     * Returns the current rating.
+     * Restituisce valutazione corrente.
      *
-     * @return rating value
+     * @return valutazione valore
      */
     public int getVoto() {
         return votoCorrente;
     }
 
     /**
-     * Returns the review text.
+     * Restituisce testo recensione.
      *
-     * @return review text
+     * @return testo recensione
      */
     public String getDescrizione() {
         return txtDescrizione.getText();
     }
 
     /**
-     * Adds the submit action listener.
+     * Aggiunge invia azione listener.
      *
-     * @param listener action listener
+     * @param listener azione listener
      */
     public void addInviaListener(ActionListener listener) {
         btnInvia.addActionListener(listener);

@@ -5,6 +5,7 @@ import model.Annuncio;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseListener;
 
 public class DettaglioAnnuncio extends JFrame {
   private JPanel mainPanel;
@@ -15,7 +16,8 @@ public class DettaglioAnnuncio extends JFrame {
   private JLabel lblImmagine;
   private JButton btnPrecedente;
   private JButton btnSuccessivo;
-  private JLabel lblUtente;
+  private JLabel lblUtentePrefix;
+  private JLabel lblUtenteNome;
   private JButton btnContatta;
   private JButton btnIndietro;
   private JLabel lblTipo;
@@ -26,9 +28,9 @@ public class DettaglioAnnuncio extends JFrame {
   private DettaglioAnnuncioController controller;
 
   /**
-   * Creates the listing detail frame.
+   * Crea finestra dettaglio annuncio.
    *
-   * @param annuncio listing to display
+   * @param annuncio annuncio a visualizza
    */
   public DettaglioAnnuncio(Annuncio annuncio) {
     setContentPane(mainPanel);
@@ -43,7 +45,7 @@ public class DettaglioAnnuncio extends JFrame {
   }
 
   /**
-   * Registers button listeners for the view.
+   * Registra pulsante listener per vista.
    */
   private void setupListeners() {
     btnIndietro.addActionListener(e -> dispose());
@@ -53,45 +55,45 @@ public class DettaglioAnnuncio extends JFrame {
   }
 
   /**
-   * Sets the title label text.
+   * Imposta titolo etichetta testo.
    *
-   * @param titolo title text
+   * @param titolo titolo testo
    */
   public void setTitolo(String titolo) { lblTitolo.setText(titolo); }
 
   /**
-   * Sets the description text.
+   * Imposta descrizione testo.
    *
-   * @param descrizione description text
+   * @param descrizione descrizione testo
    */
   public void setDescrizione(String descrizione) { txtDescrizione.setText(descrizione); }
 
   /**
-   * Sets the category label text.
+   * Imposta categoria etichetta testo.
    *
-   * @param testo category text
+   * @param testo categoria testo
    */
   public void setCategoria(String testo) { lblCategoria.setText(testo); }
 
   /**
-   * Sets the type label text.
+   * Imposta tipo etichetta testo.
    *
-   * @param testo type text
+   * @param testo tipo testo
    */
   public void setTipo(String testo) { lblTipo.setText(testo); }
 
   /**
-   * Sets the condition label text.
+   * Imposta condizione etichetta testo.
    *
-   * @param testo condition text
+   * @param testo condizione testo
    */
   public void setCondizione(String testo) { lblCondizione.setText(testo); }
 
   /**
-   * Sets the price label text and color.
+   * Imposta prezzo etichetta testo e colore.
    *
-   * @param testo price text
-   * @param colore label color
+   * @param testo prezzo testo
+   * @param colore etichetta colore
    */
   public void setPrezzoInfo(String testo, Color colore) {
     lblPrezzo.setText(testo);
@@ -99,23 +101,47 @@ public class DettaglioAnnuncio extends JFrame {
   }
 
   /**
-   * Sets the user info label text.
+   * Imposta pubblicatore username testo.
    *
-   * @param testo user info text
+   * @param nome username
+   * @param cliccabile true quando etichetta dovrebbe aspetto cliccabile
    */
-  public void setUtenteInfo(String testo) { lblUtente.setText(testo); }
+  public void setUtenteNome(String nome, boolean cliccabile) {
+    String valore = nome != null ? nome : "";
+    if (cliccabile) {
+      lblUtenteNome.setText("<html><u>" + valore + "</u></html>");
+      lblUtenteNome.setForeground(new Color(0, 102, 204));
+      lblUtenteNome.setCursor(new Cursor(Cursor.HAND_CURSOR));
+      lblUtenteNome.setToolTipText("Apri profilo");
+    } else {
+      lblUtenteNome.setText(valore);
+      Color base = UIManager.getColor("Label.foreground");
+      lblUtenteNome.setForeground(base != null ? base : Color.BLACK);
+      lblUtenteNome.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+      lblUtenteNome.setToolTipText(null);
+    }
+  }
 
   /**
-   * Sets the image counter label text.
+   * Aggiunge mouse listener a pubblicatore etichetta.
    *
-   * @param testo counter text
+   * @param listener mouse listener
+   */
+  public void addUtenteListener(MouseListener listener) {
+    lblUtenteNome.addMouseListener(listener);
+  }
+
+  /**
+   * Imposta etichetta contatore immagini testo.
+   *
+   * @param testo contatore testo
    */
   public void setContatoreImmagini(String testo) { lblContatoreImmagini.setText(testo); }
 
   /**
-   * Sets the image icon, scaling it to the label size.
+   * Imposta icona immagine, ridimensionandola a etichetta dimensione.
    *
-   * @param icon image icon
+   * @param icon icona immagine
    */
   public void setImmagine(ImageIcon icon) {
     int w = lblImmagine.getWidth();
@@ -132,9 +158,9 @@ public class DettaglioAnnuncio extends JFrame {
   }
 
   /**
-   * Clears the image icon and sets placeholder text.
+   * Cancella icona immagine e imposta segnaposto testo.
    *
-   * @param testo placeholder text
+   * @param testo segnaposto testo
    */
   public void setImmagineTesto(String testo) {
     lblImmagine.setIcon(null);
@@ -142,21 +168,21 @@ public class DettaglioAnnuncio extends JFrame {
   }
 
   /**
-   * Hides the image panel.
+   * Nasconde pannello immagini.
    */
   public void nascondiPannelloImmagini() {
     if (imagePanel != null) imagePanel.setVisible(false);
   }
 
   /**
-   * Shows the image panel.
+   * Mostra pannello immagini.
    */
   public void mostraPannelloImmagini() {
     if (imagePanel != null) imagePanel.setVisible(true);
   }
 
   /**
-   * Initializes custom UI components.
+   * Inizializza personalizzati UI componenti.
    */
   private void createUIComponents() { }
 }

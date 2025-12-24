@@ -13,9 +13,9 @@ public class RegistrazioneController {
   private final UtenteDAO utenteDAO;
 
   /**
-   * Creates the controller and registers listeners.
+   * Crea controller e registra listener.
    *
-   * @param view registration view
+   * @param view vista registrazione
    */
   public RegistrazioneController(RegistrazioneForm view) {
     this.view = view;
@@ -25,7 +25,7 @@ public class RegistrazioneController {
   }
 
   /**
-   * Registers UI listeners for the registration view.
+   * Registra UI listener per vista registrazione.
    */
   private void initListeners() {
     this.view.addRegistraListener(new ActionListener() {
@@ -37,7 +37,7 @@ public class RegistrazioneController {
   }
 
   /**
-   * Validates input and submits a new registration.
+   * Valida input e invia nuovo registrazione.
    */
   private void registraUtente() {
     String username = view.getUsername();

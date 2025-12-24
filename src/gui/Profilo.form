@@ -9,7 +9,6 @@
     <properties/>
     <border type="none"/>
     <children>
-      <!-- TITOLO -->
       <component id="title" class="javax.swing.JLabel" binding="lblTitolo">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
@@ -20,7 +19,6 @@
         </properties>
       </component>
 
-      <!-- INFO UTENTE -->
       <grid id="infoPanel" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="5" vgap="5">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
@@ -83,7 +81,6 @@
         </children>
       </grid>
 
-      <!-- STATISTICHE -->
       <grid id="statsPanel" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="15" vgap="5">
          <margin top="0" left="0" bottom="0" right="0"/>
          <constraints>
@@ -119,8 +116,6 @@
         </children>
       </grid>
 
-      <!-- TABS (Recensioni / Annunci) -->
-      <!-- QUI ERA IL PROBLEMA: Questa struttura è necessaria per l'inizializzazione -->
       <tabbedpane id="tabPane" binding="tabbedPane">
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
@@ -130,7 +125,6 @@
         <properties/>
         <border type="none"/>
         <children>
-          <!-- TAB 1: Recensioni -->
           <grid id="tabRecensioniPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
@@ -154,7 +148,6 @@
             </children>
           </grid>
           
-          <!-- TAB 2: Annunci -->
           <grid id="tabAnnunciPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
@@ -170,7 +163,6 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <!-- Questa è la tabella che causava il NullPointerException -->
                   <component id="tableAnnunci" class="javax.swing.JTable" binding="tableAnnunci">
                     <properties/>
                   </component>
@@ -179,7 +171,6 @@
             </children>
           </grid>
 
-          <!-- TAB 3: Proposte Ricevute -->
           <grid id="tabProposteRicevutePanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
@@ -203,7 +194,6 @@
             </children>
           </grid>
 
-          <!-- TAB 4: Proposte Inviate -->
           <grid id="tabProposteInviatePanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
