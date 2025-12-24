@@ -6,12 +6,15 @@ import dao.UtenteDAO;
 import exception.DatabaseException;
 import gui.DettaglioAnnuncio;
 import gui.FaiPropostaDialog;
+import gui.Profilo;
 import model.*;
 import model.enums.TipoAnnuncio;
 import utils.SessionManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,12 +25,13 @@ public class DettaglioAnnuncioController {
   private final ImmaginiDAO immaginiDAO;
   private List<Immagini> listaImmagini;
   private int currentImageIndex = 0;
+  private Utente pubblicatore;
 
   /**
-   * Creates the controller for the listing detail view.
+   * Crea controller per vista dettaglio annuncio.
    *
-   * @param view detail view
-   * @param annuncio listing to display
+   * @param view dettaglio vista
+   * @param annuncio annuncio a visualizza
    */
   public DettaglioAnnuncioController(DettaglioAnnuncio view, Annuncio annuncio) {
     this.view = view;
@@ -39,7 +43,7 @@ public class DettaglioAnnuncioController {
   }
 
   /**
-   * Loads listing data and populates the view.
+   * Carica dati annuncio e popola vista.
    */
   private void caricaDati() {
     try {
@@ -76,21 +80,30 @@ public class DettaglioAnnuncioController {
     }
     view.setPrezzoInfo(prezzoTesto, prezzoColore);
 
-    view.setUtenteInfo("Pubblicato da: Utente ID " + annuncio.getIdUtente());
-
     UtenteDAO utenteDAO = new UtenteDAO();
     try {
-      Utente pubblicatore = utenteDAO.getUserByID(annuncio.getIdUtente());
-      view.setUtenteInfo("Pubblicato da: " + pubblicatore.getUsername());
+      pubblicatore = utenteDAO.getUserByID(annuncio.getIdUtente());
+      if (pubblicatore != null) {
+        view.setUtenteNome(pubblicatore.getUsername(), true);
+        view.addUtenteListener(new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            apriProfiloPubblicatore();
+          }
+        });
+      } else {
+        view.setUtenteNome("Utente ID " + annuncio.getIdUtente(), false);
+      }
     } catch (DatabaseException e) {
       System.err.println("Errore caricamento info utente: " + e.getMessage());
+      view.setUtenteNome("Utente ID " + annuncio.getIdUtente(), false);
     }
 
     aggiornaVistaImmagine();
   }
 
   /**
-   * Advances to the next image in the carousel.
+   * Avanza a successiva immagine in carosello.
    */
   public void azioneSuccessiva() {
     if (listaImmagini != null && !listaImmagini.isEmpty()) {
@@ -100,7 +113,7 @@ public class DettaglioAnnuncioController {
   }
 
   /**
-   * Moves to the previous image in the carousel.
+   * Sposta a precedente immagine in carosello.
    */
   public void azionePrecedente() {
     if (listaImmagini != null && !listaImmagini.isEmpty()) {
@@ -110,7 +123,7 @@ public class DettaglioAnnuncioController {
   }
 
   /**
-   * Opens the proposal dialog and persists a proposal if confirmed.
+   * Apre dialogo proposta e salva proposta se confermata.
    */
   public void azioneContatta() {
     FaiPropostaDialog dialog = new FaiPropostaDialog(view, annuncio.getTipoAnnuncio());
@@ -128,12 +141,12 @@ public class DettaglioAnnuncioController {
   }
 
   /**
-   * Persists a proposal for the current listing.
+   * Salva proposta per corrente annuncio.
    *
-   * @param idAnnuncio listing id
-   * @param prezzo proposed price
-   * @param descrizione proposal description
-   * @param immagine proposal image
+   * @param idAnnuncio id annuncio
+   * @param prezzo proposto prezzo
+   * @param descrizione descrizione proposta
+   * @param immagine proposta immagine
    */
   private void salvaProposta(int idAnnuncio, Double prezzo, String descrizione, byte[] immagine) {
     Utente utenteCorrente = SessionManager.getInstance().getUtente();
@@ -199,7 +212,7 @@ public class DettaglioAnnuncioController {
   }
 
   /**
-   * Updates the image view based on the current index.
+   * Aggiorna vista immagine basato in indice corrente.
    */
   private void aggiornaVistaImmagine() {
     if (listaImmagini == null || listaImmagini.isEmpty()) {
@@ -218,5 +231,17 @@ public class DettaglioAnnuncioController {
     } else {
       view.setImmagineTesto("Errore img");
     }
+  }
+
+  /**
+   * Apre pubblicatore vista profilo.
+   */
+  private void apriProfiloPubblicatore() {
+    if (pubblicatore == null) {
+      return;
+    }
+    Profilo profilo = new Profilo();
+    new ProfiloController(profilo, pubblicatore);
+    profilo.setVisible(true);
   }
 }

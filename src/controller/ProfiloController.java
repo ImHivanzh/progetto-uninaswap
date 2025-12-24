@@ -3,6 +3,7 @@ package controller;
 import dao.AnnuncioDAO;
 import dao.PropostaDAO;
 import dao.RecensioneDAO;
+import dao.UtenteDAO;
 import model.Recensione;
 import model.Annuncio;
 import model.PropostaRiepilogo;
@@ -11,6 +12,7 @@ import utils.SessionManager;
 import exception.DatabaseException;
 import gui.DettaglioAnnuncio;
 import gui.Profilo;
+import gui.ScriviRecensione;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -32,19 +34,19 @@ public class ProfiloController {
   private List<PropostaRiepilogo> proposteInviate;
 
   /**
-   * Creates a controller for the current user's profile.
+   * Crea controller per profilo utente corrente.
    *
-   * @param view profile view
+   * @param view vista profilo
    */
   public ProfiloController(Profilo view) {
     this(view, null);
   }
 
   /**
-   * Creates a controller for a specific user profile.
+   * Crea controller per specifico utente profilo.
    *
-   * @param view profile view
-   * @param utenteTarget profile owner
+   * @param view vista profilo
+   * @param utenteTarget profilo proprietario
    */
   public ProfiloController(Profilo view, Utente utenteTarget) {
     this.view = view;
@@ -61,6 +63,7 @@ public class ProfiloController {
     } else {
       this.utenteTarget = utenteTarget;
       this.view.setTitoloProfilo("Profilo di " + utenteTarget.getUsername());
+      this.view.nascondiTabProposte();
     }
 
     caricaDati();
@@ -68,9 +71,9 @@ public class ProfiloController {
   }
 
   /**
-   * Creates a proposals DAO, showing an error on failure.
+   * Crea proposte DAO, mostrando errore in caso di errore.
    *
-   * @return DAO instance or null
+   * @return DAO istanza o null
    */
   private PropostaDAO creaPropostaDAO() {
     try {
@@ -82,7 +85,7 @@ public class ProfiloController {
   }
 
   /**
-   * Registers table listeners for profile interactions.
+   * Registra tabella listener per profilo interazioni.
    */
   private void setupInteraction() {
     view.addTableAnnunciListener(new MouseAdapter() {
@@ -126,7 +129,7 @@ public class ProfiloController {
   }
 
   /**
-   * Loads profile data and populates the view.
+   * Carica profilo data e popola vista.
    */
   private void caricaDati() {
     if (utenteTarget == null) {
@@ -174,7 +177,7 @@ public class ProfiloController {
         );
       }
 
-      if (propostaDAO != null) {
+      if (mostraDatiSensibili && propostaDAO != null) {
         proposteRicevute = propostaDAO.getProposteRicevute(utenteTarget.getIdUtente());
         proposteInviate = propostaDAO.getProposteInviate(utenteTarget.getIdUtente());
 
@@ -206,11 +209,11 @@ public class ProfiloController {
   }
 
   /**
-   * Returns the localized status label for a proposal.
+   * Restituisce localizzato etichetta stato per proposta.
    *
-   * @param accettata accepted flag
-   * @param inattesa pending flag
-   * @return status label
+   * @param accettata accettata flag
+   * @param inattesa in attesa flag
+   * @return etichetta stato
    */
   private String formatStato(boolean accettata, boolean inattesa) {
     if (accettata) {
@@ -223,9 +226,9 @@ public class ProfiloController {
   }
 
   /**
-   * Handles a double-click on a received proposal.
+   * Gestisce doppio-clic in ricevute proposta.
    *
-   * @param selectedRow row index
+   * @param selectedRow riga indice
    */
   private void handlePropostaRicevuta(int selectedRow) {
     if (!mostraDatiSensibili) {
@@ -239,17 +242,25 @@ public class ProfiloController {
     String dettaglio = buildDettaglioProposta(proposta, "Da");
 
     if (proposta.accettata()) {
-      JOptionPane.showMessageDialog(
+      Object[] opzioni = {"Lascia recensione", "Chiudi"};
+      int scelta = JOptionPane.showOptionDialog(
               view,
-              dettaglio + "\n\nQuesta proposta è gia stata accettata.",
+              dettaglio + "\n\nQuesta proposta e stata accettata.",
               "Proposta ricevuta",
-              JOptionPane.INFORMATION_MESSAGE);
+              JOptionPane.DEFAULT_OPTION,
+              JOptionPane.INFORMATION_MESSAGE,
+              null,
+              opzioni,
+              opzioni[0]);
+      if (scelta == 0) {
+        apriScriviRecensione(proposta.utenteCoinvolto());
+      }
       return;
     }
     if (!proposta.inattesa()) {
       JOptionPane.showMessageDialog(
               view,
-              dettaglio + "\n\nQuesta proposta è stata rifiutata.",
+              dettaglio + "\n\nQuesta proposta e stata rifiutata.",
               "Proposta ricevuta",
               JOptionPane.INFORMATION_MESSAGE);
       return;
@@ -275,9 +286,9 @@ public class ProfiloController {
   }
 
   /**
-   * Handles a double-click on a sent proposal.
+   * Gestisce doppio-clic in inviate proposta.
    *
-   * @param selectedRow row index
+   * @param selectedRow riga indice
    */
   private void handlePropostaInviata(int selectedRow) {
     if (!mostraDatiSensibili) {
@@ -291,11 +302,19 @@ public class ProfiloController {
     String dettaglio = buildDettaglioProposta(proposta, "A");
 
     if (proposta.accettata()) {
-      JOptionPane.showMessageDialog(
+      Object[] opzioni = {"Lascia recensione", "Chiudi"};
+      int scelta = JOptionPane.showOptionDialog(
               view,
-              dettaglio + "\n\nLa proposta e stata accettata e non puo essere annullata.",
+              dettaglio + "\n\nLa proposta e stata accettata.",
               "Proposta inviata",
-              JOptionPane.INFORMATION_MESSAGE);
+              JOptionPane.DEFAULT_OPTION,
+              JOptionPane.INFORMATION_MESSAGE,
+              null,
+              opzioni,
+              opzioni[0]);
+      if (scelta == 0) {
+        apriScriviRecensione(proposta.utenteCoinvolto());
+      }
       return;
     }
     if (!proposta.inattesa()) {
@@ -324,13 +343,13 @@ public class ProfiloController {
   }
 
   /**
-   * Updates the proposal status and refreshes data on success.
+   * Aggiorna stato proposta e aggiorna data in caso di successo.
    *
-   * @param proposta proposal summary
-   * @param usernameProponente proposer username
-   * @param accettata accepted flag
-   * @param inattesa pending flag
-   * @param messaggioOk success message
+   * @param proposta riepilogo proposta
+   * @param usernameProponente proponente username
+   * @param accettata accettata flag
+   * @param inattesa in attesa flag
+   * @param messaggioOk successo messaggio
    */
   private void aggiornaEsitoProposta(
           PropostaRiepilogo proposta, String usernameProponente, boolean accettata, boolean inattesa,
@@ -358,11 +377,11 @@ public class ProfiloController {
   }
 
   /**
-   * Deletes a proposal and refreshes data on success.
+   * Elimina proposta e aggiorna data in caso di successo.
    *
-   * @param proposta proposal summary
-   * @param usernameProponente proposer username
-   * @param messaggioOk success message
+   * @param proposta riepilogo proposta
+   * @param usernameProponente proponente username
+   * @param messaggioOk successo messaggio
    */
   private void eliminaProposta(PropostaRiepilogo proposta, String usernameProponente, String messaggioOk) {
     if (propostaDAO == null) {
@@ -386,11 +405,11 @@ public class ProfiloController {
   }
 
   /**
-   * Builds a detail string for a proposal row.
+   * Costruisce dettaglio stringa per proposta riga.
    *
-   * @param proposta proposal summary
-   * @param labelUtente label prefix
-   * @return detail string
+   * @param proposta riepilogo proposta
+   * @param labelUtente etichetta prefisso
+   * @return dettaglio stringa
    */
   private String buildDettaglioProposta(PropostaRiepilogo proposta, String labelUtente) {
     return labelUtente + ": " + proposta.utenteCoinvolto()
@@ -398,5 +417,36 @@ public class ProfiloController {
             + "\nTipo: " + proposta.tipoAnnuncio()
             + "\nDettaglio: " + proposta.dettaglio()
             + "\nStato: " + formatStato(proposta.accettata(), proposta.inattesa());
+  }
+
+  /**
+   * Apre form recensione per utente indicato.
+   *
+   * @param usernameDestinatario username destinatario
+   */
+  private void apriScriviRecensione(String usernameDestinatario) {
+    if (usernameDestinatario == null || usernameDestinatario.trim().isEmpty()) {
+      view.mostraErrore("Utente destinatario non valido.");
+      return;
+    }
+
+    String username = usernameDestinatario.trim();
+    Utente utenteDestinatario;
+    try {
+      UtenteDAO utenteDAO = new UtenteDAO();
+      utenteDestinatario = utenteDAO.getUserByUsername(username);
+    } catch (DatabaseException e) {
+      view.mostraErrore("Errore durante il recupero dell'utente: " + e.getMessage());
+      return;
+    }
+
+    if (utenteDestinatario == null) {
+      view.mostraErrore("Utente destinatario non trovato.");
+      return;
+    }
+
+    ScriviRecensione recensioneView = new ScriviRecensione();
+    new ScriviRecensioneController(recensioneView, utenteDestinatario.getIdUtente());
+    recensioneView.setVisible(true);
   }
 }

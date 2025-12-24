@@ -10,7 +10,6 @@
     <border type="none"/>
     <children>
       
-      <!-- TITOLO VIEW -->
       <component id="lblTitle" class="javax.swing.JLabel">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
@@ -21,7 +20,6 @@
         </properties>
       </component>
 
-      <!-- CAMPO TITOLO -->
       <component id="lblTitolo" class="javax.swing.JLabel">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -39,7 +37,6 @@
         <properties/>
       </component>
 
-      <!-- CAMPO DESCRIZIONE -->
       <component id="lblDesc" class="javax.swing.JLabel">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
@@ -66,7 +63,6 @@
         </children>
       </scrollpane>
 
-      <!-- CATEGORIA -->
       <component id="lblCat" class="javax.swing.JLabel">
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -82,7 +78,6 @@
         <properties/>
       </component>
 
-      <!-- TIPO ANNUNCIO -->
       <component id="lblTipo" class="javax.swing.JLabel">
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -98,7 +93,6 @@
         <properties/>
       </component>
 
-      <!-- PREZZO -->
       <component id="lblPrezzo" class="javax.swing.JLabel">
         <constraints>
           <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -119,7 +113,6 @@
         </properties>
       </component>
       
-      <!-- BOTTONI: Carica Img e Pubblica -->
       <grid id="pnlButtons" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="0">
         <margin top="10" left="0" bottom="0" right="0"/>
         <constraints>
@@ -128,7 +121,6 @@
         <properties/>
         <border type="none"/>
         <children>
-           <!-- ECCO IL BOTTONE CHE MANCAVA -->
            <component id="btnCaricaImg" class="javax.swing.JButton" binding="btnCaricaImg">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>

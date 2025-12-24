@@ -12,20 +12,20 @@ public class Spedizione {
     private Annuncio annuncio;
 
     /**
-     * Creates an empty shipment record.
+     * Crea vuoto spedizione record.
      */
     public Spedizione() {}
 
     /**
-     * Creates a shipment record with the provided fields.
+     * Crea spedizione record con fornito campi.
      *
-     * @param idSpedizione shipment id
-     * @param indirizzo shipping address
-     * @param numeroTelefono contact phone number
-     * @param dataInvio shipping date
-     * @param dataArrivo arrival date
-     * @param spedito shipped flag
-     * @param utente user reference
+     * @param idSpedizione id spedizione
+     * @param indirizzo indirizzo spedizione
+     * @param numeroTelefono numero telefono contatto
+     * @param dataInvio data spedizione
+     * @param dataArrivo data arrivo
+     * @param spedito spedito flag
+     * @param utente utente riferimento
      */
     public Spedizione(int idSpedizione, String indirizzo, String numeroTelefono, Date dataInvio,
                       Date dataArrivo, boolean spedito, Utente utente) {
@@ -39,100 +39,100 @@ public class Spedizione {
     }
 
     /**
-     * Returns the shipment id.
+     * Restituisce id spedizione.
      *
-     * @return shipment id
+     * @return id spedizione
      */
     public int getIdSpedizione() { return idSpedizione; }
 
     /**
-     * Sets the shipment id.
+     * Imposta id spedizione.
      *
-     * @param idSpedizione shipment id
+     * @param idSpedizione id spedizione
      */
     public void setIdSpedizione(int idSpedizione) { this.idSpedizione = idSpedizione; }
 
     /**
-     * Returns the shipping address.
+     * Restituisce indirizzo spedizione.
      *
-     * @return shipping address
+     * @return indirizzo spedizione
      */
     public String getIndirizzo() { return indirizzo; }
 
     /**
-     * Sets the shipping address.
+     * Imposta indirizzo spedizione.
      *
-     * @param indirizzo shipping address
+     * @param indirizzo indirizzo spedizione
      */
     public void setIndirizzo(String indirizzo) { this.indirizzo = indirizzo; }
 
     /**
-     * Returns the contact phone number.
+     * Restituisce numero telefono contatto.
      *
-     * @return contact phone number
+     * @return numero telefono contatto
      */
     public String getNumeroTelefono() { return numeroTelefono; }
 
     /**
-     * Sets the contact phone number.
+     * Imposta numero telefono contatto.
      *
-     * @param numeroTelefono contact phone number
+     * @param numeroTelefono numero telefono contatto
      */
     public void setNumeroTelefono(String numeroTelefono) { this.numeroTelefono = numeroTelefono; }
 
     /**
-     * Returns the shipping date.
+     * Restituisce data spedizione.
      *
-     * @return shipping date
+     * @return data spedizione
      */
     public Date getDataInvio() { return dataInvio; }
 
     /**
-     * Sets the shipping date.
+     * Imposta data spedizione.
      *
-     * @param dataInvio shipping date
+     * @param dataInvio data spedizione
      */
     public void setDataInvio(Date dataInvio) { this.dataInvio = dataInvio; }
 
     /**
-     * Returns the arrival date.
+     * Restituisce data arrivo.
      *
-     * @return arrival date
+     * @return data arrivo
      */
     public Date getDataArrivo() { return dataArrivo; }
 
     /**
-     * Sets the arrival date.
+     * Imposta data arrivo.
      *
-     * @param dataArrivo arrival date
+     * @param dataArrivo data arrivo
      */
     public void setDataArrivo(Date dataArrivo) { this.dataArrivo = dataArrivo; }
 
     /**
-     * Returns whether the shipment has been sent.
+     * Restituisce se spedizione e stata inviate.
      *
-     * @return true when sent
+     * @return true quando inviate
      */
     public boolean isSpedito() { return spedito; }
 
     /**
-     * Sets the shipped flag.
+     * Imposta spedito flag.
      *
-     * @param spedito shipped flag
+     * @param spedito spedito flag
      */
     public void setSpedito(boolean spedito) { this.spedito = spedito; }
 
     /**
-     * Returns the related listing.
+     * Restituisce collegato annuncio.
      *
-     * @return related listing
+     * @return collegato annuncio
      */
     public Annuncio getAnnuncio() { return annuncio; }
 
     /**
-     * Sets the related listing.
+     * Imposta collegato annuncio.
      *
-     * @param utente user reference
+     * @param utente utente riferimento
      */
     public void setAnnuncio(Utente utente) { this.annuncio = annuncio; }
 

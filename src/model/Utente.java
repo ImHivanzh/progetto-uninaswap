@@ -9,18 +9,18 @@ public class Utente {
     private String numeroTelefono;
 
     /**
-     * Creates an empty user.
+     * Crea vuoto utente.
      */
     public Utente() {}
 
     /**
-     * Creates a user with the provided fields.
+     * Crea utente con fornito campi.
      *
-     * @param idUtente user id
+     * @param idUtente utente id
      * @param username username
      * @param password password
-     * @param email email address
-     * @param numeroTelefono phone number
+     * @param email email indirizzo
+     * @param numeroTelefono numero telefono
      */
     public Utente(int idUtente, String username, String password, String email, String numeroTelefono) {
         this.idUtente = idUtente;
@@ -31,21 +31,21 @@ public class Utente {
     }
 
     /**
-     * Returns the user id.
+     * Restituisce utente id.
      *
-     * @return user id
+     * @return utente id
      */
     public int getIdUtente() { return idUtente; }
 
     /**
-     * Sets the user id.
+     * Imposta utente id.
      *
-     * @param idUtente user id
+     * @param idUtente utente id
      */
     public void setIdUtente(int idUtente) { this.idUtente = idUtente; }
 
     /**
-     * Returns the username.
+     * Restituisce username.
      *
      * @return username
      */
@@ -54,7 +54,7 @@ public class Utente {
     }
 
     /**
-     * Sets the username.
+     * Imposta username.
      *
      * @param username username
      */
@@ -63,33 +63,33 @@ public class Utente {
     }
 
     /**
-     * Returns the email address.
+     * Restituisce email indirizzo.
      *
-     * @return email address
+     * @return email indirizzo
      */
     public String getEmail() {
         return email;
     }
 
     /**
-     * Sets the email address.
+     * Imposta email indirizzo.
      *
-     * @param email email address
+     * @param email email indirizzo
      */
     public void setEmail(String email) { this.email = email; }
 
     /**
-     * Returns the password.
+     * Restituisce password.
      *
      * @return password
      */
     public String getPassword() { return password; }
 
     /**
-     * Sets the password after strength validation.
+     * Imposta password dopo forza validazione.
      *
-     * @param password password value
-     * @throws IllegalArgumentException when the password is not strong enough
+     * @param password password valore
+     * @throws IllegalArgumentException quando password e non forte sufficiente
      */
     public void setPassword(String password) {
         if (DataCheck.isStrongPassword(password)) {
@@ -100,18 +100,18 @@ public class Utente {
     }
 
     /**
-     * Returns the phone number.
+     * Restituisce numero telefono.
      *
-     * @return phone number
+     * @return numero telefono
      */
     public String getNumeroTelefono() {
         return numeroTelefono;
     }
 
     /**
-     * Sets the phone number.
+     * Imposta numero telefono.
      *
-     * @param numeroTelefono phone number
+     * @param numeroTelefono numero telefono
      */
     public void setNumeroTelefono(String numeroTelefono) {
         this.numeroTelefono = numeroTelefono;

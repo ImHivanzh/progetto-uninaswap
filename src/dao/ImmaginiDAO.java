@@ -14,7 +14,7 @@ public class ImmaginiDAO {
   private Connection con;
 
   /**
-   * Creates the DAO and initializes the database connection.
+   * Crea DAO e inizializza database connessione.
    */
   public ImmaginiDAO() {
     try {
@@ -25,11 +25,11 @@ public class ImmaginiDAO {
   }
 
   /**
-   * Persists an image linked to a listing.
+   * Salva immagine collegato a annuncio.
    *
-   * @param immagine image entity
-   * @return true when the insert succeeds
-   * @throws DatabaseException when the insert fails
+   * @param immagine immagine entita
+   * @return true quando inserimento riesce
+   * @throws DatabaseException quando inserimento fallisce
    */
   public boolean salvaImmagine(Immagini immagine) throws DatabaseException {
     String sql = "INSERT INTO immagini (immagine, idannuncio) VALUES (?, ?)";
@@ -55,10 +55,10 @@ public class ImmaginiDAO {
   }
 
   /**
-   * Returns all images for a specific listing.
+   * Restituisce tutti immagini per specifico annuncio.
    *
-   * @param idAnnuncio listing id
-   * @return list of images
+   * @param idAnnuncio id annuncio
+   * @return lista di immagini
    */
   public List<Immagini> getImmaginiByAnnuncio(int idAnnuncio) {
     List<Immagini> lista = new ArrayList<>();

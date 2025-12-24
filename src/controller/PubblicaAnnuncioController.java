@@ -22,9 +22,9 @@ public class PubblicaAnnuncioController {
   private final ImmaginiDAO immaginiDAO;
 
   /**
-   * Creates the controller for the publish listing view.
+   * Crea controller per vista pubblica annuncio.
    *
-   * @param view publish view
+   * @param view pubblica vista
    */
   public PubblicaAnnuncioController(PubblicaAnnuncio view) {
     this.view = view;
@@ -33,7 +33,7 @@ public class PubblicaAnnuncioController {
   }
 
   /**
-   * Validates input and publishes the listing.
+   * Valida input e pubblica annuncio.
    */
   public void pubblica() {
     Utente utente = SessionManager.getInstance().getUtente();
@@ -115,11 +115,11 @@ public class PubblicaAnnuncioController {
   }
 
   /**
-   * Converts files to byte arrays and stores them for the listing.
+   * Converte file a byte array e memorizza loro per annuncio.
    *
-   * @param annuncio listing to attach images to
-   * @param files image files
-   * @throws DatabaseException when persistence fails
+   * @param annuncio annuncio a allega immagini a
+   * @param files file immagini
+   * @throws DatabaseException quando persistenza fallisce
    */
   private void salvaImmaginiPerAnnuncio(Annuncio annuncio, List<File> files) throws DatabaseException {
     try {

@@ -23,7 +23,7 @@ public class PubblicaAnnuncio extends BaseFrame {
   private List<File> immaginiSelezionate;
 
   /**
-   * Creates the publish listing form.
+   * Crea form pubblica annuncio.
    */
   public PubblicaAnnuncio() {
     super("Pubblica Annuncio");
@@ -38,7 +38,7 @@ public class PubblicaAnnuncio extends BaseFrame {
   }
 
   /**
-   * Initializes UI state and listeners.
+   * Inizializza UI stato e listener.
    */
   private void initUI() {
     cmbCategoria.setModel(new DefaultComboBoxModel<>(Categoria.values()));
@@ -81,54 +81,54 @@ public class PubblicaAnnuncio extends BaseFrame {
   }
 
   /**
-   * Returns the title input.
+   * Restituisce input titolo.
    *
-   * @return title
+   * @return titolo
    */
   public String getTitolo() {
     return txtTitolo.getText();
   }
 
   /**
-   * Returns the description input.
+   * Restituisce input descrizione.
    *
-   * @return description
+   * @return descrizione
    */
   public String getDescrizione() {
     return txtDescrizione.getText();
   }
 
   /**
-   * Returns the selected category.
+   * Restituisce categoria selezionata.
    *
-   * @return selected category
+   * @return categoria selezionata
    */
   public Categoria getCategoriaSelezionata() {
     return (Categoria) cmbCategoria.getSelectedItem();
   }
 
   /**
-   * Returns the selected listing type.
+   * Restituisce tipo annuncio selezionato.
    *
-   * @return selected type
+   * @return tipo selezionato
    */
   public TipoAnnuncio getTipoSelezionato() {
     return (TipoAnnuncio) cmbTipo.getSelectedItem();
   }
 
   /**
-   * Returns the price input.
+   * Restituisce input prezzo.
    *
-   * @return price text
+   * @return prezzo testo
    */
   public String getPrezzo() {
     return txtPrezzo.getText();
   }
 
   /**
-   * Returns the selected image files.
+   * Restituisce file immagini selezionati.
    *
-   * @return image file list
+   * @return immagine file lista
    */
   public List<File> getImmagini() {
     return immaginiSelezionate;

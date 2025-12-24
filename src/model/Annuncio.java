@@ -16,20 +16,20 @@ public class Annuncio {
     private List<Immagini> immagini;
 
     /**
-     * Creates an empty listing with an initialized image list.
+     * Crea vuoto annuncio con inizializzato lista immagini.
      */
     public Annuncio() {
         this.immagini = new ArrayList<>();
     }
 
     /**
-     * Creates a listing with core fields.
+     * Crea annuncio con principali campi.
      *
-     * @param idUtente owner id
-     * @param titolo title
-     * @param descrizione description
-     * @param categoria category
-     * @param tipoAnnuncio listing type
+     * @param idUtente proprietario id
+     * @param titolo titolo
+     * @param descrizione descrizione
+     * @param categoria categoria
+     * @param tipoAnnuncio tipo annuncio
      */
     public Annuncio(int idUtente, String titolo, String descrizione, Categoria categoria, TipoAnnuncio tipoAnnuncio) {
         this.idUtente = idUtente;
@@ -42,14 +42,14 @@ public class Annuncio {
     }
 
     /**
-     * Creates a listing with an explicit id, useful for DB reconstruction.
+     * Crea annuncio con esplicito id, utile per DB ricostruzione.
      *
-     * @param idAnnuncio listing id
-     * @param titolo title
-     * @param descrizione description
-     * @param categoria category
-     * @param idUtente owner id
-     * @param tipoAnnuncio listing type
+     * @param idAnnuncio id annuncio
+     * @param titolo titolo
+     * @param descrizione descrizione
+     * @param categoria categoria
+     * @param idUtente proprietario id
+     * @param tipoAnnuncio tipo annuncio
      */
     public Annuncio(int idAnnuncio, String titolo, String descrizione, Categoria categoria, int idUtente,
                     TipoAnnuncio tipoAnnuncio) {
@@ -64,153 +64,153 @@ public class Annuncio {
     }
 
     /**
-     * Returns the listing id.
+     * Restituisce id annuncio.
      *
-     * @return listing id
+     * @return id annuncio
      */
     public int getIdAnnuncio() {
         return idAnnuncio;
     }
 
     /**
-     * Sets the listing id.
+     * Imposta id annuncio.
      *
-     * @param idAnnuncio listing id
+     * @param idAnnuncio id annuncio
      */
     public void setIdAnnuncio(int idAnnuncio) {
         this.idAnnuncio = idAnnuncio;
     }
 
     /**
-     * Returns the owner user id.
+     * Restituisce proprietario utente id.
      *
-     * @return owner id
+     * @return proprietario id
      */
     public int getIdUtente() {
         return idUtente;
     }
 
     /**
-     * Sets the owner user id.
+     * Imposta proprietario utente id.
      *
-     * @param idUtente owner id
+     * @param idUtente proprietario id
      */
     public void setIdUtente(int idUtente) {
         this.idUtente = idUtente;
     }
 
     /**
-     * Returns the title.
+     * Restituisce titolo.
      *
-     * @return title
+     * @return titolo
      */
     public String getTitolo() {
         return titolo;
     }
 
     /**
-     * Sets the title.
+     * Imposta titolo.
      *
-     * @param titolo title
+     * @param titolo titolo
      */
     public void setTitolo(String titolo) {
         this.titolo = titolo;
     }
 
     /**
-     * Returns the description.
+     * Restituisce descrizione.
      *
-     * @return description
+     * @return descrizione
      */
     public String getDescrizione() {
         return descrizione;
     }
 
     /**
-     * Sets the description.
+     * Imposta descrizione.
      *
-     * @param descrizione description
+     * @param descrizione descrizione
      */
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
     }
 
     /**
-     * Returns the category.
+     * Restituisce categoria.
      *
-     * @return category
+     * @return categoria
      */
     public Categoria getCategoria() {
         return categoria;
     }
 
     /**
-     * Sets the category.
+     * Imposta categoria.
      *
-     * @param categoria category
+     * @param categoria categoria
      */
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
 
     /**
-     * Returns the listing type.
+     * Restituisce tipo annuncio.
      *
-     * @return listing type
+     * @return tipo annuncio
      */
     public TipoAnnuncio getTipoAnnuncio() {
         return tipoAnnuncio;
     }
 
     /**
-     * Sets the listing type.
+     * Imposta tipo annuncio.
      *
-     * @param tipoAnnuncio listing type
+     * @param tipoAnnuncio tipo annuncio
      */
     public void setTipoAnnuncio(TipoAnnuncio tipoAnnuncio) {
         this.tipoAnnuncio = tipoAnnuncio;
     }
 
     /**
-     * Returns whether the listing is active.
+     * Restituisce se annuncio e attivo.
      *
-     * @return true when active
+     * @return true quando attivo
      */
     public boolean isStato() {
         return stato;
     }
 
     /**
-     * Sets the active state.
+     * Imposta attivo stato.
      *
-     * @param stato active state
+     * @param stato attivo stato
      */
     public void setStato(boolean stato) {
         this.stato = stato;
     }
 
     /**
-     * Returns the attached images.
+     * Restituisce allegati immagini.
      *
-     * @return image list
+     * @return lista immagini
      */
     public List<Immagini> getImmagini() {
         return immagini;
     }
 
     /**
-     * Sets the image list.
+     * Imposta lista immagini.
      *
-     * @param immagini image list
+     * @param immagini lista immagini
      */
     public void setImmagini(List<Immagini> immagini) {
         this.immagini = immagini;
     }
 
     /**
-     * Adds an image to the listing.
+     * Aggiunge immagine a annuncio.
      *
-     * @param immagine image to add
+     * @param immagine immagine da aggiungere
      */
     public void addImmagine(Immagini immagine) {
         if (this.immagini == null) {
@@ -220,9 +220,9 @@ public class Annuncio {
     }
 
     /**
-     * Returns a string representation of the listing.
+     * Restituisce rappresentazione stringa di annuncio.
      *
-     * @return string representation
+     * @return rappresentazione stringa
      */
     @Override
     public String toString() {

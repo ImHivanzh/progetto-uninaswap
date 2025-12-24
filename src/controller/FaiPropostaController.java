@@ -20,10 +20,10 @@ public class FaiPropostaController {
   private byte[] immagineProposta = null;
 
   /**
-   * Creates the controller for the proposal dialog.
+   * Crea controller per dialogo proposta.
    *
-   * @param view dialog view
-   * @param tipoAnnuncio listing type
+   * @param view dialogo vista
+   * @param tipoAnnuncio tipo annuncio
    */
   public FaiPropostaController(FaiPropostaDialog view, TipoAnnuncio tipoAnnuncio) {
     this.view = view;
@@ -31,7 +31,7 @@ public class FaiPropostaController {
   }
 
   /**
-   * Handles image selection and preview update.
+   * Gestisce immagine selezione e anteprima aggiorna.
    */
   public void azioneCaricaImmagine() {
     JFileChooser fileChooser = new JFileChooser();
@@ -49,7 +49,7 @@ public class FaiPropostaController {
   }
 
   /**
-   * Validates input and confirms the proposal.
+   * Valida input e conferma proposta.
    */
   public void azioneConferma() {
     String testoDescrizione = view.getDescrizioneInput();
@@ -84,7 +84,7 @@ public class FaiPropostaController {
   }
 
   /**
-   * Cancels the proposal and closes the dialog.
+   * Annulla proposta e chiude dialogo.
    */
   public void azioneAnnulla() {
     this.confermato = false;
@@ -92,30 +92,30 @@ public class FaiPropostaController {
   }
 
   /**
-   * Returns whether the proposal was confirmed.
+   * Restituisce se proposta era confermata.
    *
-   * @return true when confirmed
+   * @return true quando confermata
    */
   public boolean isConfermato() { return confermato; }
 
   /**
-   * Returns the proposed price.
+   * Restituisce proposto prezzo.
    *
-   * @return proposed price or null
+   * @return proposto prezzo o null
    */
   public Double getOffertaPrezzo() { return offertaPrezzo; }
 
   /**
-   * Returns the proposal description.
+   * Restituisce descrizione proposta.
    *
-   * @return proposal description
+   * @return descrizione proposta
    */
   public String getDescrizioneProposta() { return descrizioneProposta; }
 
   /**
-   * Returns the proposal image bytes.
+   * Restituisce byte immagine proposta.
    *
-   * @return image bytes or null
+   * @return byte immagine o null
    */
   public byte[] getImmagineProposta() { return immagineProposta; }
 }

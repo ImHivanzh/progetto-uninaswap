@@ -4,43 +4,43 @@ public class Vendita extends Annuncio {
     private double prezzo;
 
     /**
-     * Creates an empty sale listing.
+     * Crea vuoto vendita annuncio.
      */
     public Vendita() {
         super();
     }
 
     /**
-     * Creates a sale listing with the provided price.
+     * Crea vendita annuncio con fornito prezzo.
      *
-     * @param prezzo price value
+     * @param prezzo prezzo valore
      */
     public Vendita(double prezzo) {
         this.prezzo = prezzo;
     }
 
     /**
-     * Returns the price.
+     * Restituisce prezzo.
      *
-     * @return price value
+     * @return prezzo valore
      */
     public double getPrezzo() {
         return prezzo;
     }
 
     /**
-     * Sets the price.
+     * Imposta prezzo.
      *
-     * @param prezzo price value
+     * @param prezzo prezzo valore
      */
     public void setPrezzo(double prezzo) {
         this.prezzo = prezzo;
     }
 
     /**
-     * Returns a string representation of the sale listing.
+     * Restituisce rappresentazione stringa di vendita annuncio.
      *
-     * @return string representation
+     * @return rappresentazione stringa
      */
     @Override
     public String toString() {

@@ -7,14 +7,14 @@ public class Scambio extends Annuncio {
     private String oggettoRichiesto;
 
     /**
-     * Creates an exchange listing with an explicit id.
+     * Crea scambio annuncio con esplicito id.
      *
-     * @param id listing id
-     * @param titolo title
-     * @param descrizione description
-     * @param categoria category
-     * @param utenteID owner id
-     * @param oggettoRichiesto requested item
+     * @param id id annuncio
+     * @param titolo titolo
+     * @param descrizione descrizione
+     * @param categoria categoria
+     * @param utenteID proprietario id
+     * @param oggettoRichiesto oggetto richiesto
      */
     public Scambio(int id, String titolo, String descrizione, Categoria categoria, int utenteID,
                    String oggettoRichiesto) {
@@ -23,13 +23,13 @@ public class Scambio extends Annuncio {
     }
 
     /**
-     * Creates an exchange listing for new insertion.
+     * Crea scambio annuncio per nuovo inserimento.
      *
-     * @param titolo title
-     * @param descrizione description
-     * @param categoria category
-     * @param utenteID owner id
-     * @param oggettoRichiesto requested item
+     * @param titolo titolo
+     * @param descrizione descrizione
+     * @param categoria categoria
+     * @param utenteID proprietario id
+     * @param oggettoRichiesto oggetto richiesto
      */
     public Scambio(String titolo, String descrizione, Categoria categoria, int utenteID, String oggettoRichiesto) {
         super(utenteID, titolo, descrizione, categoria, TipoAnnuncio.SCAMBIO);
@@ -37,23 +37,23 @@ public class Scambio extends Annuncio {
     }
 
     /**
-     * Returns the requested item description.
+     * Restituisce descrizione oggetto richiesto.
      *
-     * @return requested item
+     * @return oggetto richiesto
      */
     public String getOggettoRichiesto() { return oggettoRichiesto; }
 
     /**
-     * Sets the requested item description.
+     * Imposta descrizione oggetto richiesto.
      *
-     * @param oggettoRichiesto requested item
+     * @param oggettoRichiesto oggetto richiesto
      */
     public void setOggettoRichiesto(String oggettoRichiesto) { this.oggettoRichiesto = oggettoRichiesto; }
 
     /**
-     * Returns a string representation of the exchange listing.
+     * Restituisce rappresentazione stringa di scambio annuncio.
      *
-     * @return string representation
+     * @return rappresentazione stringa
      */
     @Override
     public String toString() {

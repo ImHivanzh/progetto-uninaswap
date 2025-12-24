@@ -4,9 +4,9 @@ public record PropostaRiepilogo(int idAnnuncio, String titoloAnnuncio, String ti
                                 String dettaglio, boolean accettata, boolean inattesa) {
 
   /**
-   * Returns a human-readable status string.
+   * Restituisce leggibile stato stringa.
    *
-   * @return status text
+   * @return testo stato
    */
   public String getStatoTestuale() {
     if (accettata) {
