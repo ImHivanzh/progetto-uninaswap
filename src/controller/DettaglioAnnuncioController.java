@@ -10,6 +10,7 @@ import gui.Profilo;
 import model.*;
 import model.enums.TipoAnnuncio;
 import utils.SessionManager;
+import utils.WindowManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,13 +19,34 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller per vista dettaglio annuncio.
+ */
 public class DettaglioAnnuncioController {
 
+  /**
+   * Vista dettaglio annuncio.
+   */
   private final DettaglioAnnuncio view;
+  /**
+   * Annuncio mostrato.
+   */
   private final Annuncio annuncio;
+  /**
+   * DAO immagini per annuncio.
+   */
   private final ImmaginiDAO immaginiDAO;
+  /**
+   * Lista immagini associate.
+   */
   private List<Immagini> listaImmagini;
+  /**
+   * Indice immagine corrente.
+   */
   private int currentImageIndex = 0;
+  /**
+   * Utente pubblicatore.
+   */
   private Utente pubblicatore;
 
   /**
@@ -55,8 +77,8 @@ public class DettaglioAnnuncioController {
     view.setTitolo(annuncio.getTitolo());
     view.setDescrizione(annuncio.getDescrizione());
     view.setCategoria("Categoria: " + annuncio.getCategoria());
-    view.setTipo("Tipo: " + annuncio.getTipoAnnuncio().toString());
-    view.setCondizione("Condizioni: Buone");
+    String tipo = annuncio.getTipoAnnuncio() != null ? annuncio.getTipoAnnuncio().toString() : "N/A";
+    view.setTipo("Tipo: " + tipo + " | Consegna: " + annuncio.getConsegnaLabel());
 
     String prezzoTesto;
     Color prezzoColore;
@@ -86,6 +108,9 @@ public class DettaglioAnnuncioController {
       if (pubblicatore != null) {
         view.setUtenteNome(pubblicatore.getUsername(), true);
         view.addUtenteListener(new MouseAdapter() {
+          /**
+           * {@inheritDoc}
+           */
           @Override
           public void mouseClicked(MouseEvent e) {
             apriProfiloPubblicatore();
@@ -127,7 +152,7 @@ public class DettaglioAnnuncioController {
    */
   public void azioneContatta() {
     FaiPropostaDialog dialog = new FaiPropostaDialog(view, annuncio.getTipoAnnuncio());
-    dialog.setVisible(true);
+    WindowManager.open(view, dialog);
 
     FaiPropostaController dialogController = dialog.getController();
 
@@ -242,6 +267,6 @@ public class DettaglioAnnuncioController {
     }
     Profilo profilo = new Profilo();
     new ProfiloController(profilo, pubblicatore);
-    profilo.setVisible(true);
+    WindowManager.open(view, profilo);
   }
 }

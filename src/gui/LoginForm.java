@@ -4,12 +4,33 @@ import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 
+/**
+ * Form di login applicazione.
+ */
 public class LoginForm extends BaseFrame {
+    /**
+     * Pannello principale.
+     */
     private JPanel mainPanel;
+    /**
+     * Campo username.
+     */
     private JTextField userField;
+    /**
+     * Campo password.
+     */
     private JPasswordField passField;
+    /**
+     * Pulsante login.
+     */
     private JButton loginButton;
+    /**
+     * Etichetta registrazione.
+     */
     private JLabel registerLabel;
+    /**
+     * Etichetta password dimenticata.
+     */
     private JLabel forgotPassLabel;
 
     /**

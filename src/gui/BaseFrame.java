@@ -3,6 +3,9 @@ package gui;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Finestra base con comportamenti comuni.
+ */
 public class BaseFrame extends JFrame {
 
     /**

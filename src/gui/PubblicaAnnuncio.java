@@ -10,16 +10,46 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Form per pubblicazione annuncio.
+ */
 public class PubblicaAnnuncio extends BaseFrame {
+  /**
+   * Pannello principale.
+   */
   private JPanel mainPanel;
+  /**
+   * Campo titolo.
+   */
   private JTextField txtTitolo;
+  /**
+   * Area testo descrizione.
+   */
   private JTextArea txtDescrizione;
+  /**
+   * Combo categoria.
+   */
   private JComboBox<Categoria> cmbCategoria;
+  /**
+   * Combo tipo annuncio.
+   */
   private JComboBox<TipoAnnuncio> cmbTipo;
+  /**
+   * Campo prezzo.
+   */
   private JTextField txtPrezzo;
+  /**
+   * Pulsante pubblica.
+   */
   private JButton btnPubblica;
+  /**
+   * Pulsante carica immagine.
+   */
   private JButton btnCaricaImg;
 
+  /**
+   * Lista immagini selezionate.
+   */
   private List<File> immaginiSelezionate;
 
   /**

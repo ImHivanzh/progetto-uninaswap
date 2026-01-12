@@ -5,14 +5,45 @@ import model.enums.TipoAnnuncio;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Modello dati annuncio.
+ */
 public class Annuncio {
+    /**
+     * Identificativo annuncio.
+     */
     private int idAnnuncio;
+    /**
+     * Identificativo utente proprietario.
+     */
     private int idUtente;
+    /**
+     * Titolo annuncio.
+     */
     private String titolo;
+    /**
+     * Descrizione annuncio.
+     */
     private String descrizione;
+    /**
+     * Categoria annuncio.
+     */
     private Categoria categoria;
+    /**
+     * Tipo annuncio.
+     */
     private TipoAnnuncio tipoAnnuncio;
+    /**
+     * Flag spedizione/ritiro.
+     */
+    private Boolean spedizione;
+    /**
+     * Stato attivo annuncio.
+     */
     private boolean stato;
+    /**
+     * Lista immagini annuncio.
+     */
     private List<Immagini> immagini;
 
     /**
@@ -172,6 +203,36 @@ public class Annuncio {
     }
 
     /**
+     * Restituisce se consegna e spedizione.
+     *
+     * @return true per spedizione, false per ritiro, null se non definito
+     */
+    public Boolean getSpedizione() {
+        return spedizione;
+    }
+
+    /**
+     * Imposta consegna spedizione/ritiro.
+     *
+     * @param spedizione true per spedizione, false per ritiro, null se non definito
+     */
+    public void setSpedizione(Boolean spedizione) {
+        this.spedizione = spedizione;
+    }
+
+    /**
+     * Restituisce etichetta consegna.
+     *
+     * @return etichetta consegna
+     */
+    public String getConsegnaLabel() {
+        if (spedizione == null) {
+            return "N/A";
+        }
+        return spedizione ? "Spedizione" : "Ritiro";
+    }
+
+    /**
      * Restituisce se annuncio e attivo.
      *
      * @return true quando attivo
@@ -232,6 +293,7 @@ public class Annuncio {
                 ", titolo='" + titolo + '\'' +
                 ", categoria=" + categoria +
                 ", tipo=" + tipoAnnuncio +
+                ", consegna=" + getConsegnaLabel() +
                 ", stato=" + stato +
                 '}';
     }

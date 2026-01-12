@@ -7,9 +7,18 @@ import model.Utente;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Controller per registrazione utente.
+ */
 public class RegistrazioneController {
 
+  /**
+   * Vista registrazione.
+   */
   private final RegistrazioneForm view;
+  /**
+   * DAO utenti.
+   */
   private final UtenteDAO utenteDAO;
 
   /**
@@ -29,6 +38,9 @@ public class RegistrazioneController {
    */
   private void initListeners() {
     this.view.addRegistraListener(new ActionListener() {
+      /**
+       * {@inheritDoc}
+       */
       @Override
       public void actionPerformed(ActionEvent e) {
         registraUtente();

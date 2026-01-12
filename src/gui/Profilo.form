@@ -171,7 +171,7 @@
             </children>
           </grid>
 
-          <grid id="tabProposteRicevutePanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
+          <grid id="tabProposteRicevutePanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="6">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <tabbedpane title="Proposte Ricevute"/>
@@ -191,10 +191,18 @@
                   </component>
                 </children>
               </scrollpane>
+              <component id="btnRecensioneRicevuta" class="javax.swing.JButton" binding="btnRecensioneRicevuta">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Lascia Recensione"/>
+                </properties>
+              </component>
             </children>
           </grid>
 
-          <grid id="tabProposteInviatePanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
+          <grid id="tabProposteInviatePanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="6">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <tabbedpane title="Proposte Inviate"/>
@@ -214,6 +222,14 @@
                   </component>
                 </children>
               </scrollpane>
+              <component id="btnRecensioneInviata" class="javax.swing.JButton" binding="btnRecensioneInviata">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Lascia Recensione"/>
+                </properties>
+              </component>
             </children>
           </grid>
 

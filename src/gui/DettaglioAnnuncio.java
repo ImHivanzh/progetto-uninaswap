@@ -7,24 +7,74 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseListener;
 
+/**
+ * Finestra per dettaglio annuncio.
+ */
 public class DettaglioAnnuncio extends JFrame {
+  /**
+   * Pannello principale.
+   */
   private JPanel mainPanel;
+  /**
+   * Etichetta titolo annuncio.
+   */
   private JLabel lblTitolo;
+  /**
+   * Etichetta prezzo annuncio.
+   */
   private JLabel lblPrezzo;
+  /**
+   * Etichetta categoria annuncio.
+   */
   private JLabel lblCategoria;
+  /**
+   * Area testo descrizione.
+   */
   private JTextArea txtDescrizione;
+  /**
+   * Etichetta immagine annuncio.
+   */
   private JLabel lblImmagine;
+  /**
+   * Pulsante immagine precedente.
+   */
   private JButton btnPrecedente;
+  /**
+   * Pulsante immagine successiva.
+   */
   private JButton btnSuccessivo;
+  /**
+   * Etichetta prefisso utente.
+   */
   private JLabel lblUtentePrefix;
+  /**
+   * Etichetta nome utente.
+   */
   private JLabel lblUtenteNome;
+  /**
+   * Pulsante contatta.
+   */
   private JButton btnContatta;
+  /**
+   * Pulsante indietro.
+   */
   private JButton btnIndietro;
+  /**
+   * Etichetta tipo annuncio.
+   */
   private JLabel lblTipo;
-  private JLabel lblCondizione;
+  /**
+   * Pannello immagini.
+   */
   private JPanel imagePanel;
+  /**
+   * Etichetta contatore immagini.
+   */
   private JLabel lblContatoreImmagini;
 
+  /**
+   * Controller associato alla vista.
+   */
   private DettaglioAnnuncioController controller;
 
   /**
@@ -81,13 +131,6 @@ public class DettaglioAnnuncio extends JFrame {
    * @param testo tipo testo
    */
   public void setTipo(String testo) { lblTipo.setText(testo); }
-
-  /**
-   * Imposta condizione etichetta testo.
-   *
-   * @param testo condizione testo
-   */
-  public void setCondizione(String testo) { lblCondizione.setText(testo); }
 
   /**
    * Imposta prezzo etichetta testo e colore.

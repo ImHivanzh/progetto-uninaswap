@@ -1,10 +1,28 @@
 package model;
 
+/**
+ * Modello dati recensione.
+ */
 public class Recensione {
+    /**
+     * Valutazione numerica.
+     */
     private int voto;
+    /**
+     * Testo recensione.
+     */
     private String descrizione;
+    /**
+     * Id utente recensore.
+     */
     private int idUtente;
+    /**
+     * Nome utente recensore.
+     */
     private String nomeUtente;
+    /**
+     * Id utente recensito.
+     */
     private int idUtenteRecensito;
 
     /**

@@ -1,5 +1,8 @@
 package utils;
 
+/**
+ * Utility per validazioni input.
+ */
 public class DataCheck {
     /**
      * Valida email indirizzo contro base regex pattern.

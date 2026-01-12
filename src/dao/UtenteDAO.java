@@ -1,5 +1,6 @@
 package dao;
 
+import controller.LoginController;
 import model.Utente;
 import utils.DataCheck;
 import db.dbConnection;
@@ -10,8 +11,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * DAO per accesso dati utenti.
+ */
 public class UtenteDAO {
 
+    /**
+     * Connessione al database.
+     */
     private Connection con;
 
     /**

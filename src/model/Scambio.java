@@ -3,7 +3,13 @@ package model;
 import model.enums.Categoria;
 import model.enums.TipoAnnuncio;
 
+/**
+ * Modello annuncio scambio.
+ */
 public class Scambio extends Annuncio {
+    /**
+     * Oggetto richiesto per lo scambio.
+     */
     private String oggettoRichiesto;
 
     /**

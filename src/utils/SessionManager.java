@@ -2,9 +2,18 @@ package utils;
 
 import model.Utente;
 
+/**
+ * Gestisce la sessione utente corrente.
+ */
 public class SessionManager {
 
+  /**
+   * Istanza singleton.
+   */
   private static SessionManager instance;
+  /**
+   * Utente attualmente loggato.
+   */
   private Utente utenteCorrente;
   /**
    * Impedisce diretto istanziazione di singleton.

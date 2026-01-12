@@ -6,13 +6,31 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * Singleton per gestione connessione database.
+ */
 public class dbConnection {
 
+    /**
+     * Istanza singleton.
+     */
     private static dbConnection instance;
+    /**
+     * Connessione attiva.
+     */
     private Connection connection;
 
+    /**
+     * Nome utente database.
+     */
     private static final String NOME = "postgres.wzzmgxzgtpsvazdwdbqr";
+    /**
+     * Password database.
+     */
     private static final String PASSWORD = "UninaSwapDB";
+    /**
+     * URL connessione database.
+     */
     private static final String URL = "jdbc:postgresql://aws-1-eu-west-1.pooler.supabase.com:5432/postgres";
 
     /**

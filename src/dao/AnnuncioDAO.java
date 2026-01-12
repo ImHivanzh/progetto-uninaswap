@@ -10,8 +10,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DAO per accesso dati annunci.
+ */
 public class AnnuncioDAO {
 
+  /**
+   * Connessione al database.
+   */
   private Connection con;
 
   /**
@@ -227,6 +233,23 @@ public class AnnuncioDAO {
     annuncio.setCategoria(categoria);
     annuncio.setTipoAnnuncio(tipo);
     annuncio.setStato(stato);
+    Object spedizioneObj = rs.getObject("spedizione");
+    if (spedizioneObj == null) {
+      annuncio.setSpedizione(null);
+    } else if (spedizioneObj instanceof Boolean) {
+      annuncio.setSpedizione((Boolean) spedizioneObj);
+    } else if (spedizioneObj instanceof Number) {
+      annuncio.setSpedizione(((Number) spedizioneObj).intValue() == 1);
+    } else {
+      String valore = spedizioneObj.toString().trim().toLowerCase();
+      if (valore.equals("1") || valore.equals("true") || valore.equals("t")) {
+        annuncio.setSpedizione(true);
+      } else if (valore.equals("0") || valore.equals("false") || valore.equals("f")) {
+        annuncio.setSpedizione(false);
+      } else {
+        annuncio.setSpedizione(null);
+      }
+    }
 
     return annuncio;
   }

@@ -1,11 +1,29 @@
 package model;
 import utils.DataCheck;
 
+/**
+ * Modello dati utente.
+ */
 public class Utente {
+    /**
+     * Identificativo utente.
+     */
     private int idUtente;
+    /**
+     * Username utente.
+     */
     private String username;
+    /**
+     * Email utente.
+     */
     private String email;
+    /**
+     * Password utente.
+     */
     private String password;
+    /**
+     * Numero telefono utente.
+     */
     private String numeroTelefono;
 
     /**

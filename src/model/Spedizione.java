@@ -2,13 +2,37 @@ package model;
 
 import java.util.Date;
 
+/**
+ * Modello dati spedizione.
+ */
 public class Spedizione {
+    /**
+     * Identificativo spedizione.
+     */
     private int idSpedizione;
+    /**
+     * Indirizzo spedizione.
+     */
     private String indirizzo;
+    /**
+     * Numero telefono contatto.
+     */
     private String numeroTelefono;
+    /**
+     * Data invio.
+     */
     private Date dataInvio;
+    /**
+     * Data arrivo.
+     */
     private Date dataArrivo;
+    /**
+     * Flag spedito.
+     */
     private boolean spedito;
+    /**
+     * Annuncio associato.
+     */
     private Annuncio annuncio;
 
     /**

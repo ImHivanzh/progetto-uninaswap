@@ -3,12 +3,33 @@ package gui;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 
+/**
+ * Form per registrazione utente.
+ */
 public class RegistrazioneForm extends BaseFrame {
+    /**
+     * Pannello principale.
+     */
     private JPanel mainPanel;
+    /**
+     * Campo username.
+     */
     private JTextField txtUsername;
+    /**
+     * Campo email.
+     */
     private JTextField txtMail;
+    /**
+     * Campo password.
+     */
     private JPasswordField txtPassword;
+    /**
+     * Campo telefono.
+     */
     private JTextField txtTelefono;
+    /**
+     * Pulsante registra.
+     */
     private JButton btnRegistra;
 
     /**
