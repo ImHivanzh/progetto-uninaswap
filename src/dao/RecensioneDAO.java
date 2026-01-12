@@ -11,8 +11,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DAO per accesso dati recensioni.
+ */
 public class RecensioneDAO {
 
+  /**
+   * Connessione al database.
+   */
   private Connection con;
 
   /**

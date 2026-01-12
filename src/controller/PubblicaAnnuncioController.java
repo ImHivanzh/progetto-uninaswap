@@ -15,10 +15,22 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
+/**
+ * Controller per pubblicazione annunci.
+ */
 public class PubblicaAnnuncioController {
 
+  /**
+   * Vista pubblica annuncio.
+   */
   private final PubblicaAnnuncio view;
+  /**
+   * DAO annunci.
+   */
   private final AnnuncioDAO annuncioDAO;
+  /**
+   * DAO immagini.
+   */
   private final ImmaginiDAO immaginiDAO;
 
   /**

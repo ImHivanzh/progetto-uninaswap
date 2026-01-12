@@ -1,6 +1,12 @@
 package model;
 
+/**
+ * Modello annuncio vendita.
+ */
 public class Vendita extends Annuncio {
+    /**
+     * Prezzo vendita.
+     */
     private double prezzo;
 
     /**

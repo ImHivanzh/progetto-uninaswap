@@ -6,18 +6,54 @@ import model.enums.TipoAnnuncio;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Dialogo per invio proposta.
+ */
 public class FaiPropostaDialog extends JDialog {
+  /**
+   * Pannello contenuto.
+   */
   private JPanel contentPane;
+  /**
+   * Pannello prezzo.
+   */
   private JPanel pnlPrezzo;
+  /**
+   * Campo prezzo.
+   */
   private JTextField txtPrezzo;
+  /**
+   * Etichetta descrizione.
+   */
   private JLabel lblDescrizione;
+  /**
+   * Area testo descrizione.
+   */
   private JTextArea txtDescrizione;
+  /**
+   * Pannello immagine.
+   */
   private JPanel pnlImmagine;
+  /**
+   * Pulsante carica immagine.
+   */
   private JButton btnCaricaImmagine;
+  /**
+   * Etichetta anteprima immagine.
+   */
   private JLabel lblImagePreview;
+  /**
+   * Pulsante invio.
+   */
   private JButton btnInvia;
+  /**
+   * Pulsante annulla.
+   */
   private JButton btnAnnulla;
 
+  /**
+   * Controller associato al dialogo.
+   */
   private FaiPropostaController controller;
 
   /**
@@ -29,6 +65,7 @@ public class FaiPropostaDialog extends JDialog {
   public FaiPropostaDialog(Frame owner, TipoAnnuncio tipoAnnuncio) {
     super(owner, "Fai una Proposta", true);
     setContentPane(contentPane);
+    setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     getRootPane().setDefaultButton(btnInvia);
 
     this.controller = new FaiPropostaController(this, tipoAnnuncio);

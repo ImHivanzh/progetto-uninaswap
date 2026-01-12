@@ -11,6 +11,7 @@ import model.Annuncio;
 import model.Immagini;
 import model.Vendita;
 import utils.SessionManager;
+import utils.WindowManager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,12 +21,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Controller principale per la bacheca annunci.
+ */
 public class MainController implements ActionListener {
 
+  /**
+   * Numero massimo annunci in evidenza.
+   */
   private static final int MAX_ANNUNCI_EVIDENZA = 6;
 
+  /**
+   * Vista principale.
+   */
   private final MainApp view;
+  /**
+   * DAO annunci.
+   */
   private final AnnuncioDAO annuncioDAO;
+  /**
+   * DAO immagini.
+   */
   private final ImmaginiDAO immaginiDAO;
 
   /**
@@ -61,16 +77,22 @@ public class MainController implements ActionListener {
    */
   private void registraListener() {
     view.addProfiloListener(this);
+    view.addLogoutListener(this);
     view.addPubblicaListener(this);
     view.addSearchListener(this);
     view.addResetListener(this);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void actionPerformed(ActionEvent e) {
     String action = e.getActionCommand();
     if (MainApp.ACTION_PROFILO.equals(action)) {
       apriProfilo();
+    } else if (MainApp.ACTION_LOGOUT.equals(action)) {
+      eseguiLogout();
     } else if (MainApp.ACTION_PUBBLICA.equals(action)) {
       apriPubblicaAnnuncio();
     } else if (MainApp.ACTION_RICERCA.equals(action)) {
@@ -89,6 +111,9 @@ public class MainController implements ActionListener {
     LoginForm loginForm = new LoginForm();
     loginForm.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
     new LoginController(loginForm, new Runnable() {
+      /**
+       * {@inheritDoc}
+       */
       @Override
       public void run() {
         view.setNavigazioneAbilitata(true);
@@ -100,6 +125,9 @@ public class MainController implements ActionListener {
     });
 
     loginForm.addWindowListener(new WindowAdapter() {
+      /**
+       * {@inheritDoc}
+       */
       @Override
       public void windowClosed(WindowEvent e) {
         if (SessionManager.getInstance().getUtente() == null) {
@@ -117,7 +145,7 @@ public class MainController implements ActionListener {
   private void apriProfilo() {
     Profilo profilo = new Profilo();
     new ProfiloController(profilo);
-    profilo.setVisible(true);
+    WindowManager.open(view, profilo);
   }
 
   /**
@@ -125,7 +153,7 @@ public class MainController implements ActionListener {
    */
   private void apriPubblicaAnnuncio() {
     PubblicaAnnuncio pubblicaAnnuncio = new PubblicaAnnuncio();
-    pubblicaAnnuncio.setVisible(true);
+    WindowManager.open(view, pubblicaAnnuncio);
   }
 
   /**
@@ -174,6 +202,12 @@ public class MainController implements ActionListener {
     view.mostraRisultatiRicerca(risultati, this);
   }
 
+  /**
+   * Converte testo prezzo in valore numerico, supportando virgola come separatore.
+   *
+   * @param prezzoRaw testo prezzo
+   * @return valore numerico o null se non valido
+   */
   private Double parsePrezzoMax(String prezzoRaw) {
     if (prezzoRaw == null) {
       return null;
@@ -190,6 +224,13 @@ public class MainController implements ActionListener {
     }
   }
 
+  /**
+   * Verifica se annuncio contiene il testo in titolo o descrizione.
+   *
+   * @param annuncio annuncio da verificare
+   * @param testo testo filtro
+   * @return true se il testo corrisponde ai campi
+   */
   private boolean matchesTesto(Annuncio annuncio, String testo) {
     if (testo == null || testo.isEmpty()) {
       return true;
@@ -200,6 +241,13 @@ public class MainController implements ActionListener {
     return titolo.contains(query) || descrizione.contains(query);
   }
 
+  /**
+   * Verifica se annuncio appartiene alla categoria selezionata.
+   *
+   * @param annuncio annuncio da verificare
+   * @param categoria categoria filtro
+   * @return true se la categoria corrisponde
+   */
   private boolean matchesCategoria(Annuncio annuncio, String categoria) {
     if (categoria == null || categoria.trim().isEmpty() || "Tutte".equalsIgnoreCase(categoria.trim())) {
       return true;
@@ -208,6 +256,13 @@ public class MainController implements ActionListener {
     return annuncioCategoria.equalsIgnoreCase(categoria.trim());
   }
 
+  /**
+   * Verifica se annuncio appartiene al tipo selezionato.
+   *
+   * @param annuncio annuncio da verificare
+   * @param tipo tipo filtro
+   * @return true se il tipo corrisponde
+   */
   private boolean matchesTipo(Annuncio annuncio, String tipo) {
     if (tipo == null || tipo.trim().isEmpty() || "Tutti".equalsIgnoreCase(tipo.trim())) {
       return true;
@@ -216,6 +271,13 @@ public class MainController implements ActionListener {
     return annuncioTipo.equalsIgnoreCase(tipo.trim());
   }
 
+  /**
+   * Verifica filtro prezzo massimo per annuncio.
+   *
+   * @param annuncio annuncio da verificare
+   * @param prezzoMax prezzo massimo
+   * @return true se compatibile con il filtro
+   */
   private boolean matchesPrezzo(Annuncio annuncio, Double prezzoMax) {
     if (prezzoMax == null) {
       return true;
@@ -226,9 +288,22 @@ public class MainController implements ActionListener {
     return ((Vendita) annuncio).getPrezzo() <= prezzoMax;
   }
 
+  /**
+   * Ripristina filtri ricerca e ricarica annunci in evidenza.
+   */
   private void resetRicerca() {
     view.resetFiltri();
     caricaAnnunciInEvidenza();
+  }
+
+  /**
+   * Esegue logout e mostra login.
+   */
+  private void eseguiLogout() {
+    SessionManager.getInstance().logout();
+    view.setNavigazioneAbilitata(false);
+    view.setTitoloUtente(null);
+    mostraLogin();
   }
 
   /**
@@ -296,7 +371,7 @@ public class MainController implements ActionListener {
     }
     Annuncio annuncio = (Annuncio) data;
     DettaglioAnnuncio dettaglio = new DettaglioAnnuncio(annuncio);
-    dettaglio.setVisible(true);
+    WindowManager.open(view, dettaglio);
   }
 
   /**

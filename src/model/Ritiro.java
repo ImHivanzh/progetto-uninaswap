@@ -1,13 +1,37 @@
 package model;
 import java.util.Date;
 
+/**
+ * Modello dati ritiro.
+ */
 public class Ritiro {
+    /**
+     * Identificativo ritiro.
+     */
     private int idRitiro;
+    /**
+     * Luogo ritiro.
+     */
     private String sede;
+    /**
+     * Orario ritiro.
+     */
     private String orario;
+    /**
+     * Data ritiro.
+     */
     private Date data;
+    /**
+     * Numero telefono contatto.
+     */
     private String numeroTelefono;
+    /**
+     * Flag ritiro completato.
+     */
     private boolean ritirato;
+    /**
+     * Annuncio associato.
+     */
     private Annuncio annuncio;
 
     /**

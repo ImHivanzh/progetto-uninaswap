@@ -10,10 +10,22 @@ import exception.DatabaseException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Controller per invio recensioni.
+ */
 public class ScriviRecensioneController {
 
+  /**
+   * Vista recensione.
+   */
   private final ScriviRecensione view;
+  /**
+   * DAO recensioni.
+   */
   private final RecensioneDAO recensioneDAO;
+  /**
+   * ID utente destinatario recensione.
+   */
   private final int idUtenteDestinatario;
 
   /**
@@ -34,6 +46,9 @@ public class ScriviRecensioneController {
    */
   private void initListeners() {
     this.view.addInviaListener(new ActionListener() {
+      /**
+       * {@inheritDoc}
+       */
       @Override
       public void actionPerformed(ActionEvent e) {
         inviaRecensione();

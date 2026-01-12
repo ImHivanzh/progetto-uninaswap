@@ -1,26 +1,84 @@
 package gui;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 
+/**
+ * Vista profilo utente.
+ */
 public class Profilo extends BaseFrame {
+  /**
+   * Pannello principale.
+   */
   private JPanel mainPanel;
+  /**
+   * Etichetta titolo.
+   */
   private JLabel lblTitolo;
+  /**
+   * Etichetta username.
+   */
   private JLabel lblUsername;
+  /**
+   * Etichetta email.
+   */
   private JLabel lblEmail;
+  /**
+   * Etichetta telefono.
+   */
   private JLabel lblTelefono;
+  /**
+   * Etichetta media voto.
+   */
   private JLabel lblMediaVoto;
+  /**
+   * Pannello tab.
+   */
   private JTabbedPane tabbedPane;
+  /**
+   * Tabella recensioni.
+   */
   private JTable tableRecensioni;
+  /**
+   * Tabella annunci.
+   */
   private JTable tableAnnunci;
+  /**
+   * Tabella proposte ricevute.
+   */
   private JTable tableProposteRicevute;
+  /**
+   * Tabella proposte inviate.
+   */
   private JTable tableProposteInviate;
+  /**
+   * Pulsante recensioni ricevute.
+   */
+  private JButton btnRecensioneRicevuta;
+  /**
+   * Pulsante recensioni inviate.
+   */
+  private JButton btnRecensioneInviata;
 
+  /**
+   * Modello tabella recensioni.
+   */
   private DefaultTableModel modelRecensioni;
+  /**
+   * Modello tabella annunci.
+   */
   private DefaultTableModel modelAnnunci;
+  /**
+   * Modello tabella proposte ricevute.
+   */
   private DefaultTableModel modelProposteRicevute;
+  /**
+   * Modello tabella proposte inviate.
+   */
   private DefaultTableModel modelProposteInviate;
 
   /**
@@ -43,7 +101,13 @@ public class Profilo extends BaseFrame {
    */
   private void setupTables() {
     modelRecensioni = new DefaultTableModel(new Object[]{"Nome utente", "Voto", "Descrizione"}, 0) {
-      @Override public boolean isCellEditable(int row, int col) { return false; }
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public boolean isCellEditable(int row, int col) {
+        return false;
+      }
     };
     tableRecensioni.setModel(modelRecensioni);
     tableRecensioni.getColumnModel().getColumn(1).setMaxWidth(80);
@@ -52,7 +116,13 @@ public class Profilo extends BaseFrame {
     tableRecensioni.getTableHeader().setReorderingAllowed(false);
 
     modelAnnunci = new DefaultTableModel(new Object[]{"Titolo", "Categoria", "Tipo"}, 0) {
-      @Override public boolean isCellEditable(int row, int col) { return false; }
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public boolean isCellEditable(int row, int col) {
+        return false;
+      }
     };
     tableAnnunci.setModel(modelAnnunci);
     tableAnnunci.setRowHeight(25);
@@ -61,21 +131,73 @@ public class Profilo extends BaseFrame {
 
     modelProposteRicevute = new DefaultTableModel(
             new Object[]{"Da", "Annuncio", "Tipo", "Dettaglio", "Stato"}, 0) {
-      @Override public boolean isCellEditable(int row, int col) { return false; }
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public boolean isCellEditable(int row, int col) {
+        return false;
+      }
     };
     tableProposteRicevute.setModel(modelProposteRicevute);
     tableProposteRicevute.setRowHeight(25);
     tableProposteRicevute.getTableHeader().setResizingAllowed(false);
     tableProposteRicevute.getTableHeader().setReorderingAllowed(false);
+    applyStatoRenderer(tableProposteRicevute, 4);
 
     modelProposteInviate = new DefaultTableModel(
             new Object[]{"A", "Annuncio", "Tipo", "Dettaglio", "Stato"}, 0) {
-      @Override public boolean isCellEditable(int row, int col) { return false; }
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public boolean isCellEditable(int row, int col) {
+        return false;
+      }
     };
     tableProposteInviate.setModel(modelProposteInviate);
     tableProposteInviate.setRowHeight(25);
     tableProposteInviate.getTableHeader().setResizingAllowed(false);
     tableProposteInviate.getTableHeader().setReorderingAllowed(false);
+    applyStatoRenderer(tableProposteInviate, 4);
+  }
+
+  /**
+   * Applica renderer per stato alle celle della colonna indicata.
+   *
+   * @param table tabella target
+   * @param colIndex indice colonna
+   */
+  private void applyStatoRenderer(JTable table, int colIndex) {
+    if (table == null) {
+      return;
+    }
+    DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Component getTableCellRendererComponent(
+              JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        Component comp = super.getTableCellRendererComponent(
+                table, value, isSelected, hasFocus, row, column);
+        if (!isSelected) {
+          String testo = value != null ? value.toString().trim().toLowerCase() : "";
+          if (testo.startsWith("accettata")) {
+            comp.setForeground(new Color(0, 140, 0));
+          } else if (testo.startsWith("rifiutato")) {
+            comp.setForeground(new Color(180, 0, 0));
+          } else if (testo.startsWith("in attesa")) {
+            comp.setForeground(new Color(200, 140, 0));
+          } else {
+            comp.setForeground(table.getForeground());
+          }
+        }
+        comp.setFont(comp.getFont().deriveFont(Font.BOLD));
+        return comp;
+      }
+    };
+    table.getColumnModel().getColumn(colIndex).setCellRenderer(renderer);
   }
 
   /**
@@ -103,6 +225,46 @@ public class Profilo extends BaseFrame {
    */
   public void addTableProposteInviateListener(MouseListener listener) {
     tableProposteInviate.addMouseListener(listener);
+  }
+
+  /**
+   * Aggiunge listener a pulsante recensione proposte ricevute.
+   *
+   * @param listener azione listener
+   */
+  public void addRecensioneRicevutaListener(ActionListener listener) {
+    if (btnRecensioneRicevuta != null) {
+      btnRecensioneRicevuta.addActionListener(listener);
+    }
+  }
+
+  /**
+   * Aggiunge listener a pulsante recensione proposte inviate.
+   *
+   * @param listener azione listener
+   */
+  public void addRecensioneInviataListener(ActionListener listener) {
+    if (btnRecensioneInviata != null) {
+      btnRecensioneInviata.addActionListener(listener);
+    }
+  }
+
+  /**
+   * Restituisce riga selezionata proposte ricevute.
+   *
+   * @return indice riga o -1
+   */
+  public int getSelectedPropostaRicevutaRow() {
+    return tableProposteRicevute != null ? tableProposteRicevute.getSelectedRow() : -1;
+  }
+
+  /**
+   * Restituisce riga selezionata proposte inviate.
+   *
+   * @return indice riga o -1
+   */
+  public int getSelectedPropostaInviataRow() {
+    return tableProposteInviate != null ? tableProposteInviate.getSelectedRow() : -1;
   }
 
   /**
@@ -212,13 +374,28 @@ public class Profilo extends BaseFrame {
    * @param media valutazione media
    */
   public void setMediaVoto(double media) {
-    String val = String.format("%.1f / 5", media);
-    lblMediaVoto.setText(val);
+    int filled = (int) Math.round(media);
+    if (filled < 0) {
+      filled = 0;
+    } else if (filled > 5) {
+      filled = 5;
+    }
+    StringBuilder stelle = new StringBuilder(5);
+    for (int i = 0; i < 5; i++) {
+      stelle.append(i < filled ? "\u2605" : "\u2606");
+    }
+    lblMediaVoto.setText(stelle.toString());
+    lblMediaVoto.setToolTipText(String.format("%.1f / 5", media));
     if (media >= 4) lblMediaVoto.setForeground(new Color(0, 150, 0));
     else if (media >= 2.5) lblMediaVoto.setForeground(new Color(200, 150, 0));
     else lblMediaVoto.setForeground(Color.RED);
   }
 
+  /**
+   * Rimuove tab se presente con titolo indicato.
+   *
+   * @param titolo titolo tab
+   */
   private void rimuoviTabSePresente(String titolo) {
     for (int i = tabbedPane.getTabCount() - 1; i >= 0; i--) {
       if (titolo.equals(tabbedPane.getTitleAt(i))) {

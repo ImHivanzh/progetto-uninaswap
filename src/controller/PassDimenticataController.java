@@ -8,9 +8,18 @@ import exception.DatabaseException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Controller per recupero password.
+ */
 public class PassDimenticataController {
 
+    /**
+     * Vista recupero password.
+     */
     private final PassDimenticataForm view;
+    /**
+     * DAO utenti.
+     */
     private final UtenteDAO utenteDAO;
 
     /**
@@ -29,6 +38,9 @@ public class PassDimenticataController {
      */
     private void initListeners() {
         this.view.addInvioListener(new ActionListener() {
+            /**
+             * {@inheritDoc}
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 gestisciCambioPassword();

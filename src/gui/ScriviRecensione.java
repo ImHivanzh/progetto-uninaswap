@@ -6,16 +6,43 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Form per scrivere una recensione.
+ */
 public class ScriviRecensione extends BaseFrame {
+    /**
+     * Pannello principale.
+     */
     private JPanel mainPanel;
+    /**
+     * Pannello stelle.
+     */
     private JPanel pnlStelle;
+    /**
+     * Area testo descrizione.
+     */
     private JTextArea txtDescrizione;
+    /**
+     * Pulsante invio.
+     */
     private JButton btnInvia;
 
+    /**
+     * Pulsanti stelle voto.
+     */
     private final JButton[] stelleButtons = new JButton[5];
+    /**
+     * Voto corrente selezionato.
+     */
     private int votoCorrente = 5;
 
+    /**
+     * Colore stella selezionata.
+     */
     private final Color COLORE_PIENA = new Color(255, 200, 0);
+    /**
+     * Colore stella non selezionata.
+     */
     private final Color COLORE_VUOTA = Color.LIGHT_GRAY;
 
     /**

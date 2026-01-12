@@ -14,13 +14,22 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DAO per accesso dati proposte.
+ */
 public class PropostaDAO {
 
+    /**
+     * Connessione al database.
+     */
     private final Connection con;
+    /**
+     * Query per proposte ricevute.
+     */
     private static final String SQL_PROPOSTE_RICEVUTE =
             "SELECT a.idannuncio, a.titolo, a.tipoannuncio, u.nomeutente AS utente, " +
             "       ('Offerta: ' || COALESCE(CAST(v.controofferta AS VARCHAR), 'N/A')) AS dettaglio, " +
-            "       v.accettato, v.inattesa " +
+            "       v.accettato, v.inattesa, CAST(NULL AS bytea) AS immagine " +
             "  FROM vendita v " +
             "  JOIN annuncio a ON v.idannuncio = a.idannuncio " +
             "  JOIN utente u ON v.idutente = u.idutente " +
@@ -28,7 +37,7 @@ public class PropostaDAO {
             "UNION ALL " +
             "SELECT a.idannuncio, a.titolo, a.tipoannuncio, u.nomeutente AS utente, " +
             "       ('Scambio proposto: ' || COALESCE(s.propscambio, 'N/A')) AS dettaglio, " +
-            "       s.accettato, s.inattesa " +
+            "       s.accettato, s.inattesa, s.immagine AS immagine " +
             "  FROM scambio s " +
             "  JOIN annuncio a ON s.idannuncio = a.idannuncio " +
             "  JOIN utente u ON s.idutente = u.idutente " +
@@ -36,17 +45,20 @@ public class PropostaDAO {
             "UNION ALL " +
             "SELECT a.idannuncio, a.titolo, a.tipoannuncio, u.nomeutente AS utente, " +
             "       ('Richiesta regalo' || COALESCE(' del ' || r.dataprenotazione, '')) AS dettaglio, " +
-            "       r.accettato, r.inattesa " +
+            "       r.accettato, r.inattesa, CAST(NULL AS bytea) AS immagine " +
             "  FROM regalo r " +
             "  JOIN annuncio a ON r.idannuncio = a.idannuncio " +
             "  JOIN utente u ON r.idutente = u.idutente " +
             " WHERE a.idutente = ? " +
             "ORDER BY titolo";
 
+    /**
+     * Query per proposte inviate.
+     */
     private static final String SQL_PROPOSTE_INVIATE =
             "SELECT a.idannuncio, a.titolo, a.tipoannuncio, u.nomeutente AS utente, " +
             "       ('Offerta: ' || COALESCE(CAST(v.controofferta AS VARCHAR), 'N/A')) AS dettaglio, " +
-            "       v.accettato, v.inattesa " +
+            "       v.accettato, v.inattesa, CAST(NULL AS bytea) AS immagine " +
             "  FROM vendita v " +
             "  JOIN annuncio a ON v.idannuncio = a.idannuncio " +
             "  JOIN utente u ON a.idutente = u.idutente " +
@@ -54,7 +66,7 @@ public class PropostaDAO {
             "UNION ALL " +
             "SELECT a.idannuncio, a.titolo, a.tipoannuncio, u.nomeutente AS utente, " +
             "       ('Scambio proposto: ' || COALESCE(s.propscambio, 'N/A')) AS dettaglio, " +
-            "       s.accettato, s.inattesa " +
+            "       s.accettato, s.inattesa, s.immagine AS immagine " +
             "  FROM scambio s " +
             "  JOIN annuncio a ON s.idannuncio = a.idannuncio " +
             "  JOIN utente u ON a.idutente = u.idutente " +
@@ -62,7 +74,7 @@ public class PropostaDAO {
             "UNION ALL " +
             "SELECT a.idannuncio, a.titolo, a.tipoannuncio, u.nomeutente AS utente, " +
             "       ('Richiesta regalo' || COALESCE(' del ' || r.dataprenotazione, '')) AS dettaglio, " +
-            "       r.accettato, r.inattesa " +
+            "       r.accettato, r.inattesa, CAST(NULL AS bytea) AS immagine " +
             "  FROM regalo r " +
             "  JOIN annuncio a ON r.idannuncio = a.idannuncio " +
             "  JOIN utente u ON a.idutente = u.idutente " +
@@ -147,7 +159,7 @@ public class PropostaDAO {
             ps.setBoolean(5, false);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new DatabaseException("Errore durante l'inserimento della proposta di scambio", e);
+            throw new DatabaseException("Errore durante l'inserimento della proposta di scambio" + e.getMessage(), e);
         }
     }
 
@@ -223,7 +235,8 @@ public class PropostaDAO {
                             rs.getString("utente"),
                             rs.getString("dettaglio"),
                             rs.getBoolean("accettato"),
-                            rs.getBoolean("inattesa")
+                            rs.getBoolean("inattesa"),
+                            rs.getBytes("immagine")
                     );
                     proposte.add(proposta);
                 }

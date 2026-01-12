@@ -3,11 +3,29 @@ package gui;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 
+/**
+ * Form per recupero password.
+ */
 public class PassDimenticataForm extends JFrame {
+    /**
+     * Pannello principale.
+     */
     private JPanel mainPanel;
+    /**
+     * Campo username.
+     */
     private JTextField UserField;
+    /**
+     * Campo nuova password.
+     */
     private JPasswordField NPassField;
+    /**
+     * Campo conferma password.
+     */
     private JPasswordField CPassField;
+    /**
+     * Pulsante invio.
+     */
     private JButton loginButton;
 
     /**

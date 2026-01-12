@@ -9,14 +9,35 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+/**
+ * Controller per dialogo proposta.
+ */
 public class FaiPropostaController {
 
+  /**
+   * Vista dialogo proposta.
+   */
   private final FaiPropostaDialog view;
+  /**
+   * Tipo annuncio di riferimento.
+   */
   private final TipoAnnuncio tipoAnnuncio;
 
+  /**
+   * Flag conferma proposta.
+   */
   private boolean confermato = false;
+  /**
+   * Prezzo offerto.
+   */
   private Double offertaPrezzo = null;
+  /**
+   * Testo descrizione proposta.
+   */
   private String descrizioneProposta = "";
+  /**
+   * Immagine proposta in bytes.
+   */
   private byte[] immagineProposta = null;
 
   /**

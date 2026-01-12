@@ -1,5 +1,8 @@
 package exception;
 
+/**
+ * Eccezione per errori legati al database.
+ */
 public class DatabaseException extends Exception {
 
   /**

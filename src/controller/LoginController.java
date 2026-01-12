@@ -7,6 +7,7 @@ import gui.RegistrazioneForm;
 import dao.UtenteDAO;
 import model.Utente;
 import utils.SessionManager;
+import utils.WindowManager;
 import exception.DatabaseException;
 
 import java.awt.event.ActionEvent;
@@ -14,10 +15,22 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Controller per autenticazione utente.
+ */
 public class LoginController {
 
+  /**
+   * Vista login.
+   */
   private final LoginForm view;
+  /**
+   * DAO utenti.
+   */
   private final UtenteDAO utenteDAO;
+  /**
+   * Callback per login avvenuto.
+   */
   private final Runnable onLoginSuccess;
 
   /**
@@ -47,6 +60,9 @@ public class LoginController {
    */
   private void initListeners() {
     this.view.addLoginListener(new ActionListener() {
+      /**
+       * {@inheritDoc}
+       */
       @Override
       public void actionPerformed(ActionEvent e) {
         controllaLogin();
@@ -54,20 +70,26 @@ public class LoginController {
     });
 
     this.view.addRegisterListener(new MouseAdapter() {
+      /**
+       * {@inheritDoc}
+       */
       @Override
       public void mouseClicked(MouseEvent e) {
         RegistrazioneForm regForm = new RegistrazioneForm();
         new RegistrazioneController(regForm);
-        regForm.setVisible(true);
+        WindowManager.open(view, regForm);
       }
     });
 
     this.view.addForgotPassListener(new MouseAdapter() {
+      /**
+       * {@inheritDoc}
+       */
       @Override
       public void mouseClicked(MouseEvent e) {
         PassDimenticataForm passForm = new PassDimenticataForm();
         new PassDimenticataController(passForm);
-        passForm.setVisible(true);
+        WindowManager.open(view, passForm);
       }
     });
   }

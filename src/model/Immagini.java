@@ -1,9 +1,24 @@
 package model;
 
+/**
+ * Modello dati immagine.
+ */
 public class Immagini {
+    /**
+     * Identificativo immagine.
+     */
     private int idImmagine;
+    /**
+     * Contenuto immagine in bytes.
+     */
     private byte[] immagine;
+    /**
+     * Annuncio associato.
+     */
     private Annuncio annuncio;
+    /**
+     * Scambio associato.
+     */
     private Scambio scambio;
 
     /**

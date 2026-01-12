@@ -16,3 +16,13 @@ Meanwhile, the compiled output files will be generated in the `bin` folder by de
 ## Dependency Management
 
 The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+
+## Javadoc
+
+Generate API documentation into `docs/javadoc`:
+
+```powershell
+.\scripts\generate-javadoc.ps1
+```
+
+The script generates Javadoc with the Italian UI locale and UTF-8 encoding.

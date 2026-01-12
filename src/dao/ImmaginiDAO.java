@@ -9,8 +9,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DAO per accesso dati immagini.
+ */
 public class ImmaginiDAO {
 
+  /**
+   * Connessione al database.
+   */
   private Connection con;
 
   /**

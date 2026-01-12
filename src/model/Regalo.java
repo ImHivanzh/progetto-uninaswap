@@ -3,6 +3,9 @@ package model;
 import model.enums.Categoria;
 import model.enums.TipoAnnuncio;
 
+/**
+ * Modello annuncio regalo.
+ */
 public class Regalo extends Annuncio {
 
     /**

@@ -12,6 +12,9 @@ import utils.SessionManager;
 
 import javax.swing.SwingUtilities;
 
+/**
+ * Entry point per avvio applicazione.
+ */
 public class App {
     /**
      * Avvia applicazione e mostra finestra profilo in EDT.
@@ -23,6 +26,9 @@ public class App {
         FlatLightLaf.setup();
 
         SwingUtilities.invokeLater(new Runnable() {
+            /**
+             * {@inheritDoc}
+             */
             @Override
             public void run() {
                 LoginForm frame = new LoginForm();
