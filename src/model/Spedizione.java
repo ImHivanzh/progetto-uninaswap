@@ -133,9 +133,9 @@ public class Spedizione {
     public void setDataArrivo(Date dataArrivo) { this.dataArrivo = dataArrivo; }
 
     /**
-     * Restituisce se spedizione e stata inviate.
+     * Restituisce se la spedizione è stata inviata.
      *
-     * @return true quando inviate
+     * @return true quando inviata
      */
     public boolean isSpedito() { return spedito; }
 

@@ -38,7 +38,7 @@ public class RitiroDAO {
    * Verifica se ritiro esiste per annuncio.
    *
    * @param idAnnuncio id annuncio
-   * @return true quando esiste gia un ritiro
+   * @return true quando esiste già un ritiro
    * @throws DatabaseException quando query fallisce
    */
   public boolean esistePerAnnuncio(int idAnnuncio) throws DatabaseException {
@@ -105,7 +105,7 @@ public class RitiroDAO {
           model.Ritiro ritiro = new model.Ritiro();
           ritiro.setIdRitiro(rs.getInt("idritiro"));
           ritiro.setSede(rs.getString("sede"));
-          ritiro.setOrario(rs.getString("orario")); // Assuming orario is stored as a string, check DB schema.
+          ritiro.setOrario(rs.getString("orario")); // Si assume che orario sia salvato come stringa: verificare lo schema DB.
           ritiro.setData(rs.getDate("data"));
           ritiro.setNumeroTelefono(rs.getString("numerotelefono"));
           ritiro.setRitirato(rs.getBoolean("ritirato"));

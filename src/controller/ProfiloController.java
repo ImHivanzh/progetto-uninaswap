@@ -397,7 +397,7 @@ public class ProfiloController {
 
         int scelta = JOptionPane.showOptionDialog(
                 view,
-                dettaglio + "\n\nQuesta proposta e stata accettata.",
+                dettaglio + "\n\nQuesta proposta è stata accettata.",
                 "Proposta ricevuta",
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.INFORMATION_MESSAGE,
@@ -414,7 +414,7 @@ public class ProfiloController {
               return;
             case "Dettagli consegna":
               visualizzaDettagliConsegna(proposta);
-              break; // continue loop
+              break; // continua ciclo
             case "Ho spedito":
               try {
                 if (spedizioneDAO.aggiornaStatoSpedizione(idAnnuncio, true)) {
@@ -445,13 +445,13 @@ public class ProfiloController {
               return;
             case "Mostra immagine":
               mostraImmagineProposta(proposta);
-              break; // continue loop
+              break; // continua ciclo
             case "Chiudi":
             default:
               return;
           }
         } else {
-          return; // User closed the dialog
+          return; // Utente ha chiuso la finestra
         }
       }
     }
@@ -461,7 +461,7 @@ public class ProfiloController {
           Object[] opzioni = {"Mostra immagine", "Chiudi"};
           int scelta = JOptionPane.showOptionDialog(
                   view,
-                  dettaglio + "\n\nQuesta proposta e stata rifiutata.",
+                  dettaglio + "\n\nQuesta proposta è stata rifiutata.",
                   "Proposta ricevuta",
                   JOptionPane.DEFAULT_OPTION,
                   JOptionPane.INFORMATION_MESSAGE,
@@ -477,7 +477,7 @@ public class ProfiloController {
       } else {
         JOptionPane.showMessageDialog(
                 view,
-                dettaglio + "\n\nQuesta proposta e stata rifiutata.",
+                dettaglio + "\n\nQuesta proposta è stata rifiutata.",
                 "Proposta ricevuta",
                 JOptionPane.INFORMATION_MESSAGE);
       }
@@ -565,7 +565,7 @@ public class ProfiloController {
 
         int scelta = JOptionPane.showOptionDialog(
                 view,
-                dettaglio + "\n\nLa proposta e stata accettata.",
+                dettaglio + "\n\nLa proposta è stata accettata.",
                 "Proposta inviata",
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.INFORMATION_MESSAGE,
@@ -582,16 +582,16 @@ public class ProfiloController {
             case "Scegli consegna":
             case "Dettagli consegna":
               inserisciDettagliConsegna(proposta);
-              break; // continue loop
+              break; // continua ciclo
             case "Mostra immagine":
               mostraImmagineProposta(proposta);
-              break; // continue loop
+              break; // continua ciclo
             case "Chiudi":
             default:
               return;
           }
         } else {
-          return; // User closed the dialog
+          return; // Utente ha chiuso la finestra
         }
       }
     }
@@ -601,7 +601,7 @@ public class ProfiloController {
           Object[] opzioni = {"Mostra immagine", "Chiudi"};
           int scelta = JOptionPane.showOptionDialog(
                   view,
-                  dettaglio + "\n\nLa proposta e stata rifiutata.",
+                  dettaglio + "\n\nLa proposta è stata rifiutata.",
                   "Proposta inviata",
                   JOptionPane.DEFAULT_OPTION,
                   JOptionPane.INFORMATION_MESSAGE,
@@ -617,14 +617,14 @@ public class ProfiloController {
       } else {
         JOptionPane.showMessageDialog(
                 view,
-                dettaglio + "\n\nLa proposta e stata rifiutata.",
+                dettaglio + "\n\nLa proposta è stata rifiutata.",
                 "Proposta inviata",
                 JOptionPane.INFORMATION_MESSAGE);
       }
       return;
     }
 
-    // When the proposal is pending, only allow viewing the image or closing the dialog.
+    // Quando la proposta è in attesa, consenti solo la visualizzazione dell'immagine o la chiusura del dialogo.
     while (true) {
       Object[] opzioni = mostraImmagine
               ? new Object[]{"Mostra immagine", "Chiudi"}
