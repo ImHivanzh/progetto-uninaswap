@@ -318,9 +318,6 @@ public class MainController implements ActionListener {
         continue;
       }
       byte[] immagine = estraiPrimaImmagine(annuncio);
-      if (immagine == null) {
-        continue;
-      }
       evidenza.add(new MainApp.AnnuncioEvidenza(annuncio, immagine));
     }
 

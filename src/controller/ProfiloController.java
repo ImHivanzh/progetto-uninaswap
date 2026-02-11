@@ -15,6 +15,7 @@ import utils.SessionManager;
 import utils.WindowManager;
 import exception.DatabaseException;
 import gui.DettaglioAnnuncio;
+import gui.ModificaPropostaDialog;
 import gui.Profilo;
 import gui.ScriviRecensione;
 
@@ -27,6 +28,7 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -53,6 +55,8 @@ public class ProfiloController {
    * DAO proposte.
    */
   private final PropostaDAO propostaDAO;
+  private final SpedizioneDAO spedizioneDAO;
+  private final RitiroDAO ritiroDAO;
   /**
    * Utente target del profilo.
    */
@@ -95,6 +99,8 @@ public class ProfiloController {
     this.recensioneDAO = new RecensioneDAO();
     this.annuncioDAO = new AnnuncioDAO();
     this.propostaDAO = creaPropostaDAO();
+    this.spedizioneDAO = creaSpedizioneDAO();
+    this.ritiroDAO = creaRitiroDAO();
     this.proposteRicevute = Collections.emptyList();
     this.proposteInviate = Collections.emptyList();
 
@@ -122,6 +128,7 @@ public class ProfiloController {
       return new PropostaDAO();
     } catch (DatabaseException e) {
       view.mostraErrore("Errore durante la connessione per le proposte: " + e.getMessage());
+      e.printStackTrace();
       return null;
     }
   }
@@ -136,6 +143,7 @@ public class ProfiloController {
       return new SpedizioneDAO();
     } catch (DatabaseException e) {
       view.mostraErrore("Errore durante la connessione per la spedizione: " + e.getMessage());
+      e.printStackTrace();
       return null;
     }
   }
@@ -150,6 +158,7 @@ public class ProfiloController {
       return new RitiroDAO();
     } catch (DatabaseException e) {
       view.mostraErrore("Errore durante la connessione per il ritiro: " + e.getMessage());
+      e.printStackTrace();
       return null;
     }
   }
@@ -208,6 +217,8 @@ public class ProfiloController {
 
     view.addRecensioneRicevutaListener(e -> handleRecensioneDaProposta(true));
     view.addRecensioneInviataListener(e -> handleRecensioneDaProposta(false));
+    view.addModificaPropostaListener(e -> handleModificaProposta());
+    view.addAnnullaPropostaListener(e -> handleAnnullaProposta());
   }
 
   /**
@@ -269,7 +280,7 @@ public class ProfiloController {
                   proposta.titoloAnnuncio(),
                   proposta.tipoAnnuncio(),
                   proposta.dettaglio(),
-                  formatStato(proposta.accettata(), proposta.inattesa())
+                  formatStato(proposta)
           );
         }
 
@@ -279,7 +290,7 @@ public class ProfiloController {
                   proposta.titoloAnnuncio(),
                   proposta.tipoAnnuncio(),
                   proposta.dettaglio(),
-                  formatStato(proposta.accettata(), proposta.inattesa())
+                  formatStato(proposta)
           );
         }
       }
@@ -291,20 +302,36 @@ public class ProfiloController {
   }
 
   /**
-   * Restituisce localizzato etichetta stato per proposta.
+   * Restituisce etichetta stato per proposta.
    *
-   * @param accettata accettata flag
-   * @param inattesa in attesa flag
+   * @param proposta riepilogo proposta
    * @return etichetta stato
    */
-  private String formatStato(boolean accettata, boolean inattesa) {
-    if (accettata) {
-      return "Accettata";
+  private String formatStato(PropostaRiepilogo proposta) {
+    if (!proposta.accettata()) {
+      return proposta.inattesa() ? "In attesa" : "Rifiutato";
     }
-    if (inattesa) {
+
+    if (spedizioneDAO == null || ritiroDAO == null) {
       return "In attesa";
     }
-    return "Rifiutato";
+
+    try {
+      model.Spedizione spedizione = spedizioneDAO.getSpedizioneByAnnuncio(proposta.idAnnuncio());
+      model.Ritiro ritiro = ritiroDAO.getRitiroByAnnuncio(proposta.idAnnuncio());
+
+      if (spedizione != null) {
+        return spedizione.isSpedito() ? "Concluso" : "Da spedire";
+      }
+      if (ritiro != null) {
+        return ritiro.isRitirato() ? "Concluso" : "Da ritirare";
+      }
+      return "In attesa";
+    } catch (DatabaseException e) {
+      view.mostraErrore("Errore nel controllo stato proposta: " + e.getMessage());
+      e.printStackTrace();
+      return "In attesa";
+    }
   }
 
   /**
@@ -325,10 +352,49 @@ public class ProfiloController {
     String dettaglio = buildDettaglioProposta(proposta, "Da");
 
     if (proposta.accettata()) {
+      boolean isSpedizioneNonSpedita = false;
+      boolean isRitiroNonRitirato = false;
+      int idAnnuncio = proposta.idAnnuncio();
+
+      if (spedizioneDAO != null || ritiroDAO != null) {
+        try {
+          if (spedizioneDAO != null) {
+            model.Spedizione spedizione = spedizioneDAO.getSpedizioneByAnnuncio(idAnnuncio);
+            if (spedizione != null && !spedizione.isSpedito()) {
+              isSpedizioneNonSpedita = true;
+            }
+          }
+          if (ritiroDAO != null) {
+            model.Ritiro ritiro = ritiroDAO.getRitiroByAnnuncio(idAnnuncio);
+            if (ritiro != null && !ritiro.isRitirato()) {
+              isRitiroNonRitirato = true;
+            }
+          }
+        } catch (DatabaseException e) {
+          view.mostraErrore("Errore nel controllo stato consegna: " + e.getMessage());
+          e.printStackTrace();
+        }
+      }
+
       while (true) {
-        Object[] opzioni = mostraImmagine
-                ? new Object[]{"Lascia recensione", "Dettagli consegna", "Mostra immagine", "Chiudi"}
-                : new Object[]{"Lascia recensione", "Dettagli consegna", "Chiudi"};
+        List<String> opzioniList = new ArrayList<>();
+        if ("Concluso".equals(formatStato(proposta))) {
+          opzioniList.add("Lascia recensione");
+        }
+        opzioniList.add("Dettagli consegna");
+        if (isSpedizioneNonSpedita) {
+          opzioniList.add("Ho spedito");
+        }
+        if (isRitiroNonRitirato) {
+          opzioniList.add("Ritirato");
+        }
+        if (mostraImmagine) {
+          opzioniList.add("Mostra immagine");
+        }
+        opzioniList.add("Chiudi");
+
+        String[] opzioni = opzioniList.toArray(new String[0]);
+
         int scelta = JOptionPane.showOptionDialog(
                 view,
                 dettaglio + "\n\nQuesta proposta e stata accettata.",
@@ -338,19 +404,55 @@ public class ProfiloController {
                 null,
                 opzioni,
                 opzioni[0]);
-        if (scelta == 0) {
-          apriScriviRecensione(proposta.utenteCoinvolto());
-          return;
+
+        // Handle button clicks by finding the chosen option in the list
+        if (scelta >= 0 && scelta < opzioni.length) {
+          String opzioneScelta = opzioni[scelta];
+          switch (opzioneScelta) {
+            case "Lascia recensione":
+              apriScriviRecensione(proposta.utenteCoinvolto());
+              return;
+            case "Dettagli consegna":
+              visualizzaDettagliConsegna(proposta);
+              break; // continue loop
+            case "Ho spedito":
+              try {
+                if (spedizioneDAO.aggiornaStatoSpedizione(idAnnuncio, true)) {
+                  view.mostraMessaggio("Spedizione aggiornata a 'spedito'.");
+                  caricaDati();
+                }
+                else {
+                  view.mostraErrore("Impossibile aggiornare lo stato della spedizione.");
+                }
+              } catch (DatabaseException e) {
+                view.mostraErrore("Errore nell'aggiornamento stato spedizione: " + e.getMessage());
+                e.printStackTrace();
+              }
+              return;
+            case "Ritirato":
+              try {
+                if (ritiroDAO.aggiornaStatoRitiro(idAnnuncio, true)) {
+                  view.mostraMessaggio("Ritiro aggiornato a 'ritirato'.");
+                  caricaDati();
+                }
+                else {
+                  view.mostraErrore("Impossibile aggiornare lo stato del ritiro.");
+                }
+              } catch (DatabaseException e) {
+                view.mostraErrore("Errore nell'aggiornamento stato ritiro: " + e.getMessage());
+                e.printStackTrace();
+              }
+              return;
+            case "Mostra immagine":
+              mostraImmagineProposta(proposta);
+              break; // continue loop
+            case "Chiudi":
+            default:
+              return;
+          }
+        } else {
+          return; // User closed the dialog
         }
-        if (scelta == 1) {
-          gestisciDettagliConsegna(proposta);
-          continue;
-        }
-        if (mostraImmagine && scelta == 2) {
-          mostraImmagineProposta(proposta);
-          continue;
-        }
-        return;
       }
     }
     if (!proposta.inattesa()) {
@@ -400,7 +502,7 @@ public class ProfiloController {
         boolean ok = aggiornaEsitoProposta(
                 proposta, proposta.utenteCoinvolto(), true, false, "Proposta accettata con successo.");
         if (ok) {
-          gestisciDettagliConsegna(proposta);
+          caricaDati();
         }
         return;
       }
@@ -435,9 +537,32 @@ public class ProfiloController {
 
     if (proposta.accettata()) {
       while (true) {
-        Object[] opzioni = mostraImmagine
-                ? new Object[]{"Lascia recensione", "Mostra immagine", "Chiudi"}
-                : new Object[]{"Lascia recensione", "Chiudi"};
+        boolean deliveryDetailsExist = false;
+        if (spedizioneDAO != null && ritiroDAO != null) {
+          try {
+            deliveryDetailsExist = spedizioneDAO.esistePerAnnuncio(proposta.idAnnuncio())
+                    || ritiroDAO.esistePerAnnuncio(proposta.idAnnuncio());
+          } catch (DatabaseException e) {
+            view.mostraErrore("Errore nel controllo stato consegna: " + e.getMessage());
+            e.printStackTrace();
+          }
+        }
+
+        List<String> opzioniList = new ArrayList<>();
+        if ("Concluso".equals(formatStato(proposta))) {
+          opzioniList.add("Lascia recensione");
+        }
+        if (!deliveryDetailsExist) {
+          opzioniList.add("Scegli consegna");
+        } else {
+          opzioniList.add("Dettagli consegna");
+        }
+        if (mostraImmagine) {
+          opzioniList.add("Mostra immagine");
+        }
+        opzioniList.add("Chiudi");
+        String[] opzioni = opzioniList.toArray(new String[0]);
+
         int scelta = JOptionPane.showOptionDialog(
                 view,
                 dettaglio + "\n\nLa proposta e stata accettata.",
@@ -447,15 +572,27 @@ public class ProfiloController {
                 null,
                 opzioni,
                 opzioni[0]);
-        if (scelta == 0) {
-          apriScriviRecensione(proposta.utenteCoinvolto());
-          return;
+
+        if (scelta >= 0 && scelta < opzioni.length) {
+          String opzioneScelta = opzioni[scelta];
+          switch (opzioneScelta) {
+            case "Lascia recensione":
+              apriScriviRecensione(proposta.utenteCoinvolto());
+              return;
+            case "Scegli consegna":
+            case "Dettagli consegna":
+              inserisciDettagliConsegna(proposta);
+              break; // continue loop
+            case "Mostra immagine":
+              mostraImmagineProposta(proposta);
+              break; // continue loop
+            case "Chiudi":
+            default:
+              return;
+          }
+        } else {
+          return; // User closed the dialog
         }
-        if (mostraImmagine && scelta == 1) {
-          mostraImmagineProposta(proposta);
-          continue;
-        }
-        return;
       }
     }
     if (!proposta.inattesa()) {
@@ -487,11 +624,12 @@ public class ProfiloController {
       return;
     }
 
+    // When the proposal is pending, only allow viewing the image or closing the dialog.
     while (true) {
       Object[] opzioni = mostraImmagine
-              ? new Object[]{"Annulla proposta", "Mostra immagine", "Chiudi"}
-              : new Object[]{"Annulla proposta", "Chiudi"};
-      Object defaultOption = mostraImmagine ? opzioni[2] : opzioni[1];
+              ? new Object[]{"Mostra immagine", "Chiudi"}
+              : new Object[]{"Chiudi"};
+      Object defaultOption = mostraImmagine ? opzioni[1] : opzioni[0];
       int scelta = JOptionPane.showOptionDialog(
               view,
               dettaglio,
@@ -502,11 +640,7 @@ public class ProfiloController {
               opzioni,
               defaultOption);
 
-      if (scelta == 0) {
-        eliminaProposta(proposta, utenteTarget.getUsername(), "Proposta annullata.");
-        return;
-      }
-      if (mostraImmagine && scelta == 1) {
+      if (mostraImmagine && scelta == 0) {
         mostraImmagineProposta(proposta);
         continue;
       }
@@ -534,8 +668,8 @@ public class ProfiloController {
     }
 
     PropostaRiepilogo proposta = lista.get(selectedRow);
-    if (!proposta.accettata()) {
-      view.mostraErrore("Puoi lasciare una recensione solo per proposte accettate.");
+    if (!"Concluso".equals(formatStato(proposta))) {
+      view.mostraErrore("Puoi lasciare una recensione solo per proposte concluse.");
       return;
     }
 
@@ -574,6 +708,7 @@ public class ProfiloController {
       return ok;
     } catch (DatabaseException e) {
       view.mostraErrore("Errore durante l'aggiornamento della proposta: " + e.getMessage());
+      e.printStackTrace();
       return false;
     }
   }
@@ -603,6 +738,7 @@ public class ProfiloController {
       }
     } catch (DatabaseException e) {
       view.mostraErrore("Errore durante l'operazione sulla proposta: " + e.getMessage());
+      e.printStackTrace();
     }
   }
 
@@ -611,25 +747,35 @@ public class ProfiloController {
    *
    * @param proposta riepilogo proposta
    */
-  private void gestisciDettagliConsegna(PropostaRiepilogo proposta) {
+  private void inserisciDettagliConsegna(PropostaRiepilogo proposta) {
     if (proposta == null) {
       return;
     }
 
-    SpedizioneDAO spedizioneDAO = creaSpedizioneDAO();
-    RitiroDAO ritiroDAO = creaRitiroDAO();
     if (spedizioneDAO == null || ritiroDAO == null) {
+      view.mostraErrore("Connessione ai servizi di spedizione/ritiro non disponibile.");
       return;
     }
 
     try {
-      if (spedizioneDAO.esistePerAnnuncio(proposta.idAnnuncio())
-              || ritiroDAO.esistePerAnnuncio(proposta.idAnnuncio())) {
-        view.mostraErrore("Dettagli consegna gia presenti per questo annuncio.");
-        return;
+      if (spedizioneDAO.esistePerAnnuncio(proposta.idAnnuncio())) {
+        model.Spedizione spedizione = spedizioneDAO.getSpedizioneByAnnuncio(proposta.idAnnuncio());
+        if (spedizione != null) {
+          mostraDettagliSpedizione(spedizione);
+          return;
+        }
+      }
+
+      if (ritiroDAO.esistePerAnnuncio(proposta.idAnnuncio())) {
+        model.Ritiro ritiro = ritiroDAO.getRitiroByAnnuncio(proposta.idAnnuncio());
+        if (ritiro != null) {
+          mostraDettagliRitiro(ritiro);
+          return;
+        }
       }
     } catch (DatabaseException e) {
       view.mostraErrore("Errore durante la verifica consegna: " + e.getMessage());
+      e.printStackTrace();
       return;
     }
 
@@ -645,9 +791,9 @@ public class ProfiloController {
             opzioni[0]);
 
     if (scelta == 0) {
-      salvaSpedizione(spedizioneDAO, proposta.idAnnuncio());
+      salvaSpedizione(proposta.idAnnuncio());
     } else if (scelta == 1) {
-      salvaRitiro(ritiroDAO, proposta.idAnnuncio());
+      salvaRitiro(proposta.idAnnuncio());
     }
   }
 
@@ -657,7 +803,7 @@ public class ProfiloController {
    * @param spedizioneDAO dao spedizione
    * @param idAnnuncio id annuncio
    */
-  private void salvaSpedizione(SpedizioneDAO spedizioneDAO, int idAnnuncio) {
+  private void salvaSpedizione(int idAnnuncio) {
     JTextField indirizzoField = new JTextField(24);
     JTextField telefonoField = new JTextField(12);
     JSpinner dataInvioSpinner = createDateSpinner();
@@ -709,14 +855,17 @@ public class ProfiloController {
                 new java.sql.Date(dataArrivo.getTime()),
                 indirizzo,
                 telefono,
-                idAnnuncio);
+                idAnnuncio,
+                utenteTarget.getIdUtente());
         if (ok) {
           view.mostraMessaggio("Dettagli spedizione salvati.");
+          caricaDati();
         } else {
           view.mostraErrore("Salvataggio spedizione non riuscito.");
         }
       } catch (DatabaseException e) {
         view.mostraErrore("Errore durante il salvataggio della spedizione: " + e.getMessage());
+        e.printStackTrace();
       }
       return;
     }
@@ -728,7 +877,7 @@ public class ProfiloController {
    * @param ritiroDAO dao ritiro
    * @param idAnnuncio id annuncio
    */
-  private void salvaRitiro(RitiroDAO ritiroDAO, int idAnnuncio) {
+  private void salvaRitiro(int idAnnuncio) {
     JTextField sedeField = new JTextField(20);
     JTextField telefonoField = new JTextField(12);
     JSpinner dataSpinner = createDateSpinner();
@@ -779,11 +928,13 @@ public class ProfiloController {
                 idAnnuncio);
         if (ok) {
           view.mostraMessaggio("Dettagli ritiro salvati.");
+          caricaDati();
         } else {
           view.mostraErrore("Salvataggio ritiro non riuscito.");
         }
       } catch (DatabaseException e) {
         view.mostraErrore("Errore durante il salvataggio del ritiro: " + e.getMessage());
+        e.printStackTrace();
       }
       return;
     }
@@ -857,7 +1008,7 @@ public class ProfiloController {
             + "\nAnnuncio: " + proposta.titoloAnnuncio()
             + "\nTipo: " + proposta.tipoAnnuncio()
             + "\nDettaglio: " + proposta.dettaglio()
-            + "\nStato: " + formatStato(proposta.accettata(), proposta.inattesa());
+            + "\nStato: " + formatStato(proposta);
   }
 
   /**
@@ -954,6 +1105,7 @@ public class ProfiloController {
       utenteDestinatario = utenteDAO.getUserByUsername(username);
     } catch (DatabaseException e) {
       view.mostraErrore("Errore durante il recupero dell'utente: " + e.getMessage());
+      e.printStackTrace();
       return;
     }
 
@@ -965,5 +1117,143 @@ public class ProfiloController {
     ScriviRecensione recensioneView = new ScriviRecensione();
     new ScriviRecensioneController(recensioneView, utenteDestinatario.getIdUtente());
     WindowManager.open(view, recensioneView);
+  }
+
+  /**
+   * Gestisce modifica proposta inviata.
+   */
+  private void handleModificaProposta() {
+    if (!mostraDatiSensibili) {
+      view.mostraErrore("Operazione disponibile solo nel tuo profilo.");
+      return;
+    }
+
+    int selectedRow = view.getSelectedPropostaInviataRow();
+    if (selectedRow < 0 || proposteInviate == null || selectedRow >= proposteInviate.size()) {
+      view.mostraErrore("Seleziona una proposta da modificare.");
+      return;
+    }
+
+    PropostaRiepilogo proposta = proposteInviate.get(selectedRow);
+
+    if (!proposta.inattesa()) {
+      view.mostraErrore("Puoi modificare solo le proposte in attesa.");
+      return;
+    }
+
+    if (proposta.tipoAnnuncio().toUpperCase().contains("REGALO")) {
+      view.mostraErrore("Non puoi modificare una proposta per un regalo.");
+      return;
+    }
+
+    ModificaPropostaDialog dialog = new ModificaPropostaDialog(view, proposta);
+    dialog.setVisible(true);
+
+    caricaDati();
+  }
+
+  /**
+   * Gestisce annullamento proposta inviata.
+   */
+  private void handleAnnullaProposta() {
+    if (!mostraDatiSensibili) {
+      view.mostraErrore("Operazione disponibile solo nel tuo profilo.");
+      return;
+    }
+
+    int selectedRow = view.getSelectedPropostaInviataRow();
+    if (selectedRow < 0 || proposteInviate == null || selectedRow >= proposteInviate.size()) {
+      view.mostraErrore("Seleziona una proposta da annullare.");
+      return;
+    }
+
+    PropostaRiepilogo proposta = proposteInviate.get(selectedRow);
+
+    if (!proposta.inattesa()) {
+      view.mostraErrore("Puoi annullare solo le proposte in attesa.");
+      return;
+    }
+
+    int confirm = JOptionPane.showConfirmDialog(
+            view,
+            "Sei sicuro di voler annullare questa proposta?",
+            "Conferma annullamento",
+            JOptionPane.YES_NO_OPTION
+    );
+
+    if (confirm == JOptionPane.YES_OPTION) {
+      eliminaProposta(proposta, utenteTarget.getUsername(), "Proposta annullata con successo.");
+    }
+  }
+
+  /**
+   * Visualizza i dettagli della consegna per una proposta (sola lettura).
+   *
+   * @param proposta la proposta per cui visualizzare i dettagli.
+   */
+  private void visualizzaDettagliConsegna(PropostaRiepilogo proposta) {
+    if (spedizioneDAO == null || ritiroDAO == null) {
+      view.mostraErrore("Connessione ai servizi di spedizione/ritiro non disponibile.");
+      return;
+    }
+    try {
+      if (spedizioneDAO.esistePerAnnuncio(proposta.idAnnuncio())) {
+        model.Spedizione spedizione = spedizioneDAO.getSpedizioneByAnnuncio(proposta.idAnnuncio());
+        if (spedizione != null) {
+          mostraDettagliSpedizione(spedizione);
+        }
+      } else if (ritiroDAO.esistePerAnnuncio(proposta.idAnnuncio())) {
+        model.Ritiro ritiro = ritiroDAO.getRitiroByAnnuncio(proposta.idAnnuncio());
+        if (ritiro != null) {
+          mostraDettagliRitiro(ritiro);
+        }
+      } else {
+        view.mostraMessaggio("Dettagli di consegna non ancora forniti dall'acquirente.");
+      }
+    } catch (DatabaseException e) {
+      view.mostraErrore("Errore durante la visualizzazione dei dettagli di consegna: " + e.getMessage());
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Mostra dettagli di una spedizione in una finestra di dialogo.
+   * @param spedizione l'oggetto Spedizione da visualizzare.
+   */
+  private void mostraDettagliSpedizione(model.Spedizione spedizione) {
+    StringBuilder message = new StringBuilder("Dettagli Spedizione:\n");
+    if (spedizione.getIdSpedizione() != 0) {
+      message.append("ID Spedizione: ").append(spedizione.getIdSpedizione()).append("\n");
+    }
+    message.append("Indirizzo: ").append(spedizione.getIndirizzo()).append("\n");
+    message.append("Numero di Telefono: ").append(spedizione.getNumeroTelefono()).append("\n");
+    message.append("Data Invio: ").append(spedizione.getDataInvio().toString()).append("\n");
+    message.append("Data Arrivo: ").append(spedizione.getDataArrivo().toString()).append("\n");
+    message.append("Spedito: ").append(spedizione.isSpedito() ? "Si" : "No");
+
+    JOptionPane.showMessageDialog(view, message.toString(), "Dettagli Spedizione", JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  /**
+   * Mostra dettagli di un ritiro in una finestra di dialogo.
+   * @param ritiro l'oggetto Ritiro da visualizzare.
+   */
+  private void mostraDettagliRitiro(model.Ritiro ritiro) {
+    String message = String.format(
+            "Dettagli Ritiro:\n" +
+            "ID Ritiro: %d\n" +
+            "Sede: %s\n" +
+            "Orario: %s\n" +
+            "Data: %s\n" +
+            "Numero di Telefono: %s\n" +
+            "Ritirato: %s",
+            ritiro.getIdRitiro(),
+            ritiro.getSede(),
+            ritiro.getOrario(),
+            ritiro.getData().toString(),
+            ritiro.getNumeroTelefono(),
+            ritiro.isRitirato() ? "Si" : "No"
+    );
+    JOptionPane.showMessageDialog(view, message, "Dettagli Ritiro", JOptionPane.INFORMATION_MESSAGE);
   }
 }

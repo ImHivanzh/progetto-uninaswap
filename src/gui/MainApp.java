@@ -180,6 +180,41 @@ public class MainApp extends BaseFrame {
   }
 
   /**
+   * Pannello scrollabile che traccia la larghezza del viewport.
+   */
+  private static class ScrollablePanel extends JPanel implements Scrollable {
+
+    public ScrollablePanel(LayoutManager layout) {
+      super(layout);
+    }
+
+    @Override
+    public Dimension getPreferredScrollableViewportSize() {
+      return getPreferredSize();
+    }
+
+    @Override
+    public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+      return 16;
+    }
+
+    @Override
+    public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+      return 160;
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportWidth() {
+      return true;
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportHeight() {
+      return false;
+    }
+  }
+
+  /**
    * Inizializza navigazione barra e avvolge principale pannello.
    */
   private void initLayout() {
@@ -456,10 +491,18 @@ public class MainApp extends BaseFrame {
       empty.setHorizontalAlignment(SwingConstants.CENTER);
       cardsPanel.add(empty, BorderLayout.CENTER);
     } else {
-      cardsPanel.setLayout(new GridLayout(0, 3, 10, 10));
+      ScrollablePanel contentPanel = new ScrollablePanel(new GridLayout(0, 2, 10, 10));
+
       for (AnnuncioEvidenza annuncioEvidenza : annunci) {
-        cardsPanel.add(creaCardEvidenza(annuncioEvidenza, listener));
+        contentPanel.add(creaCardEvidenza(annuncioEvidenza, listener));
       }
+
+      JScrollPane scrollPane = new JScrollPane(contentPanel);
+      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+      scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+      cardsPanel.setLayout(new BorderLayout());
+      cardsPanel.add(scrollPane, BorderLayout.CENTER);
     }
 
     cardsPanel.revalidate();

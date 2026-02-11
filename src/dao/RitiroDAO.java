@@ -19,6 +19,7 @@ public class RitiroDAO {
    * Connessione al database.
    */
   private final Connection con;
+  private final AnnuncioDAO annuncioDAO;
 
   /**
    * Crea DAO e inizializza database connessione.
@@ -30,6 +31,7 @@ public class RitiroDAO {
     if (this.con == null) {
       throw new DatabaseException("Connessione al database non disponibile.");
     }
+    this.annuncioDAO = new AnnuncioDAO();
   }
 
   /**
@@ -82,6 +84,60 @@ public class RitiroDAO {
       return ps.executeUpdate() > 0;
     } catch (SQLException e) {
       throw new DatabaseException("Errore durante l'inserimento del ritiro", e);
+    }
+  }
+
+  /**
+   * Restituisce ritiro da id annuncio.
+   *
+   * @param idAnnuncio id annuncio
+   * @return ritiro o null
+   * @throws DatabaseException quando query fallisce
+   */
+  public model.Ritiro getRitiroByAnnuncio(int idAnnuncio) throws DatabaseException {
+    if (con == null) throw new DatabaseException("Connessione al database non disponibile.");
+
+    String sql = "SELECT * FROM ritiro WHERE idannuncio = ?";
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
+      ps.setInt(1, idAnnuncio);
+      try (ResultSet rs = ps.executeQuery()) {
+        if (rs.next()) {
+          model.Ritiro ritiro = new model.Ritiro();
+          ritiro.setIdRitiro(rs.getInt("idritiro"));
+          ritiro.setSede(rs.getString("sede"));
+          ritiro.setOrario(rs.getString("orario")); // Assuming orario is stored as a string, check DB schema.
+          ritiro.setData(rs.getDate("data"));
+          ritiro.setNumeroTelefono(rs.getString("numerotelefono"));
+          ritiro.setRitirato(rs.getBoolean("ritirato"));
+          ritiro.setAnnuncio(annuncioDAO.findById(rs.getInt("idannuncio")));
+          return ritiro;
+        }
+      }
+    } catch (SQLException e) {
+      throw new DatabaseException("Errore durante il recupero del ritiro", e);
+    }
+    return null;
+  }
+
+  /**
+   * Aggiorna lo stato "ritirato" di un ritiro.
+   *
+   * @param idAnnuncio l'ID dell'annuncio a cui è associato il ritiro.
+   * @param isRitirato il nuovo stato di ritiro (true se ritirato, false altrimenti).
+   * @return true se l'aggiornamento è riuscito, false altrimenti.
+   * @throws DatabaseException se si verifica un errore durante l'accesso al database.
+   */
+  public boolean aggiornaStatoRitiro(int idAnnuncio, boolean isRitirato) throws DatabaseException {
+    if (con == null) {
+      throw new DatabaseException("Connessione al database non disponibile.");
+    }
+    String sql = "UPDATE ritiro SET ritirato = ? WHERE idannuncio = ?";
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
+      ps.setBoolean(1, isRitirato);
+      ps.setInt(2, idAnnuncio);
+      return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+      throw new DatabaseException("Errore durante l'aggiornamento dello stato del ritiro", e);
     }
   }
 }

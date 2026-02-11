@@ -233,24 +233,33 @@ public class AnnuncioDAO {
     annuncio.setCategoria(categoria);
     annuncio.setTipoAnnuncio(tipo);
     annuncio.setStato(stato);
-    Object spedizioneObj = rs.getObject("spedizione");
-    if (spedizioneObj == null) {
-      annuncio.setSpedizione(null);
-    } else if (spedizioneObj instanceof Boolean) {
-      annuncio.setSpedizione((Boolean) spedizioneObj);
-    } else if (spedizioneObj instanceof Number) {
-      annuncio.setSpedizione(((Number) spedizioneObj).intValue() == 1);
-    } else {
-      String valore = spedizioneObj.toString().trim().toLowerCase();
-      if (valore.equals("1") || valore.equals("true") || valore.equals("t")) {
-        annuncio.setSpedizione(true);
-      } else if (valore.equals("0") || valore.equals("false") || valore.equals("f")) {
-        annuncio.setSpedizione(false);
-      } else {
-        annuncio.setSpedizione(null);
-      }
-    }
+    annuncio.setSpedizione(readSpedizione(rs));
 
     return annuncio;
+  }
+
+  private Boolean readSpedizione(ResultSet rs) {
+    try {
+      Object spedizioneObj = rs.getObject("spedizione");
+      if (spedizioneObj == null) {
+        return null;
+      }
+      if (spedizioneObj instanceof Boolean) {
+        return (Boolean) spedizioneObj;
+      }
+      if (spedizioneObj instanceof Number) {
+        return ((Number) spedizioneObj).intValue() == 1;
+      }
+      String valore = spedizioneObj.toString().trim().toLowerCase();
+      if (valore.equals("1") || valore.equals("true") || valore.equals("t")) {
+        return true;
+      }
+      if (valore.equals("0") || valore.equals("false") || valore.equals("f")) {
+        return false;
+      }
+    } catch (SQLException ignored) {
+      return null;
+    }
+    return null;
   }
 }

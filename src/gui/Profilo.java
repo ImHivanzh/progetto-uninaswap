@@ -63,7 +63,14 @@ public class Profilo extends BaseFrame {
    * Pulsante recensioni inviate.
    */
   private JButton btnRecensioneInviata;
-
+  /**
+   * Pulsante modifica proposta inviata.
+   */
+  private JButton btnModificaProposta;
+  /**
+   * Pulsante annulla proposta inviata.
+   */
+  private JButton btnAnnullaProposta;
   /**
    * Modello tabella recensioni.
    */
@@ -246,6 +253,28 @@ public class Profilo extends BaseFrame {
   public void addRecensioneInviataListener(ActionListener listener) {
     if (btnRecensioneInviata != null) {
       btnRecensioneInviata.addActionListener(listener);
+    }
+  }
+
+  /**
+   * Aggiunge listener a pulsante modifica proposte inviate.
+   *
+   * @param listener azione listener
+   */
+  public void addModificaPropostaListener(ActionListener listener) {
+    if (btnModificaProposta != null) {
+      btnModificaProposta.addActionListener(listener);
+    }
+  }
+
+  /**
+   * Aggiunge listener a pulsante annulla proposte inviate.
+   *
+   * @param listener azione listener
+   */
+  public void addAnnullaPropostaListener(ActionListener listener) {
+    if (btnAnnullaProposta != null) {
+      btnAnnullaProposta.addActionListener(listener);
     }
   }
 

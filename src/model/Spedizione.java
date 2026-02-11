@@ -49,10 +49,10 @@ public class Spedizione {
      * @param dataInvio data spedizione
      * @param dataArrivo data arrivo
      * @param spedito spedito flag
-     * @param utente utente riferimento
+     * @param annuncio annuncio riferimento
      */
     public Spedizione(int idSpedizione, String indirizzo, String numeroTelefono, Date dataInvio,
-                      Date dataArrivo, boolean spedito, Utente utente) {
+                      Date dataArrivo, boolean spedito, Annuncio annuncio) {
         this.idSpedizione = idSpedizione;
         this.indirizzo = indirizzo;
         this.numeroTelefono = numeroTelefono;
@@ -156,8 +156,8 @@ public class Spedizione {
     /**
      * Imposta collegato annuncio.
      *
-     * @param utente utente riferimento
+     * @param annuncio annuncio riferimento
      */
-    public void setAnnuncio(Utente utente) { this.annuncio = annuncio; }
+    public void setAnnuncio(Annuncio annuncio) { this.annuncio = annuncio; }
 
 }
