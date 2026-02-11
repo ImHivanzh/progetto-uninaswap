@@ -3,6 +3,7 @@ package dao;
 import db.dbConnection;
 import exception.DatabaseException;
 import model.PropostaRiepilogo;
+import model.ReportProposte;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -335,6 +336,82 @@ public class PropostaDAO {
         }
         if (normalizzato.contains("REGALO")) {
             return "regalo";
+        }
+        return null;
+    }
+    
+    public boolean modificaPropostaVendita(int idAnnuncio, int idUtente, double nuovaOfferta) throws DatabaseException {
+        String sql = "UPDATE vendita SET controofferta = ? WHERE idannuncio = ? AND idutente = ?";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setDouble(1, nuovaOfferta);
+            ps.setInt(2, idAnnuncio);
+            ps.setInt(3, idUtente);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new DatabaseException("Errore durante la modifica della proposta di vendita", e);
+        }
+    }
+
+    public boolean modificaPropostaScambio(int idAnnuncio, int idUtente, String nuovaDescrizione, byte[] nuovaImmagine) throws DatabaseException {
+        String sql = "UPDATE scambio SET propscambio = ?, immagine = ? WHERE idannuncio = ? AND idutente = ?";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, nuovaDescrizione);
+            if (nuovaImmagine != null && nuovaImmagine.length > 0) {
+                ps.setBytes(2, nuovaImmagine);
+            } else {
+                ps.setNull(2, Types.BINARY);
+            }
+            ps.setInt(3, idAnnuncio);
+            ps.setInt(4, idUtente);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new DatabaseException("Errore durante la modifica della proposta di scambio", e);
+        }
+    }
+
+    public ReportProposte getReportProposte(int idUtente) throws DatabaseException {
+        String sql = "SELECT " +
+                "    SUM(CASE WHEN tipo = 'VENDITA' THEN 1 ELSE 0 END) as totaleVendita, " +
+                "    SUM(CASE WHEN tipo = 'VENDITA' AND accettato = TRUE THEN 1 ELSE 0 END) as accettateVendita, " +
+                "    MIN(CASE WHEN tipo = 'VENDITA' AND accettato = TRUE THEN valore END) as valoreMinimoVendita, " +
+                "    MAX(CASE WHEN tipo = 'VENDITA' AND accettato = TRUE THEN valore END) as valoreMassimoVendita, " +
+                "    AVG(CASE WHEN tipo = 'VENDITA' AND accettato = TRUE THEN valore END) as valoreMedioVendita, " +
+                "    SUM(CASE WHEN tipo = 'SCAMBIO' THEN 1 ELSE 0 END) as totaleScambio, " +
+                "    SUM(CASE WHEN tipo = 'SCAMBIO' AND accettato = TRUE THEN 1 ELSE 0 END) as accettateScambio, " +
+                "    SUM(CASE WHEN tipo = 'REGALO' THEN 1 ELSE 0 END) as totaleRegalo, " +
+                "    SUM(CASE WHEN tipo = 'REGALO' AND accettato = TRUE THEN 1 ELSE 0 END) as accettateRegalo " +
+                "FROM ( " +
+                "    SELECT 'VENDITA' as tipo, accettato, controofferta as valore FROM vendita WHERE idutente = ? " +
+                "    UNION ALL " +
+                "    SELECT 'SCAMBIO' as tipo, accettato, NULL as valore FROM scambio WHERE idutente = ? " +
+                "    UNION ALL " +
+                "    SELECT 'REGALO' as tipo, accettato, NULL as valore FROM regalo WHERE idutente = ? " +
+                ") as proposte";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idUtente);
+            ps.setInt(2, idUtente);
+            ps.setInt(3, idUtente);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new ReportProposte(
+                            rs.getInt("totaleVendita"),
+                            rs.getInt("accettateVendita"),
+                            rs.getInt("totaleScambio"),
+                            rs.getInt("accettateScambio"),
+                            rs.getInt("totaleRegalo"),
+                            rs.getInt("accettateRegalo"),
+                            rs.getDouble("valoreMinimoVendita"),
+                            rs.getDouble("valoreMassimoVendita"),
+                            rs.getDouble("valoreMedioVendita")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Errore durante la generazione del report delle proposte", e);
         }
         return null;
     }
