@@ -69,7 +69,7 @@ public class RegistrazioneController {
         view.mostraMessaggio("Registrazione completata per: " + username);
         view.dispose();
       } else {
-        view.mostraErrore("Errore durante la registrazione (es. utente gia esistente)");
+        view.mostraErrore("Errore durante la registrazione (es. utente già esistente)");
       }
 
     } catch (Exception ex) {

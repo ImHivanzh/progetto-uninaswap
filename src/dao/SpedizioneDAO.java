@@ -37,7 +37,7 @@ public class SpedizioneDAO {
    * Verifica se spedizione esiste per annuncio.
    *
    * @param idAnnuncio id annuncio
-   * @return true quando esiste gia una spedizione
+   * @return true quando esiste già una spedizione
    * @throws DatabaseException quando query fallisce
    */
   public boolean esistePerAnnuncio(int idAnnuncio) throws DatabaseException {

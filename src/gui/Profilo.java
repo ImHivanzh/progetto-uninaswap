@@ -411,7 +411,7 @@ public class Profilo extends BaseFrame {
     }
     StringBuilder stelle = new StringBuilder(5);
     for (int i = 0; i < 5; i++) {
-      stelle.append(i < filled ? "\u2605" : "\u2606");
+      stelle.append(i < filled ? "★" : "☆");
     }
     lblMediaVoto.setText(stelle.toString());
     lblMediaVoto.setToolTipText(String.format("%.1f / 5", media));

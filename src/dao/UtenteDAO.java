@@ -51,7 +51,7 @@ public class UtenteDAO {
         if (!DataCheck.isValidEmail(email)) throw new IllegalArgumentException("Formato email non valido.");
         if (!DataCheck.isValidPhoneNumber(numeroTelefono)) throw new IllegalArgumentException("Numero di telefono non valido (richieste 10 cifre).");
         if (!DataCheck.isStrongPassword(password)) throw new IllegalArgumentException("Password debole: serve min. 8 caratteri, una maiuscola, un numero e un carattere speciale.");
-        if (esisteUtente(username)) throw new IllegalArgumentException("L'username '" + username + "' e gia in uso.");
+        if (esisteUtente(username)) throw new IllegalArgumentException("L'username '" + username + "' è già in uso.");
 
         if (con == null) throw new DatabaseException("Connessione non disponibile");
 
@@ -178,7 +178,7 @@ public class UtenteDAO {
     }
 
     /**
-     * Verifica se username gia esiste.
+     * Verifica se username già esiste.
      *
      * @param username username a verifica
      * @return true quando utente esiste
