@@ -30,7 +30,7 @@ public final class WindowManager {
     next.setVisible(true);
     next.toFront();
   }
-
+si
   /**
    * Aggancia listener per ripristinare finestra precedente alla chiusura.
    *
