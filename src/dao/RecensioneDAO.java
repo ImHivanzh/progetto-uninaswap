@@ -4,6 +4,7 @@ import model.Recensione;
 import db.dbConnection;
 import exception.DatabaseException;
 import utils.Logger;
+import utils.Validator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -41,6 +42,8 @@ public class RecensioneDAO {
    * @throws DatabaseException se l'inserimento fallisce
    */
   public boolean inserisciRecensione(Recensione recensione) throws DatabaseException {
+    Validator.requireNonNull(recensione, "recensione");
+
     if (con == null) throw new DatabaseException("Connessione DB non disponibile.");
 
     String sql = "INSERT INTO recensione (idutente, idutenterecensito, voto, descrizione) VALUES (?, ?, ?, ?)";

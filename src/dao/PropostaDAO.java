@@ -106,6 +106,9 @@ public class PropostaDAO {
      */
     public boolean inserisciPropostaVendita(int idUtente, int idAnnuncio, double controOfferta)
             throws DatabaseException {
+        Validator.requirePositive(idUtente, "idUtente");
+        Validator.requirePositive(idAnnuncio, "idAnnuncio");
+
         String sql = "INSERT INTO vendita(idutente, idannuncio, controofferta, accettato) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
@@ -146,6 +149,10 @@ public class PropostaDAO {
     public boolean inserisciPropostaScambio(
             int idUtente, int idAnnuncio, String propScambio, byte[] immagine)
             throws DatabaseException {
+        Validator.requirePositive(idUtente, "idUtente");
+        Validator.requirePositive(idAnnuncio, "idAnnuncio");
+        Validator.requireNonEmpty(propScambio, "propScambio");
+
         String sql =
                 "INSERT INTO scambio(idutente, idannuncio, propscambio, immagine, accettato) VALUES (?, ?, ?, ?, ?)";
 
@@ -174,6 +181,9 @@ public class PropostaDAO {
      * @throws DatabaseException se l'inserimento fallisce
      */
     public boolean inserisciPropostaRegalo(int idUtente, int idAnnuncio) throws DatabaseException {
+        Validator.requirePositive(idUtente, "idUtente");
+        Validator.requirePositive(idAnnuncio, "idAnnuncio");
+
         String sql = "INSERT INTO regalo(dataprenotazione, accettato, idutente, idannuncio) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {

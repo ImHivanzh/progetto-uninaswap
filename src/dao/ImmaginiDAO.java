@@ -5,6 +5,7 @@ import exception.DatabaseException;
 import model.Immagini;
 import model.Annuncio;
 import utils.Logger;
+import utils.Validator;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -39,6 +40,8 @@ public class ImmaginiDAO {
    * @throws DatabaseException se l'inserimento fallisce
    */
   public boolean salvaImmagine(Immagini immagine) throws DatabaseException {
+    Validator.requireNonNull(immagine, "immagine");
+
     String sql = "INSERT INTO immagini (immagine, idannuncio) VALUES (?, ?)";
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
@@ -68,6 +71,8 @@ public class ImmaginiDAO {
    * @return lista delle immagini
    */
   public List<Immagini> getImmaginiByAnnuncio(int idAnnuncio) {
+    Validator.requirePositive(idAnnuncio, "idAnnuncio");
+
     List<Immagini> lista = new ArrayList<>();
     String sql = "SELECT * FROM immagini WHERE idannuncio = ?";
 
@@ -101,6 +106,8 @@ public class ImmaginiDAO {
    * @return byte array della prima immagine, o null se non presente
    */
   public byte[] getPrimaImmagine(int idAnnuncio) {
+    Validator.requirePositive(idAnnuncio, "idAnnuncio");
+
     String sql = "SELECT immagine FROM immagini WHERE idannuncio = ? LIMIT 1";
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
