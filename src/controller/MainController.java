@@ -158,6 +158,7 @@ public class MainController implements ActionListener {
 
   /**
    * Esegue ricerca usando filtri correnti.
+   * Ottimizzato per filtrare direttamente nel database invece che in memoria.
    */
   private void eseguiRicerca() {
     String testo = view.getTestoRicerca().trim();
@@ -175,26 +176,16 @@ public class MainController implements ActionListener {
       return;
     }
 
-    List<Annuncio> annunci = annuncioDAO.findAll();
+    // Usa il metodo search ottimizzato che filtra nel database
+    List<Annuncio> annunci = annuncioDAO.search(
+            testo.isEmpty() ? null : testo,
+            categoria,
+            tipo,
+            prezzoMax
+    );
+
     List<MainApp.AnnuncioEvidenza> risultati = new ArrayList<>();
-
     for (Annuncio annuncio : annunci) {
-      if (annuncio == null || !annuncio.isStato()) {
-        continue;
-      }
-      if (!matchesTesto(annuncio, testo)) {
-        continue;
-      }
-      if (!matchesCategoria(annuncio, categoria)) {
-        continue;
-      }
-      if (!matchesTipo(annuncio, tipo)) {
-        continue;
-      }
-      if (!matchesPrezzo(annuncio, prezzoMax)) {
-        continue;
-      }
-
       byte[] immagine = estraiPrimaImmagine(annuncio);
       risultati.add(new MainApp.AnnuncioEvidenza(annuncio, immagine));
     }
@@ -222,70 +213,6 @@ public class MainController implements ActionListener {
     } catch (NumberFormatException ex) {
       return null;
     }
-  }
-
-  /**
-   * Verifica se annuncio contiene il testo in titolo o descrizione.
-   *
-   * @param annuncio annuncio da verificare
-   * @param testo testo filtro
-   * @return true se il testo corrisponde ai campi
-   */
-  private boolean matchesTesto(Annuncio annuncio, String testo) {
-    if (testo == null || testo.isEmpty()) {
-      return true;
-    }
-    String query = testo.toLowerCase();
-    String titolo = annuncio.getTitolo() != null ? annuncio.getTitolo().toLowerCase() : "";
-    String descrizione = annuncio.getDescrizione() != null ? annuncio.getDescrizione().toLowerCase() : "";
-    return titolo.contains(query) || descrizione.contains(query);
-  }
-
-  /**
-   * Verifica se annuncio appartiene alla categoria selezionata.
-   *
-   * @param annuncio annuncio da verificare
-   * @param categoria categoria filtro
-   * @return true se la categoria corrisponde
-   */
-  private boolean matchesCategoria(Annuncio annuncio, String categoria) {
-    if (categoria == null || categoria.trim().isEmpty() || "Tutte".equalsIgnoreCase(categoria.trim())) {
-      return true;
-    }
-    String annuncioCategoria = annuncio.getCategoria() != null ? annuncio.getCategoria().toString() : "";
-    return annuncioCategoria.equalsIgnoreCase(categoria.trim());
-  }
-
-  /**
-   * Verifica se annuncio appartiene al tipo selezionato.
-   *
-   * @param annuncio annuncio da verificare
-   * @param tipo tipo filtro
-   * @return true se il tipo corrisponde
-   */
-  private boolean matchesTipo(Annuncio annuncio, String tipo) {
-    if (tipo == null || tipo.trim().isEmpty() || "Tutti".equalsIgnoreCase(tipo.trim())) {
-      return true;
-    }
-    String annuncioTipo = annuncio.getTipoAnnuncio() != null ? annuncio.getTipoAnnuncio().toString() : "";
-    return annuncioTipo.equalsIgnoreCase(tipo.trim());
-  }
-
-  /**
-   * Verifica filtro prezzo massimo per annuncio.
-   *
-   * @param annuncio annuncio da verificare
-   * @param prezzoMax prezzo massimo
-   * @return true se compatibile con il filtro
-   */
-  private boolean matchesPrezzo(Annuncio annuncio, Double prezzoMax) {
-    if (prezzoMax == null) {
-      return true;
-    }
-    if (!(annuncio instanceof Vendita)) {
-      return false;
-    }
-    return ((Vendita) annuncio).getPrezzo() <= prezzoMax;
   }
 
   /**
@@ -333,6 +260,7 @@ public class MainController implements ActionListener {
 
   /**
    * Restituisce primo byte immagine per annuncio, se presente.
+   * Ottimizzato per caricare solo la prima immagine invece di tutte.
    *
    * @param annuncio annuncio
    * @return byte immagine o null
@@ -341,16 +269,7 @@ public class MainController implements ActionListener {
     if (annuncio == null) {
       return null;
     }
-    List<Immagini> immagini = immaginiDAO.getImmaginiByAnnuncio(annuncio.getIdAnnuncio());
-    if (immagini == null || immagini.isEmpty()) {
-      return null;
-    }
-    for (Immagini immagine : immagini) {
-      if (immagine != null && immagine.getImmagine() != null && immagine.getImmagine().length > 0) {
-        return immagine.getImmagine();
-      }
-    }
-    return null;
+    return immaginiDAO.getPrimaImmagine(annuncio.getIdAnnuncio());
   }
 
   /**
