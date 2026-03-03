@@ -3,6 +3,7 @@ package dao;
 import controller.LoginController;
 import model.Utente;
 import utils.DataCheck;
+import utils.Logger;
 import db.dbConnection;
 import exception.DatabaseException;
 
@@ -28,7 +29,7 @@ public class UtenteDAO {
         try {
             this.con = dbConnection.getInstance().getConnection();
         } catch (DatabaseException e) {
-            System.err.println("Errore connessione DB in UtenteDAO: " + e.getMessage());
+            Logger.error("Errore connessione DB in UtenteDAO", e);
         }
     }
 

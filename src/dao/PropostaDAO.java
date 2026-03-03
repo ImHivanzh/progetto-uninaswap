@@ -4,6 +4,7 @@ import db.dbConnection;
 import exception.DatabaseException;
 import model.PropostaRiepilogo;
 import model.ReportProposte;
+import utils.Constanti;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -328,14 +329,14 @@ public class PropostaDAO {
             return null;
         }
         String normalizzato = tipoAnnuncio.trim().toUpperCase();
-        if (normalizzato.contains("VENDITA")) {
-            return "vendita";
+        if (normalizzato.contains(Constanti.TIPO_VENDITA)) {
+            return Constanti.TABELLA_VENDITA;
         }
-        if (normalizzato.contains("SCAMBIO")) {
-            return "scambio";
+        if (normalizzato.contains(Constanti.TIPO_SCAMBIO)) {
+            return Constanti.TABELLA_SCAMBIO;
         }
-        if (normalizzato.contains("REGALO")) {
-            return "regalo";
+        if (normalizzato.contains(Constanti.TIPO_REGALO)) {
+            return Constanti.TABELLA_REGALO;
         }
         return null;
     }

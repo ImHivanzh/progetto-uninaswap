@@ -3,6 +3,7 @@ package dao;
 import model.Recensione;
 import db.dbConnection;
 import exception.DatabaseException;
+import utils.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -28,7 +29,7 @@ public class RecensioneDAO {
     try {
       this.con = dbConnection.getInstance().getConnection();
     } catch (DatabaseException e) {
-      System.err.println("Errore di connessione al database in RecensioneDAO: " + e.getMessage());
+      Logger.error("Errore di connessione al database in RecensioneDAO", e);
     }
   }
 

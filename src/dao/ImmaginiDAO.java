@@ -4,6 +4,7 @@ import db.dbConnection;
 import exception.DatabaseException;
 import model.Immagini;
 import model.Annuncio;
+import utils.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class ImmaginiDAO {
     try {
       this.con = dbConnection.getInstance().getConnection();
     } catch (DatabaseException e) {
-      System.err.println("Errore connessione DB in ImmaginiDAO: " + e.getMessage());
+      Logger.error("Errore connessione DB in ImmaginiDAO", e);
     }
   }
 
@@ -87,7 +88,7 @@ public class ImmaginiDAO {
         }
       }
     } catch (SQLException e) {
-      System.err.println("Errore recupero immagini: " + e.getMessage());
+      Logger.error("Errore recupero immagini", e);
     }
     return lista;
   }
@@ -111,7 +112,7 @@ public class ImmaginiDAO {
         }
       }
     } catch (SQLException e) {
-      System.err.println("Errore recupero prima immagine: " + e.getMessage());
+      Logger.error("Errore recupero prima immagine", e);
     }
     return null;
   }
