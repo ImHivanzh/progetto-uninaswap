@@ -79,8 +79,6 @@ public class RecensioneDAO {
             + "WHERE r.idutenterecensito = ?";
     List<Recensione> recensioni = new ArrayList<>();
 
-    if (con == null) return recensioni;
-
     try (PreparedStatement ps = con.prepareStatement(sql)) {
 
       ps.setInt(1, utenteRecensito.getIdUtente());
@@ -115,10 +113,6 @@ public class RecensioneDAO {
     Validator.requireNonNull(utenteB, "utenteB");
     Validator.requirePositive(utenteA.getIdUtente(), "utenteA.idUtente");
     Validator.requirePositive(utenteB.getIdUtente(), "utenteB.idUtente");
-
-    if (con == null) {
-      throw new DatabaseException("Connessione DB non disponibile.");
-    }
 
     String sql = "SELECT 1 FROM vendita v "
             + "JOIN annuncio a ON v.idannuncio = a.idannuncio "
