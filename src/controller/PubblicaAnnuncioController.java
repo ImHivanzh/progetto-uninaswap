@@ -8,6 +8,7 @@ import model.*;
 import model.enums.Categoria;
 import model.enums.TipoAnnuncio;
 import utils.SessionManager;
+import utils.Logger;
 
 import javax.swing.*;
 import java.io.File;

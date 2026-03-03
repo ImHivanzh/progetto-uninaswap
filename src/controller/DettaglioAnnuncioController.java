@@ -11,6 +11,7 @@ import model.*;
 import model.enums.TipoAnnuncio;
 import utils.SessionManager;
 import utils.WindowManager;
+import utils.Logger;
 
 import javax.swing.*;
 import java.awt.*;
