@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DAO per accesso dati recensioni.
+ * DAO per l'accesso ai dati delle recensioni.
  */
 public class RecensioneDAO {
 
@@ -22,7 +22,7 @@ public class RecensioneDAO {
   private Connection con;
 
   /**
-   * Crea DAO e inizializza database connessione.
+   * Crea il DAO e inizializza la connessione al database.
    */
   public RecensioneDAO() {
     try {
@@ -33,11 +33,11 @@ public class RecensioneDAO {
   }
 
   /**
-   * Inserisce recensione in database.
+   * Inserisce una recensione nel database.
    *
-   * @param recensione recensione a inserimento
-   * @return true quando inserimento riesce
-   * @throws DatabaseException quando inserimento fallisce
+   * @param recensione recensione da inserire
+   * @return true se l'inserimento ha successo
+   * @throws DatabaseException se l'inserimento fallisce
    */
   public boolean inserisciRecensione(Recensione recensione) throws DatabaseException {
     if (con == null) throw new DatabaseException("Connessione DB non disponibile.");
@@ -59,11 +59,11 @@ public class RecensioneDAO {
   }
 
   /**
-   * Restituisce recensioni ricevute da specifico utente.
+   * Restituisce le recensioni ricevute da uno specifico utente.
    *
-   * @param idUtenteRecensito id utente recensito
-   * @return lista di recensioni
-   * @throws DatabaseException quando query fallisce
+   * @param idUtenteRecensito ID dell'utente recensito
+   * @return lista delle recensioni
+   * @throws DatabaseException se la query fallisce
    */
   public List<Recensione> getRecensioniRicevute(int idUtenteRecensito) throws DatabaseException {
     String sql = "SELECT r.idutente, r.idutenterecensito, r.voto, r.descrizione, u.nomeutente "
@@ -95,12 +95,12 @@ public class RecensioneDAO {
   }
 
   /**
-   * Verifica se due utenti hanno completato una transazione tra vendita o scambio.
+   * Verifica se due utenti hanno completato una transazione (vendita o scambio).
    *
-   * @param idUtenteA primo utente id
-   * @param idUtenteB secondo utente id
-   * @return true quando esiste transazione completata
-   * @throws DatabaseException quando query fallisce
+   * @param idUtenteA ID del primo utente
+   * @param idUtenteB ID del secondo utente
+   * @return true se esiste una transazione completata
+   * @throws DatabaseException se la query fallisce
    */
   public boolean hannoTransazioneCompletata(int idUtenteA, int idUtenteB) throws DatabaseException {
     if (con == null) {

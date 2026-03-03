@@ -7,7 +7,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Singleton per gestione connessione database.
+ * Singleton per la gestione della connessione al database.
  */
 public class dbConnection {
 
@@ -21,28 +21,28 @@ public class dbConnection {
     private Connection connection;
 
     /**
-     * Nome utente database.
+     * Nome utente del database.
      */
     private static final String NOME = "postgres.wzzmgxzgtpsvazdwdbqr";
     /**
-     * Password database.
+     * Password del database.
      */
     private static final String PASSWORD = "UninaSwapDB";
     /**
-     * URL connessione database.
+     * URL di connessione al database.
      */
     private static final String URL = "jdbc:postgresql://aws-1-eu-west-1.pooler.supabase.com:5432/postgres";
 
     /**
-     * Impedisce diretto istanziazione di singleton.
+     * Impedisce l'istanziazione diretta del singleton.
      */
     private dbConnection() {
     }
 
     /**
-     * Restituisce condiviso connessione manager istanza.
+     * Restituisce l'istanza singleton del connection manager.
      *
-     * @return singleton istanza
+     * @return istanza singleton
      */
     public static synchronized dbConnection getInstance() {
         if (instance == null) {
@@ -52,10 +52,10 @@ public class dbConnection {
     }
 
     /**
-     * Restituisce attivo connessione, aprendola quando necessario.
+     * Restituisce la connessione attiva, aprendola se necessario.
      *
-     * @return attivo JDBC connessione
-     * @throws DatabaseException quando connessione non puo essere stabilita
+     * @return connessione JDBC attiva
+     * @throws DatabaseException se la connessione non può essere stabilita
      */
     public Connection getConnection() throws DatabaseException {
         try {
@@ -69,9 +69,9 @@ public class dbConnection {
     }
 
     /**
-     * Chiude attivo connessione se aperto.
+     * Chiude la connessione attiva se aperta.
      *
-     * @throws DatabaseException quando chiusura connessione fallisce
+     * @throws DatabaseException se la chiusura della connessione fallisce
      */
     public void closeConnection() throws DatabaseException {
         try {

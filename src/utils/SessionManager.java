@@ -3,7 +3,7 @@ package utils;
 import model.Utente;
 
 /**
- * Gestisce la sessione utente corrente.
+ * Gestisce la sessione dell'utente corrente.
  */
 public class SessionManager {
 
@@ -16,14 +16,14 @@ public class SessionManager {
    */
   private Utente utenteCorrente;
   /**
-   * Impedisce diretto istanziazione di singleton.
+   * Impedisce l'istanziazione diretta del singleton.
    */
   private SessionManager() {}
 
   /**
-   * Restituisce condiviso sessione manager istanza.
+   * Restituisce l'istanza singleton del session manager.
    *
-   * @return singleton istanza
+   * @return istanza singleton
    */
   public static SessionManager getInstance() {
     if (instance == null) {
@@ -33,9 +33,9 @@ public class SessionManager {
   }
 
   /**
-   * Memorizza attualmente autenticato utente.
+   * Memorizza l'utente attualmente autenticato.
    *
-   * @param utente autenticato utente
+   * @param utente utente autenticato
    */
   public void login(Utente utente) {
     this.utenteCorrente = utente;
@@ -49,9 +49,9 @@ public class SessionManager {
   }
 
   /**
-   * Restituisce attualmente loggato-in utente.
+   * Restituisce l'utente attualmente loggato.
    *
-   * @return utente corrente o null se non loggato
+   * @return utente corrente, o null se non loggato
    */
   public Utente getUtente() {
     return utenteCorrente;
