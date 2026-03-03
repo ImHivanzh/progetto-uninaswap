@@ -7,6 +7,7 @@ import model.enums.Categoria;
 import model.enums.TipoAnnuncio;
 import utils.Constanti;
 import utils.Logger;
+import utils.Validator;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -41,6 +42,11 @@ public class AnnuncioDAO {
    * @throws DatabaseException se il database non è disponibile o l'inserimento fallisce
    */
   public int pubblicaAnnuncio(Annuncio annuncio) throws DatabaseException {
+    Validator.requireNonNull(annuncio, "annuncio");
+    Validator.requireNonEmpty(annuncio.getTitolo(), "titolo");
+    Validator.requireNonEmpty(annuncio.getDescrizione(), "descrizione");
+    Validator.requirePositive(annuncio.getIdUtente(), "idUtente");
+
     if (con == null) {
       throw new DatabaseException("Connessione al database non disponibile.");
     }
@@ -208,6 +214,8 @@ public class AnnuncioDAO {
    * @throws DatabaseException se la query fallisce
    */
   public Annuncio findById(int idAnnuncio) throws DatabaseException {
+    Validator.requirePositive(idAnnuncio, "idAnnuncio");
+
     String sql = "SELECT * FROM annuncio WHERE idannuncio = ?";
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
@@ -232,6 +240,8 @@ public class AnnuncioDAO {
    * @throws DatabaseException se l'eliminazione fallisce
    */
   public boolean deleteAnnuncio(int idAnnuncio) throws DatabaseException {
+    Validator.requirePositive(idAnnuncio, "idAnnuncio");
+
     String sql = "DELETE FROM annuncio WHERE idannuncio = ?";
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
