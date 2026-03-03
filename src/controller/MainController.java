@@ -27,7 +27,7 @@ import java.util.List;
 public class MainController implements ActionListener {
 
   /**
-   * Numero massimo annunci in evidenza.
+   * Numero massimo di annunci in evidenza.
    */
   private static final int MAX_ANNUNCI_EVIDENZA = 6;
 
@@ -36,16 +36,16 @@ public class MainController implements ActionListener {
    */
   private final MainApp view;
   /**
-   * DAO annunci.
+   * DAO per gli annunci.
    */
   private final AnnuncioDAO annuncioDAO;
   /**
-   * DAO immagini.
+   * DAO per le immagini.
    */
   private final ImmaginiDAO immaginiDAO;
 
   /**
-   * Crea controller e registra listener.
+   * Crea il controller e registra i listener.
    *
    * @param view vista principale
    */
@@ -57,7 +57,7 @@ public class MainController implements ActionListener {
   }
 
   /**
-   * Avvia principale flusso, mostrando login se necessario.
+   * Avvia il flusso principale, mostrando il login se necessario.
    */
   public void avvia() {
     if (SessionManager.getInstance().getUtente() == null) {
@@ -73,7 +73,7 @@ public class MainController implements ActionListener {
   }
 
   /**
-   * Registra UI listener in vista principale.
+   * Registra i listener UI nella vista principale.
    */
   private void registraListener() {
     view.addProfiloListener(this);

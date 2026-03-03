@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DAO per accesso dati immagini.
+ * DAO per l'accesso ai dati delle immagini.
  */
 public class ImmaginiDAO {
 
@@ -20,7 +20,7 @@ public class ImmaginiDAO {
   private Connection con;
 
   /**
-   * Crea DAO e inizializza database connessione.
+   * Crea il DAO e inizializza la connessione al database.
    */
   public ImmaginiDAO() {
     try {
@@ -31,11 +31,11 @@ public class ImmaginiDAO {
   }
 
   /**
-   * Salva immagine collegato a annuncio.
+   * Salva un'immagine collegata a un annuncio.
    *
-   * @param immagine immagine entita
-   * @return true quando inserimento riesce
-   * @throws DatabaseException quando inserimento fallisce
+   * @param immagine oggetto immagine da salvare
+   * @return true se l'inserimento ha successo
+   * @throws DatabaseException se l'inserimento fallisce
    */
   public boolean salvaImmagine(Immagini immagine) throws DatabaseException {
     String sql = "INSERT INTO immagini (immagine, idannuncio) VALUES (?, ?)";
@@ -61,10 +61,10 @@ public class ImmaginiDAO {
   }
 
   /**
-   * Restituisce tutti immagini per specifico annuncio.
+   * Restituisce tutte le immagini di uno specifico annuncio.
    *
-   * @param idAnnuncio id annuncio
-   * @return lista di immagini
+   * @param idAnnuncio ID dell'annuncio
+   * @return lista delle immagini
    */
   public List<Immagini> getImmaginiByAnnuncio(int idAnnuncio) {
     List<Immagini> lista = new ArrayList<>();
@@ -96,7 +96,7 @@ public class ImmaginiDAO {
    * Restituisce solo la prima immagine di un annuncio (ottimizzato).
    * Evita di caricare tutte le immagini quando serve solo la prima.
    *
-   * @param idAnnuncio id annuncio
+   * @param idAnnuncio ID dell'annuncio
    * @return byte array della prima immagine, o null se non presente
    */
   public byte[] getPrimaImmagine(int idAnnuncio) {

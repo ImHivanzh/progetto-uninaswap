@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DAO per accesso dati annunci.
+ * DAO per l'accesso ai dati degli annunci.
  */
 public class AnnuncioDAO {
 
@@ -21,7 +21,7 @@ public class AnnuncioDAO {
   private Connection con;
 
   /**
-   * Crea DAO e inizializza database connessione.
+   * Crea il DAO e inizializza la connessione al database.
    */
   public AnnuncioDAO() {
     try {
@@ -32,11 +32,11 @@ public class AnnuncioDAO {
   }
 
   /**
-   * Inserisce nuovo annuncio e restituisce id generato.
+   * Inserisce un nuovo annuncio e restituisce l'ID generato.
    *
-   * @param annuncio annuncio a salva
-   * @return generato id, o -1 in caso di errore
-   * @throws DatabaseException quando database e non disponibile o inserimento fallisce
+   * @param annuncio annuncio da salvare
+   * @return ID generato, o -1 in caso di errore
+   * @throws DatabaseException se il database non è disponibile o l'inserimento fallisce
    */
   public int pubblicaAnnuncio(Annuncio annuncio) throws DatabaseException {
     if (con == null) {
@@ -83,9 +83,9 @@ public class AnnuncioDAO {
   }
 
   /**
-   * Restituisce tutti annunci.
+   * Restituisce tutti gli annunci.
    *
-   * @return lista di annunci
+   * @return lista degli annunci
    */
   public List<Annuncio> findAll() {
     List<Annuncio> annunci = new ArrayList<>();
@@ -175,11 +175,11 @@ public class AnnuncioDAO {
   }
 
   /**
-   * Restituisce tutti annunci per specifico utente.
+   * Restituisce tutti gli annunci di uno specifico utente.
    *
-   * @param idUtente utente id
-   * @return lista di annunci
-   * @throws DatabaseException quando query fallisce
+   * @param idUtente ID dell'utente
+   * @return lista degli annunci
+   * @throws DatabaseException se la query fallisce
    */
   public List<Annuncio> findAllByUtente(int idUtente) throws DatabaseException {
     String sql = "SELECT * FROM annuncio WHERE idutente = ?";
@@ -201,11 +201,11 @@ public class AnnuncioDAO {
   }
 
   /**
-   * Restituisce annuncio da id.
+   * Restituisce un annuncio dato l'ID.
    *
-   * @param idAnnuncio id annuncio
-   * @return annuncio o null
-   * @throws DatabaseException quando query fallisce
+   * @param idAnnuncio ID dell'annuncio
+   * @return annuncio trovato, o null se non esiste
+   * @throws DatabaseException se la query fallisce
    */
   public Annuncio findById(int idAnnuncio) throws DatabaseException {
     String sql = "SELECT * FROM annuncio WHERE idannuncio = ?";
@@ -225,11 +225,11 @@ public class AnnuncioDAO {
   }
 
   /**
-   * Elimina annuncio da id.
+   * Elimina un annuncio dato l'ID.
    *
-   * @param idAnnuncio id annuncio
-   * @return true quando riga era eliminato
-   * @throws DatabaseException quando elimina fallisce
+   * @param idAnnuncio ID dell'annuncio
+   * @return true se la riga è stata eliminata
+   * @throws DatabaseException se l'eliminazione fallisce
    */
   public boolean deleteAnnuncio(int idAnnuncio) throws DatabaseException {
     String sql = "DELETE FROM annuncio WHERE idannuncio = ?";
@@ -243,11 +243,11 @@ public class AnnuncioDAO {
   }
 
   /**
-   * Mappa riga del set di risultati a annuncio istanza.
+   * Mappa una riga del ResultSet a un'istanza di Annuncio.
    *
-   * @param rs set di risultati
-   * @return mappato annuncio
-   * @throws SQLException quando lettura valori fallisce
+   * @param rs ResultSet da cui leggere i dati
+   * @return annuncio mappato
+   * @throws SQLException se la lettura dei valori fallisce
    */
   private Annuncio mapResultSetToAnnuncio(ResultSet rs) throws SQLException {
     int id = rs.getInt("idannuncio");
