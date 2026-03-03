@@ -244,7 +244,7 @@ public class ProfiloController {
     view.pulisciTabelle();
 
     try {
-      List<Recensione> recensioni = recensioneDAO.getRecensioniRicevute(utenteTarget.getIdUtente());
+      List<Recensione> recensioni = recensioneDAO.getRecensioniRicevute(utenteTarget);
       if (recensioni.isEmpty()) {
         view.setMediaVoto(0.0);
       } else {
@@ -260,7 +260,7 @@ public class ProfiloController {
         view.setMediaVoto(sommaVoti / recensioni.size());
       }
 
-      this.listaAnnunci = annuncioDAO.findAllByUtente(utenteTarget.getIdUtente());
+      this.listaAnnunci = annuncioDAO.findAllByUtente(utenteTarget);
 
       for (Annuncio a : listaAnnunci) {
         view.aggiungiAnnuncio(

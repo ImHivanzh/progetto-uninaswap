@@ -183,16 +183,19 @@ public class AnnuncioDAO {
   /**
    * Restituisce tutti gli annunci di uno specifico utente.
    *
-   * @param idUtente ID dell'utente
+   * @param utente utente proprietario degli annunci
    * @return lista degli annunci
    * @throws DatabaseException se la query fallisce
    */
-  public List<Annuncio> findAllByUtente(int idUtente) throws DatabaseException {
+  public List<Annuncio> findAllByUtente(Utente utente) throws DatabaseException {
+    Validator.requireNonNull(utente, "utente");
+    Validator.requirePositive(utente.getIdUtente(), "utente.idUtente");
+
     String sql = "SELECT * FROM annuncio WHERE idutente = ?";
     List<Annuncio> annunci = new ArrayList<>();
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
-      ps.setInt(1, idUtente);
+      ps.setInt(1, utente.getIdUtente());
 
       try (ResultSet rs = ps.executeQuery()) {
         while (rs.next()) {

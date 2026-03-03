@@ -67,27 +67,25 @@ public class ImmaginiDAO {
   /**
    * Restituisce tutte le immagini di uno specifico annuncio.
    *
-   * @param idAnnuncio ID dell'annuncio
+   * @param annuncio annuncio di cui recuperare le immagini
    * @return lista delle immagini
    */
-  public List<Immagini> getImmaginiByAnnuncio(int idAnnuncio) {
-    Validator.requirePositive(idAnnuncio, "idAnnuncio");
+  public List<Immagini> getImmaginiByAnnuncio(Annuncio annuncio) {
+    Validator.requireNonNull(annuncio, "annuncio");
+    Validator.requirePositive(annuncio.getIdAnnuncio(), "annuncio.idAnnuncio");
 
     List<Immagini> lista = new ArrayList<>();
     String sql = "SELECT * FROM immagini WHERE idannuncio = ?";
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
-      ps.setInt(1, idAnnuncio);
+      ps.setInt(1, annuncio.getIdAnnuncio());
 
       try (ResultSet rs = ps.executeQuery()) {
         while (rs.next()) {
           Immagini img = new Immagini();
           img.setIdImmagine(rs.getInt("idimmagine"));
           img.setImmagine(rs.getBytes("immagine"));
-
-          Annuncio a = new Annuncio();
-          a.setIdAnnuncio(idAnnuncio);
-          img.setAnnuncio(a);
+          img.setAnnuncio(annuncio);
 
           lista.add(img);
         }
@@ -102,16 +100,17 @@ public class ImmaginiDAO {
    * Restituisce solo la prima immagine di un annuncio (ottimizzato).
    * Evita di caricare tutte le immagini quando serve solo la prima.
    *
-   * @param idAnnuncio ID dell'annuncio
+   * @param annuncio annuncio di cui recuperare la prima immagine
    * @return byte array della prima immagine, o null se non presente
    */
-  public byte[] getPrimaImmagine(int idAnnuncio) {
-    Validator.requirePositive(idAnnuncio, "idAnnuncio");
+  public byte[] getPrimaImmagine(Annuncio annuncio) {
+    Validator.requireNonNull(annuncio, "annuncio");
+    Validator.requirePositive(annuncio.getIdAnnuncio(), "annuncio.idAnnuncio");
 
     String sql = "SELECT immagine FROM immagini WHERE idannuncio = ? LIMIT 1";
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
-      ps.setInt(1, idAnnuncio);
+      ps.setInt(1, annuncio.getIdAnnuncio());
 
       try (ResultSet rs = ps.executeQuery()) {
         if (rs.next()) {

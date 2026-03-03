@@ -2,9 +2,12 @@ package dao;
 
 import db.dbConnection;
 import exception.DatabaseException;
+import model.Annuncio;
 import model.PropostaRiepilogo;
 import model.ReportProposte;
+import model.Utente;
 import utils.Constanti;
+import utils.Validator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -98,22 +101,24 @@ public class PropostaDAO {
     /**
      * Inserisce una proposta di vendita per un annuncio.
      *
-     * @param idUtente ID dell'utente proponente
-     * @param idAnnuncio ID dell'annuncio
+     * @param utente utente proponente
+     * @param annuncio annuncio target
      * @param controOfferta controofferta proposta
      * @return true se l'inserimento ha successo
      * @throws DatabaseException se l'inserimento fallisce
      */
-    public boolean inserisciPropostaVendita(int idUtente, int idAnnuncio, double controOfferta)
+    public boolean inserisciPropostaVendita(Utente utente, Annuncio annuncio, double controOfferta)
             throws DatabaseException {
-        Validator.requirePositive(idUtente, "idUtente");
-        Validator.requirePositive(idAnnuncio, "idAnnuncio");
+        Validator.requireNonNull(utente, "utente");
+        Validator.requireNonNull(annuncio, "annuncio");
+        Validator.requirePositive(utente.getIdUtente(), "utente.idUtente");
+        Validator.requirePositive(annuncio.getIdAnnuncio(), "annuncio.idAnnuncio");
 
         String sql = "INSERT INTO vendita(idutente, idannuncio, controofferta, accettato) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, idUtente);
-            ps.setInt(2, idAnnuncio);
+            ps.setInt(1, utente.getIdUtente());
+            ps.setInt(2, annuncio.getIdAnnuncio());
             ps.setDouble(3, controOfferta);
             ps.setBoolean(4, false);
             return ps.executeUpdate() > 0;
@@ -125,40 +130,42 @@ public class PropostaDAO {
     /**
      * Inserisce una proposta di scambio per un annuncio.
      *
-     * @param idUtente ID dell'utente proponente
-     * @param idAnnuncio ID dell'annuncio
+     * @param utente utente proponente
+     * @param annuncio annuncio target
      * @param propScambio descrizione dello scambio proposto
      * @return true se l'inserimento ha successo
      * @throws DatabaseException se l'inserimento fallisce
      */
-    public boolean inserisciPropostaScambio(int idUtente, int idAnnuncio, String propScambio)
+    public boolean inserisciPropostaScambio(Utente utente, Annuncio annuncio, String propScambio)
             throws DatabaseException {
-        return inserisciPropostaScambio(idUtente, idAnnuncio, propScambio, null);
+        return inserisciPropostaScambio(utente, annuncio, propScambio, null);
     }
 
     /**
      * Inserisce una proposta di scambio con immagine opzionale.
      *
-     * @param idUtente ID dell'utente proponente
-     * @param idAnnuncio ID dell'annuncio
+     * @param utente utente proponente
+     * @param annuncio annuncio target
      * @param propScambio descrizione dello scambio proposto
      * @param immagine byte array dell'immagine opzionale
      * @return true se l'inserimento ha successo
      * @throws DatabaseException se l'inserimento fallisce
      */
     public boolean inserisciPropostaScambio(
-            int idUtente, int idAnnuncio, String propScambio, byte[] immagine)
+            Utente utente, Annuncio annuncio, String propScambio, byte[] immagine)
             throws DatabaseException {
-        Validator.requirePositive(idUtente, "idUtente");
-        Validator.requirePositive(idAnnuncio, "idAnnuncio");
+        Validator.requireNonNull(utente, "utente");
+        Validator.requireNonNull(annuncio, "annuncio");
+        Validator.requirePositive(utente.getIdUtente(), "utente.idUtente");
+        Validator.requirePositive(annuncio.getIdAnnuncio(), "annuncio.idAnnuncio");
         Validator.requireNonEmpty(propScambio, "propScambio");
 
         String sql =
                 "INSERT INTO scambio(idutente, idannuncio, propscambio, immagine, accettato) VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, idUtente);
-            ps.setInt(2, idAnnuncio);
+            ps.setInt(1, utente.getIdUtente());
+            ps.setInt(2, annuncio.getIdAnnuncio());
             ps.setString(3, propScambio);
             if (immagine != null && immagine.length > 0) {
                 ps.setBytes(4, immagine);
@@ -175,22 +182,24 @@ public class PropostaDAO {
     /**
      * Inserisce una richiesta di regalo per un annuncio.
      *
-     * @param idUtente ID dell'utente richiedente
-     * @param idAnnuncio ID dell'annuncio
+     * @param utente utente richiedente
+     * @param annuncio annuncio target
      * @return true se l'inserimento ha successo
      * @throws DatabaseException se l'inserimento fallisce
      */
-    public boolean inserisciPropostaRegalo(int idUtente, int idAnnuncio) throws DatabaseException {
-        Validator.requirePositive(idUtente, "idUtente");
-        Validator.requirePositive(idAnnuncio, "idAnnuncio");
+    public boolean inserisciPropostaRegalo(Utente utente, Annuncio annuncio) throws DatabaseException {
+        Validator.requireNonNull(utente, "utente");
+        Validator.requireNonNull(annuncio, "annuncio");
+        Validator.requirePositive(utente.getIdUtente(), "utente.idUtente");
+        Validator.requirePositive(annuncio.getIdAnnuncio(), "annuncio.idAnnuncio");
 
         String sql = "INSERT INTO regalo(dataprenotazione, accettato, idutente, idannuncio) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
             ps.setBoolean(2, false);
-            ps.setInt(3, idUtente);
-            ps.setInt(4, idAnnuncio);
+            ps.setInt(3, utente.getIdUtente());
+            ps.setInt(4, annuncio.getIdAnnuncio());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

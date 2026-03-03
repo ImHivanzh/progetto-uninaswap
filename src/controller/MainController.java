@@ -269,7 +269,7 @@ public class MainController implements ActionListener {
     if (annuncio == null) {
       return null;
     }
-    return immaginiDAO.getPrimaImmagine(annuncio.getIdAnnuncio());
+    return immaginiDAO.getPrimaImmagine(annuncio);
   }
 
   /**

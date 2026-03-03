@@ -70,7 +70,7 @@ public class DettaglioAnnuncioController {
    */
   private void caricaDati() {
     try {
-      this.listaImmagini = immaginiDAO.getImmaginiByAnnuncio(annuncio.getIdAnnuncio());
+      this.listaImmagini = immaginiDAO.getImmaginiByAnnuncio(annuncio);
     } catch (Exception e) {
       Logger.error("Errore caricamento immagini", e);
     }
@@ -196,7 +196,6 @@ public class DettaglioAnnuncioController {
     try {
       PropostaDAO propostaDAO = new PropostaDAO();
       boolean successo = false;
-      int idUtente = utenteCorrente.getIdUtente();
 
       switch (annuncio.getTipoAnnuncio()) {
         case VENDITA:
@@ -207,14 +206,14 @@ public class DettaglioAnnuncioController {
                     JOptionPane.WARNING_MESSAGE);
             return;
           }
-          successo = propostaDAO.inserisciPropostaVendita(idUtente, idAnnuncio, prezzo);
+          successo = propostaDAO.inserisciPropostaVendita(utenteCorrente, annuncio, prezzo);
           break;
         case SCAMBIO:
           String propostaScambio = descrizione != null ? descrizione.trim() : "";
-          successo = propostaDAO.inserisciPropostaScambio(idUtente, idAnnuncio, propostaScambio, immagine);
+          successo = propostaDAO.inserisciPropostaScambio(utenteCorrente, annuncio, propostaScambio, immagine);
           break;
         case REGALO:
-          successo = propostaDAO.inserisciPropostaRegalo(idUtente, idAnnuncio);
+          successo = propostaDAO.inserisciPropostaRegalo(utenteCorrente, annuncio);
           break;
       }
 

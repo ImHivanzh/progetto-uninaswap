@@ -1,6 +1,7 @@
 package dao;
 
 import model.Recensione;
+import model.Utente;
 import db.dbConnection;
 import exception.DatabaseException;
 import utils.Logger;
@@ -65,11 +66,14 @@ public class RecensioneDAO {
   /**
    * Restituisce le recensioni ricevute da uno specifico utente.
    *
-   * @param idUtenteRecensito ID dell'utente recensito
+   * @param utenteRecensito utente recensito
    * @return lista delle recensioni
    * @throws DatabaseException se la query fallisce
    */
-  public List<Recensione> getRecensioniRicevute(int idUtenteRecensito) throws DatabaseException {
+  public List<Recensione> getRecensioniRicevute(Utente utenteRecensito) throws DatabaseException {
+    Validator.requireNonNull(utenteRecensito, "utenteRecensito");
+    Validator.requirePositive(utenteRecensito.getIdUtente(), "utenteRecensito.idUtente");
+
     String sql = "SELECT r.idutente, r.idutenterecensito, r.voto, r.descrizione, u.nomeutente "
             + "FROM recensione r LEFT JOIN utente u ON u.idutente = r.idutente "
             + "WHERE r.idutenterecensito = ?";
@@ -79,7 +83,7 @@ public class RecensioneDAO {
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
 
-      ps.setInt(1, idUtenteRecensito);
+      ps.setInt(1, utenteRecensito.getIdUtente());
 
       try (ResultSet rs = ps.executeQuery()) {
         while (rs.next()) {
@@ -101,12 +105,17 @@ public class RecensioneDAO {
   /**
    * Verifica se due utenti hanno completato una transazione (vendita o scambio).
    *
-   * @param idUtenteA ID del primo utente
-   * @param idUtenteB ID del secondo utente
+   * @param utenteA primo utente
+   * @param utenteB secondo utente
    * @return true se esiste una transazione completata
    * @throws DatabaseException se la query fallisce
    */
-  public boolean hannoTransazioneCompletata(int idUtenteA, int idUtenteB) throws DatabaseException {
+  public boolean hannoTransazioneCompletata(Utente utenteA, Utente utenteB) throws DatabaseException {
+    Validator.requireNonNull(utenteA, "utenteA");
+    Validator.requireNonNull(utenteB, "utenteB");
+    Validator.requirePositive(utenteA.getIdUtente(), "utenteA.idUtente");
+    Validator.requirePositive(utenteB.getIdUtente(), "utenteB.idUtente");
+
     if (con == null) {
       throw new DatabaseException("Connessione DB non disponibile.");
     }
@@ -123,14 +132,17 @@ public class RecensioneDAO {
             + "LIMIT 1";
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
-      ps.setInt(1, idUtenteA);
-      ps.setInt(2, idUtenteB);
-      ps.setInt(3, idUtenteB);
-      ps.setInt(4, idUtenteA);
-      ps.setInt(5, idUtenteA);
-      ps.setInt(6, idUtenteB);
-      ps.setInt(7, idUtenteB);
-      ps.setInt(8, idUtenteA);
+      int idA = utenteA.getIdUtente();
+      int idB = utenteB.getIdUtente();
+
+      ps.setInt(1, idA);
+      ps.setInt(2, idB);
+      ps.setInt(3, idB);
+      ps.setInt(4, idA);
+      ps.setInt(5, idA);
+      ps.setInt(6, idB);
+      ps.setInt(7, idB);
+      ps.setInt(8, idA);
 
       try (ResultSet rs = ps.executeQuery()) {
         return rs.next();
