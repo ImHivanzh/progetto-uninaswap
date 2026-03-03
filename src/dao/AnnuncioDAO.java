@@ -110,6 +110,71 @@ public class AnnuncioDAO {
   }
 
   /**
+   * Ricerca annunci con filtri applicati direttamente nel database (ottimizzato).
+   * Evita di caricare tutti gli annunci e filtrarli in memoria.
+   *
+   * @param testo testo da cercare in titolo o descrizione (null per ignorare)
+   * @param categoria categoria da filtrare (null per ignorare)
+   * @param tipo tipo annuncio da filtrare (null per ignorare)
+   * @param prezzoMax prezzo massimo per vendite (null per ignorare)
+   * @return lista di annunci filtrati
+   */
+  public List<Annuncio> search(String testo, String categoria, String tipo, Double prezzoMax) {
+    List<Annuncio> annunci = new ArrayList<>();
+    if (con == null) return annunci;
+
+    // Costruisce query dinamica in base ai filtri
+    StringBuilder sql = new StringBuilder("SELECT * FROM annuncio WHERE stato = true");
+    List<Object> parametri = new ArrayList<>();
+
+    // Filtro testo (cerca in titolo e descrizione)
+    if (testo != null && !testo.trim().isEmpty()) {
+      sql.append(" AND (LOWER(titolo) LIKE ? OR LOWER(descrizione) LIKE ?)");
+      String pattern = "%" + testo.toLowerCase() + "%";
+      parametri.add(pattern);
+      parametri.add(pattern);
+    }
+
+    // Filtro categoria
+    if (categoria != null && !categoria.trim().isEmpty() && !"Tutte".equalsIgnoreCase(categoria.trim())) {
+      sql.append(" AND UPPER(categoria) = ?");
+      parametri.add(categoria.toUpperCase());
+    }
+
+    // Filtro tipo annuncio
+    if (tipo != null && !tipo.trim().isEmpty() && !"Tutti".equalsIgnoreCase(tipo.trim())) {
+      sql.append(" AND UPPER(tipoannuncio) = ?");
+      parametri.add(tipo.toUpperCase());
+    }
+
+    // Filtro prezzo massimo (solo per vendite)
+    if (prezzoMax != null && prezzoMax >= 0) {
+      sql.append(" AND (tipoannuncio != 'VENDITA' OR prezzo <= ?)");
+      parametri.add(prezzoMax);
+    }
+
+    try (PreparedStatement ps = con.prepareStatement(sql.toString())) {
+      // Imposta i parametri nella query
+      for (int i = 0; i < parametri.size(); i++) {
+        ps.setObject(i + 1, parametri.get(i));
+      }
+
+      try (ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+          Annuncio a = mapResultSetToAnnuncio(rs);
+          if (a != null) {
+            annunci.add(a);
+          }
+        }
+      }
+    } catch (SQLException e) {
+      System.err.println("Errore durante la ricerca degli annunci: " + e.getMessage());
+      e.printStackTrace();
+    }
+    return annunci;
+  }
+
+  /**
    * Restituisce tutti annunci per specifico utente.
    *
    * @param idUtente utente id

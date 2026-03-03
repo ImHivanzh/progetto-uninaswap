@@ -91,4 +91,28 @@ public class ImmaginiDAO {
     }
     return lista;
   }
+
+  /**
+   * Restituisce solo la prima immagine di un annuncio (ottimizzato).
+   * Evita di caricare tutte le immagini quando serve solo la prima.
+   *
+   * @param idAnnuncio id annuncio
+   * @return byte array della prima immagine, o null se non presente
+   */
+  public byte[] getPrimaImmagine(int idAnnuncio) {
+    String sql = "SELECT immagine FROM immagini WHERE idannuncio = ? LIMIT 1";
+
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
+      ps.setInt(1, idAnnuncio);
+
+      try (ResultSet rs = ps.executeQuery()) {
+        if (rs.next()) {
+          return rs.getBytes("immagine");
+        }
+      }
+    } catch (SQLException e) {
+      System.err.println("Errore recupero prima immagine: " + e.getMessage());
+    }
+    return null;
+  }
 }
