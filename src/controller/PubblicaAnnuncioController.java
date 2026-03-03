@@ -148,8 +148,7 @@ public class PubblicaAnnuncioController {
       System.out.println("Salvate " + files.size() + " immagini per annuncio ID: " + annuncio.getIdAnnuncio());
 
     } catch (IOException e) {
-      System.err.println("Errore durante la lettura del file immagine: " + e.getMessage());
-      e.printStackTrace();
+      Logger.error("Errore durante la lettura del file immagine", e);
     }
   }
 }

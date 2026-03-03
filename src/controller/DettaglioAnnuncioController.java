@@ -72,7 +72,7 @@ public class DettaglioAnnuncioController {
     try {
       this.listaImmagini = immaginiDAO.getImmaginiByAnnuncio(annuncio.getIdAnnuncio());
     } catch (Exception e) {
-      System.err.println("Errore caricamento immagini: " + e.getMessage());
+      Logger.error("Errore caricamento immagini", e);
     }
 
     view.setTitolo(annuncio.getTitolo());
@@ -121,7 +121,7 @@ public class DettaglioAnnuncioController {
         view.setUtenteNome("Utente ID " + annuncio.getIdUtente(), false);
       }
     } catch (DatabaseException e) {
-      System.err.println("Errore caricamento info utente: " + e.getMessage());
+      Logger.error("Errore caricamento info utente", e);
       view.setUtenteNome("Utente ID " + annuncio.getIdUtente(), false);
     }
 
