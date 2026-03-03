@@ -1,5 +1,7 @@
 package gui;
 
+import utils.Logger;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -46,10 +48,10 @@ public class BaseFrame extends JFrame {
                 }
 
             } else {
-                System.err.println("AVVISO: Risorsa icona non trovata. Controlla il percorso: ../img/logo.png");
+                Logger.error("AVVISO: Risorsa icona non trovata. Controlla il percorso: ../img/logo.png");
             }
         } catch (Exception e) {
-            System.err.println("Errore durante il caricamento dell'icona: " + e.getMessage());
+            Logger.error("Errore durante il caricamento dell'icona", e);
         }
     }
 
