@@ -5,6 +5,8 @@ import exception.DatabaseException;
 import model.*;
 import model.enums.Categoria;
 import model.enums.TipoAnnuncio;
+import utils.Constanti;
+import utils.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -27,7 +29,7 @@ public class AnnuncioDAO {
     try {
       this.con = dbConnection.getInstance().getConnection();
     } catch (DatabaseException e) {
-      System.err.println("Errore di connessione al database: " + e.getMessage());
+      Logger.error("Errore di connessione al database in AnnuncioDAO", e);
     }
   }
 
@@ -103,8 +105,7 @@ public class AnnuncioDAO {
         }
       }
     } catch (SQLException e) {
-      System.err.println("Errore durante il recupero degli annunci: " + e.getMessage());
-      e.printStackTrace();
+      Logger.error("Errore durante il recupero degli annunci", e);
     }
     return annunci;
   }
@@ -136,13 +137,13 @@ public class AnnuncioDAO {
     }
 
     // Filtro categoria
-    if (categoria != null && !categoria.trim().isEmpty() && !"Tutte".equalsIgnoreCase(categoria.trim())) {
+    if (categoria != null && !categoria.trim().isEmpty() && !Constanti.CATEGORIA_TUTTE.equalsIgnoreCase(categoria.trim())) {
       sql.append(" AND UPPER(categoria) = ?");
       parametri.add(categoria.toUpperCase());
     }
 
     // Filtro tipo annuncio
-    if (tipo != null && !tipo.trim().isEmpty() && !"Tutti".equalsIgnoreCase(tipo.trim())) {
+    if (tipo != null && !tipo.trim().isEmpty() && !Constanti.TIPO_TUTTI.equalsIgnoreCase(tipo.trim())) {
       sql.append(" AND UPPER(tipoannuncio) = ?");
       parametri.add(tipo.toUpperCase());
     }
@@ -168,8 +169,7 @@ public class AnnuncioDAO {
         }
       }
     } catch (SQLException e) {
-      System.err.println("Errore durante la ricerca degli annunci: " + e.getMessage());
-      e.printStackTrace();
+      Logger.error("Errore durante la ricerca degli annunci", e);
     }
     return annunci;
   }
