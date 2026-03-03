@@ -2,6 +2,7 @@ package controller;
 
 import gui.ScriviRecensione;
 import dao.RecensioneDAO;
+import dao.UtenteDAO;
 import model.Recensione;
 import model.Utente;
 import utils.SessionManager;
@@ -24,6 +25,10 @@ public class ScriviRecensioneController {
    */
   private final RecensioneDAO recensioneDAO;
   /**
+   * DAO utenti.
+   */
+  private final UtenteDAO utenteDAO;
+  /**
    * ID utente destinatario recensione.
    */
   private final int idUtenteDestinatario;
@@ -38,6 +43,7 @@ public class ScriviRecensioneController {
     this.view = view;
     this.idUtenteDestinatario = idUtenteDestinatario;
     this.recensioneDAO = new RecensioneDAO();
+    this.utenteDAO = new UtenteDAO();
     initListeners();
   }
 
@@ -81,8 +87,13 @@ public class ScriviRecensioneController {
     }
 
     try {
-      boolean transazioneOk =
-              recensioneDAO.hannoTransazioneCompletata(utenteLoggato.getIdUtente(), idUtenteDestinatario);
+      Utente utenteDestinatario = utenteDAO.getUserByID(idUtenteDestinatario);
+      if (utenteDestinatario == null) {
+        view.mostraErrore("Utente destinatario non trovato.");
+        return;
+      }
+
+      boolean transazioneOk = recensioneDAO.hannoTransazioneCompletata(utenteLoggato, utenteDestinatario);
       if (!transazioneOk) {
         view.mostraErrore("Puoi lasciare una recensione solo dopo una transazione completata.");
         return;
