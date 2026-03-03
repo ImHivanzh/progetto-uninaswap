@@ -266,40 +266,10 @@ public class AnnuncioDAO {
     int idUtente = rs.getInt("idutente");
     boolean stato = rs.getBoolean("stato");
 
-    Categoria categoria;
-    try {
-      categoria = Categoria.valueOf(rs.getString("categoria").toUpperCase());
-    } catch (Exception e) {
-      categoria = Categoria.ALTRO;
-    }
+    Categoria categoria = parseCategoria(rs.getString("categoria"));
+    TipoAnnuncio tipo = parseTipoAnnuncio(rs.getString("tipoannuncio"));
 
-    TipoAnnuncio tipo;
-    try {
-      tipo = TipoAnnuncio.valueOf(rs.getString("tipoannuncio").toUpperCase());
-    } catch (Exception e) {
-      tipo = TipoAnnuncio.VENDITA;
-    }
-
-    Annuncio annuncio;
-
-    switch (tipo) {
-      case VENDITA:
-        double prezzo = rs.getDouble("prezzo");
-        Vendita v = new Vendita();
-        v.setPrezzo(prezzo);
-        annuncio = v;
-        break;
-      case SCAMBIO:
-        String oggettoRichiesto = rs.getString("oggetto_richiesto");
-        Scambio s = new Scambio(titolo, descrizione, categoria, idUtente, oggettoRichiesto);
-        annuncio = s;
-        break;
-      case REGALO:
-        annuncio = new Regalo(titolo, descrizione, categoria, idUtente);
-        break;
-      default:
-        annuncio = new Annuncio();
-    }
+    Annuncio annuncio = creaAnnuncioPerTipo(tipo, titolo, descrizione, categoria, idUtente, rs);
 
     annuncio.setIdAnnuncio(id);
     annuncio.setIdUtente(idUtente);
@@ -312,6 +282,71 @@ public class AnnuncioDAO {
 
     return annuncio;
   }
+
+  /**
+   * Parsing sicuro della categoria da stringa.
+   *
+   * @param categoriaStr stringa categoria dal database
+   * @return enum Categoria, o ALTRO se non riconosciuta
+   */
+  private Categoria parseCategoria(String categoriaStr) {
+    try {
+      return Categoria.valueOf(categoriaStr.toUpperCase());
+    } catch (Exception e) {
+      return Categoria.ALTRO;
+    }
+  }
+
+  /**
+   * Parsing sicuro del tipo annuncio da stringa.
+   *
+   * @param tipoStr stringa tipo dal database
+   * @return enum TipoAnnuncio, o VENDITA se non riconosciuto
+   */
+  private TipoAnnuncio parseTipoAnnuncio(String tipoStr) {
+    try {
+      return TipoAnnuncio.valueOf(tipoStr.toUpperCase());
+    } catch (Exception e) {
+      return TipoAnnuncio.VENDITA;
+    }
+  }
+
+  /**
+   * Crea l'istanza specifica di Annuncio in base al tipo.
+   *
+   * @param tipo tipo di annuncio
+   * @param titolo titolo annuncio
+   * @param descrizione descrizione annuncio
+   * @param categoria categoria annuncio
+   * @param idUtente ID utente proprietario
+   * @param rs ResultSet per leggere campi specifici
+   * @return istanza di Annuncio (Vendita, Scambio, Regalo)
+   * @throws SQLException se la lettura dei campi fallisce
+   */
+  private Annuncio creaAnnuncioPerTipo(TipoAnnuncio tipo, String titolo, String descrizione,
+                                        Categoria categoria, int idUtente, ResultSet rs) throws SQLException {
+    switch (tipo) {
+      case VENDITA:
+        double prezzo = rs.getDouble("prezzo");
+        Vendita v = new Vendita();
+        v.setPrezzo(prezzo);
+        return v;
+      case SCAMBIO:
+        String oggettoRichiesto = rs.getString("oggetto_richiesto");
+        return new Scambio(titolo, descrizione, categoria, idUtente, oggettoRichiesto);
+      case REGALO:
+        return new Regalo(titolo, descrizione, categoria, idUtente);
+      default:
+        return new Annuncio();
+    }
+  }
+
+  /**
+   * Legge il campo spedizione gestendo diversi formati dal database.
+   *
+   * @param rs ResultSet da cui leggere
+   * @return Boolean (true/false/null)
+   */
 
   private Boolean readSpedizione(ResultSet rs) {
     try {
