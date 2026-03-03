@@ -1,6 +1,5 @@
 package dao;
 
-import controller.LoginController;
 import model.Utente;
 import utils.DataCheck;
 import utils.Logger;

@@ -202,7 +202,6 @@ public class PropostaDAO {
             ps.setInt(4, annuncio.getIdAnnuncio());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new DatabaseException("Errore durante l'inserimento della proposta di regalo", e);
         }
     }
@@ -239,8 +238,6 @@ public class PropostaDAO {
      */
     private List<PropostaRiepilogo> getProposte(int idUtente, String query) throws DatabaseException {
         List<PropostaRiepilogo> proposte = new ArrayList<>();
-
-        if (con == null) throw new DatabaseException("Connessione al database non disponibile.");
 
         try (PreparedStatement ps = con.prepareStatement(query)) {
             ps.setInt(1, idUtente);
@@ -287,7 +284,6 @@ public class PropostaDAO {
         if (tabella == null) {
             throw new DatabaseException("Tipo annuncio non riconosciuto: " + tipoAnnuncio);
         }
-        if (con == null) throw new DatabaseException("Connessione al database non disponibile.");
 
         String sql =
                 "UPDATE " + tabella + " SET accettato = ?, inattesa = ? " +
@@ -301,7 +297,6 @@ public class PropostaDAO {
             ps.setString(4, usernameProponente);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new DatabaseException("Errore durante l'aggiornamento dello stato proposta", e);
         }
     }
@@ -321,7 +316,6 @@ public class PropostaDAO {
         if (tabella == null) {
             throw new DatabaseException("Tipo annuncio non riconosciuto: " + tipoAnnuncio);
         }
-        if (con == null) throw new DatabaseException("Connessione al database non disponibile.");
 
         String sql =
                 "DELETE FROM " + tabella +

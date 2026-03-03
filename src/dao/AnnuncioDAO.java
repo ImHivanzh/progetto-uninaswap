@@ -2,14 +2,22 @@ package dao;
 
 import db.dbConnection;
 import exception.DatabaseException;
-import model.*;
+import model.Annuncio;
+import model.Regalo;
+import model.Scambio;
+import model.Utente;
+import model.Vendita;
 import model.enums.Categoria;
 import model.enums.TipoAnnuncio;
 import utils.Constanti;
 import utils.Logger;
 import utils.Validator;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,7 +105,6 @@ public class AnnuncioDAO {
    */
   public List<Annuncio> findAll() {
     List<Annuncio> annunci = new ArrayList<>();
-    if (con == null) return annunci;
 
     String sql = "SELECT * FROM annuncio";
 
@@ -128,7 +135,6 @@ public class AnnuncioDAO {
    */
   public List<Annuncio> search(String testo, String categoria, String tipo, Double prezzoMax) {
     List<Annuncio> annunci = new ArrayList<>();
-    if (con == null) return annunci;
 
     // Costruisce query dinamica in base ai filtri
     StringBuilder sql = new StringBuilder("SELECT * FROM annuncio WHERE stato = true");
