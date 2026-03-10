@@ -19,7 +19,6 @@ public class RitiroDAO {
    * Connessione al database.
    */
   private final Connection con;
-  private final AnnuncioDAO annuncioDAO;
 
   /**
    * Crea DAO e inizializza database connessione.
@@ -30,28 +29,6 @@ public class RitiroDAO {
     this.con = dbConnection.getInstance().getConnection();
     if (this.con == null) {
       throw new DatabaseException("Connessione al database non disponibile.");
-    }
-    this.annuncioDAO = new AnnuncioDAO();
-  }
-
-  /**
-   * Verifica se ritiro esiste per annuncio.
-   *
-   * @param idAnnuncio id annuncio
-   * @return true quando esiste già un ritiro
-   * @throws DatabaseException quando query fallisce
-   */
-  public boolean esistePerAnnuncio(int idAnnuncio) throws DatabaseException {
-    if (con == null) throw new DatabaseException("Connessione al database non disponibile.");
-
-    String sql = "SELECT 1 FROM ritiro WHERE idannuncio = ? LIMIT 1";
-    try (PreparedStatement ps = con.prepareStatement(sql)) {
-      ps.setInt(1, idAnnuncio);
-      try (ResultSet rs = ps.executeQuery()) {
-        return rs.next();
-      }
-    } catch (SQLException e) {
-      throw new DatabaseException("Errore durante la verifica ritiro", e);
     }
   }
 
@@ -97,7 +74,7 @@ public class RitiroDAO {
   public model.Ritiro getRitiroByAnnuncio(int idAnnuncio) throws DatabaseException {
     if (con == null) throw new DatabaseException("Connessione al database non disponibile.");
 
-    String sql = "SELECT * FROM ritiro WHERE idannuncio = ?";
+    String sql = "SELECT idritiro, sede, orario, data, numerotelefono, ritirato, idannuncio FROM ritiro WHERE idannuncio = ?";
     try (PreparedStatement ps = con.prepareStatement(sql)) {
       ps.setInt(1, idAnnuncio);
       try (ResultSet rs = ps.executeQuery()) {
@@ -105,11 +82,10 @@ public class RitiroDAO {
           model.Ritiro ritiro = new model.Ritiro();
           ritiro.setIdRitiro(rs.getInt("idritiro"));
           ritiro.setSede(rs.getString("sede"));
-          ritiro.setOrario(rs.getString("orario")); // Si assume che orario sia salvato come stringa: verificare lo schema DB.
+          ritiro.setOrario(rs.getString("orario"));
           ritiro.setData(rs.getDate("data"));
           ritiro.setNumeroTelefono(rs.getString("numerotelefono"));
           ritiro.setRitirato(rs.getBoolean("ritirato"));
-          ritiro.setAnnuncio(annuncioDAO.findById(rs.getInt("idannuncio")));
           return ritiro;
         }
       }

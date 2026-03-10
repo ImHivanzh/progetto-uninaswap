@@ -10,6 +10,7 @@ import model.Recensione;
 import model.Annuncio;
 import model.PropostaRiepilogo;
 import model.Utente;
+import model.enums.StatoConsegna;
 import utils.ConsegnaHelper;
 import utils.DataCheck;
 import utils.FormHelper;
@@ -273,24 +274,34 @@ public class ProfiloController {
         proposteInviate = propostaDAO.getProposteInviate(utenteTarget.getIdUtente());
 
         for (PropostaRiepilogo proposta : proposteRicevute) {
+          if (proposta == null) continue;
+
           String nomeUtente = proposta.utenteCoinvolto() != null ? proposta.utenteCoinvolto().getUsername() : "Sconosciuto";
+          String titoloAnnuncio = proposta.annuncio() != null ? proposta.annuncio().getTitolo() : "N/A";
+          String tipoAnnuncio = proposta.annuncio() != null && proposta.annuncio().getTipoAnnuncio() != null
+              ? proposta.annuncio().getTipoAnnuncio().toString() : "N/A";
           view.aggiungiPropostaRicevuta(
                   nomeUtente,
-                  proposta.titoloAnnuncio(),
-                  proposta.tipoAnnuncio(),
+                  titoloAnnuncio,
+                  tipoAnnuncio,
                   proposta.dettaglio(),
-                  formatStato(proposta)
+                  formatStato(proposta).getDescrizione()
           );
         }
 
         for (PropostaRiepilogo proposta : proposteInviate) {
+          if (proposta == null) continue;
+
           String nomeUtente = proposta.utenteCoinvolto() != null ? proposta.utenteCoinvolto().getUsername() : "Sconosciuto";
+          String titoloAnnuncio = proposta.annuncio() != null ? proposta.annuncio().getTitolo() : "N/A";
+          String tipoAnnuncio = proposta.annuncio() != null && proposta.annuncio().getTipoAnnuncio() != null
+              ? proposta.annuncio().getTipoAnnuncio().toString() : "N/A";
           view.aggiungiPropostaInviata(
                   nomeUtente,
-                  proposta.titoloAnnuncio(),
-                  proposta.tipoAnnuncio(),
+                  titoloAnnuncio,
+                  tipoAnnuncio,
                   proposta.dettaglio(),
-                  formatStato(proposta)
+                  formatStato(proposta).getDescrizione()
           );
         }
       }
@@ -305,32 +316,33 @@ public class ProfiloController {
    * Restituisce etichetta stato per proposta.
    *
    * @param proposta riepilogo proposta
-   * @return etichetta stato
+   * @return stato consegna
    */
-  private String formatStato(PropostaRiepilogo proposta) {
+  private StatoConsegna formatStato(PropostaRiepilogo proposta) {
     if (!proposta.accettata()) {
-      return proposta.inattesa() ? "In attesa" : "Rifiutato";
+      return proposta.inattesa() ? StatoConsegna.IN_ATTESA : StatoConsegna.RIFIUTATO;
     }
 
-    if (spedizioneDAO == null || ritiroDAO == null) {
-      return "In attesa";
+    if (spedizioneDAO == null || ritiroDAO == null || proposta.annuncio() == null) {
+      return StatoConsegna.IN_ATTESA;
     }
 
     try {
-      model.Spedizione spedizione = spedizioneDAO.getSpedizioneByAnnuncio(proposta.idAnnuncio());
-      model.Ritiro ritiro = ritiroDAO.getRitiroByAnnuncio(proposta.idAnnuncio());
+      int idAnnuncio = proposta.annuncio().getIdAnnuncio();
+      model.Spedizione spedizione = spedizioneDAO.getSpedizioneByAnnuncio(idAnnuncio);
+      model.Ritiro ritiro = ritiroDAO.getRitiroByAnnuncio(idAnnuncio);
 
       if (spedizione != null) {
-        return spedizione.isSpedito() ? "Concluso" : "Da spedire";
+        return spedizione.isSpedito() ? StatoConsegna.CONCLUSO : StatoConsegna.DA_SPEDIRE;
       }
       if (ritiro != null) {
-        return ritiro.isRitirato() ? "Concluso" : "Da ritirare";
+        return ritiro.isRitirato() ? StatoConsegna.CONCLUSO : StatoConsegna.DA_RITIRARE;
       }
-      return "In attesa";
+      return StatoConsegna.IN_ATTESA;
     } catch (DatabaseException e) {
       view.mostraErrore("Errore nel controllo stato proposta: " + e.getMessage());
       Logger.error("Errore controllo stato proposta", e);
-      return "In attesa";
+      return StatoConsegna.IN_ATTESA;
     }
   }
 
@@ -348,6 +360,11 @@ public class ProfiloController {
       return;
     }
     PropostaRiepilogo proposta = proposteRicevute.get(selectedRow);
+    if (proposta == null || proposta.annuncio() == null) {
+      view.mostraErrore("Proposta non valida.");
+      return;
+    }
+
     boolean mostraImmagine = isPropostaScambio(proposta);
     String dettaglio = buildDettaglioProposta(proposta, "Da");
 
@@ -366,9 +383,15 @@ public class ProfiloController {
   private void handlePropostaRicevutaAccettata(PropostaRiepilogo proposta, boolean mostraImmagine, String dettaglio) {
     boolean isSpedizioneNonSpedita = false;
     boolean isRitiroNonRitirato = false;
-    int idAnnuncio = proposta.idAnnuncio();
 
-    if (spedizioneDAO != null || ritiroDAO != null) {
+    if (proposta.annuncio() == null) {
+      view.mostraErrore("Annuncio non disponibile.");
+      return;
+    }
+
+    int idAnnuncio = proposta.annuncio().getIdAnnuncio();
+
+    if (spedizioneDAO != null && ritiroDAO != null) {
       try {
         if (spedizioneDAO != null) {
           model.Spedizione spedizione = spedizioneDAO.getSpedizioneByAnnuncio(idAnnuncio);
@@ -390,7 +413,7 @@ public class ProfiloController {
 
     while (true) {
       List<String> opzioniList = new ArrayList<>();
-      if ("Concluso".equals(formatStato(proposta))) {
+      if (StatoConsegna.CONCLUSO.equals(formatStato(proposta))) {
         opzioniList.add("Lascia recensione");
       }
       opzioniList.add("Dettagli consegna");
@@ -562,6 +585,11 @@ public class ProfiloController {
       return;
     }
     PropostaRiepilogo proposta = proposteInviate.get(selectedRow);
+    if (proposta == null || proposta.annuncio() == null) {
+      view.mostraErrore("Proposta non valida.");
+      return;
+    }
+
     boolean mostraImmagine = isPropostaScambio(proposta);
     String dettaglio = buildDettaglioProposta(proposta, "A");
 
@@ -578,12 +606,19 @@ public class ProfiloController {
    * Gestisce proposta inviata accettata.
    */
   private void handlePropostaInviataAccettata(PropostaRiepilogo proposta, boolean mostraImmagine, String dettaglio) {
+    if (proposta.annuncio() == null) {
+      view.mostraErrore("Annuncio non disponibile.");
+      return;
+    }
+
     while (true) {
       boolean deliveryDetailsExist = false;
       if (spedizioneDAO != null && ritiroDAO != null) {
         try {
-          deliveryDetailsExist = spedizioneDAO.esistePerAnnuncio(proposta.idAnnuncio())
-                  || ritiroDAO.esistePerAnnuncio(proposta.idAnnuncio());
+          int idAnnuncio = proposta.annuncio().getIdAnnuncio();
+          model.Spedizione spedizione = spedizioneDAO.getSpedizioneByAnnuncio(idAnnuncio);
+          model.Ritiro ritiro = ritiroDAO.getRitiroByAnnuncio(idAnnuncio);
+          deliveryDetailsExist = (spedizione != null || ritiro != null);
         } catch (DatabaseException e) {
           view.mostraErrore("Errore nel controllo stato consegna: " + e.getMessage());
           Logger.error("Errore controllo stato consegna proposta inviata", e);
@@ -591,7 +626,7 @@ public class ProfiloController {
       }
 
       List<String> opzioniList = new ArrayList<>();
-      if ("Concluso".equals(formatStato(proposta))) {
+      if (StatoConsegna.CONCLUSO.equals(formatStato(proposta))) {
         opzioniList.add("Lascia recensione");
       }
       if (!deliveryDetailsExist) {
@@ -716,8 +751,18 @@ public class ProfiloController {
     }
 
     PropostaRiepilogo proposta = lista.get(selectedRow);
-    if (!"Concluso".equals(formatStato(proposta))) {
+    if (proposta == null) {
+      view.mostraErrore("Proposta non valida.");
+      return;
+    }
+
+    if (!StatoConsegna.CONCLUSO.equals(formatStato(proposta))) {
       view.mostraErrore("Puoi lasciare una recensione solo per proposte concluse.");
+      return;
+    }
+
+    if (proposta.utenteCoinvolto() == null) {
+      view.mostraErrore("Utente coinvolto non disponibile.");
       return;
     }
 
@@ -744,10 +789,16 @@ public class ProfiloController {
       view.mostraErrore("Utente proponente non valido.");
       return false;
     }
+    if (proposta.annuncio() == null) {
+      view.mostraErrore("Annuncio non disponibile.");
+      return false;
+    }
     try {
+      String tipoAnnuncio = proposta.annuncio().getTipoAnnuncio() != null
+          ? proposta.annuncio().getTipoAnnuncio().toString() : "";
       boolean ok = propostaDAO.aggiornaEsitoProposta(
-              proposta.idAnnuncio(),
-              proposta.tipoAnnuncio(),
+              proposta.annuncio().getIdAnnuncio(),
+              tipoAnnuncio,
               utenteProponente.getUsername(),
               accettata,
               inattesa);
@@ -781,10 +832,16 @@ public class ProfiloController {
       view.mostraErrore("Utente proponente non valido.");
       return;
     }
+    if (proposta.annuncio() == null) {
+      view.mostraErrore("Annuncio non disponibile.");
+      return;
+    }
     try {
+      String tipoAnnuncio = proposta.annuncio().getTipoAnnuncio() != null
+          ? proposta.annuncio().getTipoAnnuncio().toString() : "";
       boolean ok = propostaDAO.eliminaProposta(
-              proposta.idAnnuncio(),
-              proposta.tipoAnnuncio(),
+              proposta.annuncio().getIdAnnuncio(),
+              tipoAnnuncio,
               utenteProponente.getUsername());
       if (ok) {
         view.mostraMessaggio(messaggioOk);
@@ -804,7 +861,8 @@ public class ProfiloController {
    * @param proposta riepilogo proposta
    */
   private void inserisciDettagliConsegna(PropostaRiepilogo proposta) {
-    if (proposta == null) {
+    if (proposta == null || proposta.annuncio() == null) {
+      view.mostraErrore("Proposta o annuncio non disponibile.");
       return;
     }
 
@@ -813,21 +871,19 @@ public class ProfiloController {
       return;
     }
 
+    int idAnnuncio = proposta.annuncio().getIdAnnuncio();
+
     try {
-      if (spedizioneDAO.esistePerAnnuncio(proposta.idAnnuncio())) {
-        model.Spedizione spedizione = spedizioneDAO.getSpedizioneByAnnuncio(proposta.idAnnuncio());
-        if (spedizione != null) {
-          consegnaHelper.mostraDettagliSpedizione(spedizione);
-          return;
-        }
+      model.Spedizione spedizione = spedizioneDAO.getSpedizioneByAnnuncio(idAnnuncio);
+      if (spedizione != null) {
+        consegnaHelper.mostraDettagliSpedizione(spedizione);
+        return;
       }
 
-      if (ritiroDAO.esistePerAnnuncio(proposta.idAnnuncio())) {
-        model.Ritiro ritiro = ritiroDAO.getRitiroByAnnuncio(proposta.idAnnuncio());
-        if (ritiro != null) {
-          consegnaHelper.mostraDettagliRitiro(ritiro);
-          return;
-        }
+      model.Ritiro ritiro = ritiroDAO.getRitiroByAnnuncio(idAnnuncio);
+      if (ritiro != null) {
+        consegnaHelper.mostraDettagliRitiro(ritiro);
+        return;
       }
     } catch (DatabaseException e) {
       view.mostraErrore("Errore durante la verifica consegna: " + e.getMessage());
@@ -847,9 +903,9 @@ public class ProfiloController {
             opzioni[0]);
 
     if (scelta == 0) {
-      salvaSpedizione(proposta.idAnnuncio());
+      salvaSpedizione(idAnnuncio);
     } else if (scelta == 1) {
-      salvaRitiro(proposta.idAnnuncio());
+      salvaRitiro(idAnnuncio);
     }
   }
 
@@ -894,12 +950,19 @@ public class ProfiloController {
    * @return dettaglio stringa
    */
   private String buildDettaglioProposta(PropostaRiepilogo proposta, String labelUtente) {
+    if (proposta == null) {
+      return "Proposta non disponibile";
+    }
+
     String nomeUtente = proposta.utenteCoinvolto() != null ? proposta.utenteCoinvolto().getUsername() : "Sconosciuto";
+    String titoloAnnuncio = proposta.annuncio() != null ? proposta.annuncio().getTitolo() : "N/A";
+    String tipoAnnuncio = proposta.annuncio() != null && proposta.annuncio().getTipoAnnuncio() != null
+        ? proposta.annuncio().getTipoAnnuncio().toString() : "N/A";
     return labelUtente + ": " + nomeUtente
-            + "\nAnnuncio: " + proposta.titoloAnnuncio()
-            + "\nTipo: " + proposta.tipoAnnuncio()
+            + "\nAnnuncio: " + titoloAnnuncio
+            + "\nTipo: " + tipoAnnuncio
             + "\nDettaglio: " + proposta.dettaglio()
-            + "\nStato: " + formatStato(proposta);
+            + "\nStato: " + formatStato(proposta).getDescrizione();
   }
 
   /**
@@ -909,10 +972,10 @@ public class ProfiloController {
    * @return true se e scambio
    */
   private boolean isPropostaScambio(PropostaRiepilogo proposta) {
-    if (proposta == null || proposta.tipoAnnuncio() == null) {
+    if (proposta == null || proposta.annuncio() == null || proposta.annuncio().getTipoAnnuncio() == null) {
       return false;
     }
-    return proposta.tipoAnnuncio().trim().toUpperCase().contains("SCAMBIO");
+    return proposta.annuncio().getTipoAnnuncio().toString().trim().toUpperCase().contains("SCAMBIO");
   }
 
   /**
@@ -966,7 +1029,8 @@ public class ProfiloController {
       return;
     }
 
-    if (proposta.tipoAnnuncio().toUpperCase().contains("REGALO")) {
+    if (proposta.annuncio() != null && proposta.annuncio().getTipoAnnuncio() != null
+        && proposta.annuncio().getTipoAnnuncio().toString().toUpperCase().contains("REGALO")) {
       view.mostraErrore("Non puoi modificare una proposta per un regalo.");
       return;
     }
@@ -1022,46 +1086,5 @@ public class ProfiloController {
             view::mostraErrore,
             () -> view.mostraMessaggio("Dettagli di consegna non ancora forniti dall'acquirente.")
     );
-  }
-
-  /**
-   * Mostra dettagli di una spedizione in una finestra di dialogo.
-   * @param spedizione l'oggetto Spedizione da visualizzare.
-   */
-  private void mostraDettagliSpedizione(model.Spedizione spedizione) {
-    StringBuilder message = new StringBuilder("Dettagli Spedizione:\n");
-    if (spedizione.getIdSpedizione() != 0) {
-      message.append("ID Spedizione: ").append(spedizione.getIdSpedizione()).append("\n");
-    }
-    message.append("Indirizzo: ").append(spedizione.getIndirizzo()).append("\n");
-    message.append("Numero di Telefono: ").append(spedizione.getNumeroTelefono()).append("\n");
-    message.append("Data Invio: ").append(spedizione.getDataInvio().toString()).append("\n");
-    message.append("Data Arrivo: ").append(spedizione.getDataArrivo().toString()).append("\n");
-    message.append("Spedito: ").append(spedizione.isSpedito() ? "Si" : "No");
-
-    JOptionPane.showMessageDialog(view, message.toString(), "Dettagli Spedizione", JOptionPane.INFORMATION_MESSAGE);
-  }
-
-  /**
-   * Mostra dettagli di un ritiro in una finestra di dialogo.
-   * @param ritiro l'oggetto Ritiro da visualizzare.
-   */
-  private void mostraDettagliRitiro(model.Ritiro ritiro) {
-    String message = String.format(
-            "Dettagli Ritiro:\n" +
-            "ID Ritiro: %d\n" +
-            "Sede: %s\n" +
-            "Orario: %s\n" +
-            "Data: %s\n" +
-            "Numero di Telefono: %s\n" +
-            "Ritirato: %s",
-            ritiro.getIdRitiro(),
-            ritiro.getSede(),
-            ritiro.getOrario(),
-            ritiro.getData().toString(),
-            ritiro.getNumeroTelefono(),
-            ritiro.isRitirato() ? "Si" : "No"
-    );
-    JOptionPane.showMessageDialog(view, message, "Dettagli Ritiro", JOptionPane.INFORMATION_MESSAGE);
   }
 }

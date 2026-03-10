@@ -7,6 +7,7 @@ import model.PropostaRiepilogo;
 import model.ReportProposte;
 import model.Utente;
 import utils.Constanti;
+import utils.Logger;
 import utils.Validator;
 
 import java.sql.Connection;
@@ -32,7 +33,8 @@ public class PropostaDAO {
      * Query per le proposte ricevute.
      */
     private static final String SQL_PROPOSTE_RICEVUTE =
-            "SELECT a.idannuncio, a.titolo, a.tipoannuncio, u.nomeutente AS utente, " +
+            "SELECT a.idannuncio, a.titolo, a.tipoannuncio, a.descrizione, a.categoria, a.stato, a.spedizione, " +
+            "       u.idutente, u.nomeutente AS utente, u.email, u.numerotelefono, " +
             "       ('Offerta: ' || COALESCE(CAST(v.controofferta AS VARCHAR), 'N/A')) AS dettaglio, " +
             "       v.accettato, v.inattesa, CAST(NULL AS bytea) AS immagine " +
             "  FROM vendita v " +
@@ -40,7 +42,8 @@ public class PropostaDAO {
             "  JOIN utente u ON v.idutente = u.idutente " +
             " WHERE a.idutente = ? " +
             "UNION ALL " +
-            "SELECT a.idannuncio, a.titolo, a.tipoannuncio, u.nomeutente AS utente, " +
+            "SELECT a.idannuncio, a.titolo, a.tipoannuncio, a.descrizione, a.categoria, a.stato, a.spedizione, " +
+            "       u.idutente, u.nomeutente AS utente, u.email, u.numerotelefono, " +
             "       ('Scambio proposto: ' || COALESCE(s.propscambio, 'N/A')) AS dettaglio, " +
             "       s.accettato, s.inattesa, s.immagine AS immagine " +
             "  FROM scambio s " +
@@ -48,7 +51,8 @@ public class PropostaDAO {
             "  JOIN utente u ON s.idutente = u.idutente " +
             " WHERE a.idutente = ? " +
             "UNION ALL " +
-            "SELECT a.idannuncio, a.titolo, a.tipoannuncio, u.nomeutente AS utente, " +
+            "SELECT a.idannuncio, a.titolo, a.tipoannuncio, a.descrizione, a.categoria, a.stato, a.spedizione, " +
+            "       u.idutente, u.nomeutente AS utente, u.email, u.numerotelefono, " +
             "       ('Richiesta regalo' || COALESCE(' del ' || r.dataprenotazione, '')) AS dettaglio, " +
             "       r.accettato, r.inattesa, CAST(NULL AS bytea) AS immagine " +
             "  FROM regalo r " +
@@ -61,7 +65,8 @@ public class PropostaDAO {
      * Query per le proposte inviate.
      */
     private static final String SQL_PROPOSTE_INVIATE =
-            "SELECT a.idannuncio, a.titolo, a.tipoannuncio, u.nomeutente AS utente, " +
+            "SELECT a.idannuncio, a.titolo, a.tipoannuncio, a.descrizione, a.categoria, a.stato, a.spedizione, " +
+            "       u.idutente, u.nomeutente AS utente, u.email, u.numerotelefono, " +
             "       ('Offerta: ' || COALESCE(CAST(v.controofferta AS VARCHAR), 'N/A')) AS dettaglio, " +
             "       v.accettato, v.inattesa, CAST(NULL AS bytea) AS immagine " +
             "  FROM vendita v " +
@@ -69,7 +74,8 @@ public class PropostaDAO {
             "  JOIN utente u ON a.idutente = u.idutente " +
             " WHERE v.idutente = ? " +
             "UNION ALL " +
-            "SELECT a.idannuncio, a.titolo, a.tipoannuncio, u.nomeutente AS utente, " +
+            "SELECT a.idannuncio, a.titolo, a.tipoannuncio, a.descrizione, a.categoria, a.stato, a.spedizione, " +
+            "       u.idutente, u.nomeutente AS utente, u.email, u.numerotelefono, " +
             "       ('Scambio proposto: ' || COALESCE(s.propscambio, 'N/A')) AS dettaglio, " +
             "       s.accettato, s.inattesa, s.immagine AS immagine " +
             "  FROM scambio s " +
@@ -77,7 +83,8 @@ public class PropostaDAO {
             "  JOIN utente u ON a.idutente = u.idutente " +
             " WHERE s.idutente = ? " +
             "UNION ALL " +
-            "SELECT a.idannuncio, a.titolo, a.tipoannuncio, u.nomeutente AS utente, " +
+            "SELECT a.idannuncio, a.titolo, a.tipoannuncio, a.descrizione, a.categoria, a.stato, a.spedizione, " +
+            "       u.idutente, u.nomeutente AS utente, u.email, u.numerotelefono, " +
             "       ('Richiesta regalo' || COALESCE(' del ' || r.dataprenotazione, '')) AS dettaglio, " +
             "       r.accettato, r.inattesa, CAST(NULL AS bytea) AS immagine " +
             "  FROM regalo r " +
@@ -238,7 +245,6 @@ public class PropostaDAO {
      */
     private List<PropostaRiepilogo> getProposte(int idUtente, String query) throws DatabaseException {
         List<PropostaRiepilogo> proposte = new ArrayList<>();
-        UtenteDAO utenteDAO = new UtenteDAO();
 
         try (PreparedStatement ps = con.prepareStatement(query)) {
             ps.setInt(1, idUtente);
@@ -247,21 +253,44 @@ public class PropostaDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    String nomeUtente = rs.getString("utente");
+                    // Costruisci oggetto Utente direttamente dal ResultSet
+                    Utente utenteCoinvolto = new Utente();
+                    utenteCoinvolto.setIdUtente(rs.getInt("idutente"));
+                    utenteCoinvolto.setUsername(rs.getString("utente"));
+                    utenteCoinvolto.setEmail(rs.getString("email"));
+                    utenteCoinvolto.setNumeroTelefono(rs.getString("numerotelefono"));
 
-                    // Carica l'oggetto Utente completo
-                    Utente utenteCoinvolto = null;
-                    try {
-                        utenteCoinvolto = utenteDAO.getUserByUsername(nomeUtente);
-                    } catch (DatabaseException e) {
-                        // Se non troviamo l'utente, logghiamo l'errore ma continuiamo
-                        System.err.println("Errore caricamento utente " + nomeUtente + ": " + e.getMessage());
+                    // Costruisci oggetto Annuncio direttamente dal ResultSet
+                    Annuncio annuncio = new Annuncio();
+                    annuncio.setIdAnnuncio(rs.getInt("idannuncio"));
+                    annuncio.setTitolo(rs.getString("titolo"));
+                    annuncio.setDescrizione(rs.getString("descrizione"));
+                    annuncio.setStato(rs.getBoolean("stato"));
+
+                    // Parse enum values
+                    String categoriaStr = rs.getString("categoria");
+                    if (categoriaStr != null) {
+                        try {
+                            annuncio.setCategoria(model.enums.Categoria.valueOf(categoriaStr.toUpperCase()));
+                        } catch (IllegalArgumentException e) {
+                            Logger.error("Categoria non valida: " + categoriaStr, e);
+                        }
                     }
 
+                    String tipoStr = rs.getString("tipoannuncio");
+                    if (tipoStr != null) {
+                        try {
+                            annuncio.setTipoAnnuncio(model.enums.TipoAnnuncio.valueOf(tipoStr.toUpperCase()));
+                        } catch (IllegalArgumentException e) {
+                            Logger.error("Tipo annuncio non valido: " + tipoStr, e);
+                        }
+                    }
+
+                    Boolean spedizione = rs.getObject("spedizione", Boolean.class);
+                    annuncio.setSpedizione(spedizione);
+
                     PropostaRiepilogo proposta = new PropostaRiepilogo(
-                            rs.getInt("idannuncio"),
-                            rs.getString("titolo"),
-                            rs.getString("tipoannuncio"),
+                            annuncio,
                             utenteCoinvolto,
                             rs.getString("dettaglio"),
                             rs.getBoolean("accettato"),

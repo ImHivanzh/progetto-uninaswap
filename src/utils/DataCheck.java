@@ -5,6 +5,11 @@ package utils;
  */
 public class DataCheck {
     /**
+     * Lunghezza minima password.
+     */
+    public static final int MIN_PASSWORD_LENGTH = 8;
+
+    /**
      * Valida email indirizzo contro base regex pattern.
      *
      * @param email email indirizzo a valida
@@ -33,7 +38,7 @@ public class DataCheck {
      * @return true quando ha lunghezza >= 8, maiuscola, minuscola, cifra, e speciale carattere
      */
     public static boolean isStrongPassword(String password) {
-        if (password == null || password.length() < 8) {
+        if (password == null || password.length() < MIN_PASSWORD_LENGTH) {
             return false;
         }
         boolean hasUpper = false, hasLower = false, hasDigit = false, hasSpecial = false;
@@ -43,7 +48,7 @@ public class DataCheck {
             if (Character.isUpperCase(c)) hasUpper = true;
             else if (Character.isLowerCase(c)) hasLower = true;
             else if (Character.isDigit(c)) hasDigit = true;
-            else hasSpecial = true;
+            else if (specialChars.indexOf(c) >= 0) hasSpecial = true;
         }
         return hasUpper && hasLower && hasDigit && hasSpecial;
     }

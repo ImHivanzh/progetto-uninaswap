@@ -120,10 +120,10 @@ public class PubblicaAnnuncioController {
       JOptionPane.showMessageDialog(view, "Il prezzo deve essere un numero valido (usa il punto per i decimali).", "Errore", JOptionPane.ERROR_MESSAGE);
     } catch (DatabaseException e) {
       JOptionPane.showMessageDialog(view, "Errore database: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
-      e.printStackTrace();
+      Logger.error("Errore database pubblicazione annuncio", e);
     } catch (Exception e) {
       JOptionPane.showMessageDialog(view, "Errore generico: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
-      e.printStackTrace();
+      Logger.error("Errore generico pubblicazione annuncio", e);
     }
   }
 
@@ -145,7 +145,7 @@ public class PubblicaAnnuncioController {
 
         immaginiDAO.salvaImmagine(imgModel);
       }
-      System.out.println("Salvate " + files.size() + " immagini per annuncio ID: " + annuncio.getIdAnnuncio());
+      Logger.info("Salvate " + files.size() + " immagini per annuncio ID: " + annuncio.getIdAnnuncio());
 
     } catch (IOException e) {
       Logger.error("Errore durante la lettura del file immagine", e);

@@ -38,6 +38,14 @@ public class DettaglioAnnuncioController {
    */
   private final ImmaginiDAO immaginiDAO;
   /**
+   * DAO per operazioni su proposte.
+   */
+  private final PropostaDAO propostaDAO;
+  /**
+   * DAO per operazioni su utenti.
+   */
+  private final UtenteDAO utenteDAO;
+  /**
    * Lista immagini associate.
    */
   private List<Immagini> listaImmagini;
@@ -55,11 +63,14 @@ public class DettaglioAnnuncioController {
    *
    * @param view dettaglio vista
    * @param annuncio annuncio a visualizza
+   * @throws DatabaseException se inizializzazione DAO fallisce
    */
-  public DettaglioAnnuncioController(DettaglioAnnuncio view, Annuncio annuncio) {
+  public DettaglioAnnuncioController(DettaglioAnnuncio view, Annuncio annuncio) throws DatabaseException {
     this.view = view;
     this.annuncio = annuncio;
     this.immaginiDAO = new ImmaginiDAO();
+    this.propostaDAO = new PropostaDAO();
+    this.utenteDAO = new UtenteDAO();
     this.listaImmagini = new ArrayList<>();
 
     caricaDati();
@@ -103,7 +114,6 @@ public class DettaglioAnnuncioController {
     }
     view.setPrezzoInfo(prezzoTesto, prezzoColore);
 
-    UtenteDAO utenteDAO = new UtenteDAO();
     try {
       pubblicatore = annuncio.getUtente();
       if (pubblicatore == null) {
@@ -198,7 +208,6 @@ public class DettaglioAnnuncioController {
     }
 
     try {
-      PropostaDAO propostaDAO = new PropostaDAO();
       boolean successo = false;
 
       switch (annuncio.getTipoAnnuncio()) {

@@ -3,6 +3,7 @@ package controller;
 import gui.PassDimenticataForm;
 import dao.UtenteDAO;
 import utils.DataCheck;
+import utils.Logger;
 import exception.DatabaseException;
 
 import java.awt.event.ActionEvent;
@@ -83,7 +84,7 @@ public class PassDimenticataController {
             view.mostraErrore(ex.getMessage());
         } catch (DatabaseException ex) {
             view.mostraErrore("Errore di connessione al database: " + ex.getMessage());
-            ex.printStackTrace();
+            Logger.error("Errore database in password dimenticata", ex);
         }
     }
 }

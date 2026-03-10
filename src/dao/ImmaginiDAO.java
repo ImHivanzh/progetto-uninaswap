@@ -73,13 +73,14 @@ public class ImmaginiDAO {
    *
    * @param annuncio annuncio di cui recuperare le immagini
    * @return lista delle immagini
+   * @throws DatabaseException se il recupero fallisce
    */
-  public List<Immagini> getImmaginiByAnnuncio(Annuncio annuncio) {
+  public List<Immagini> getImmaginiByAnnuncio(Annuncio annuncio) throws DatabaseException {
     Validator.requireNonNull(annuncio, "annuncio");
     Validator.requirePositive(annuncio.getIdAnnuncio(), "annuncio.idAnnuncio");
 
     List<Immagini> lista = new ArrayList<>();
-    String sql = "SELECT * FROM immagini WHERE idannuncio = ?";
+    String sql = "SELECT idimmagine, immagine, idannuncio FROM immagini WHERE idannuncio = ?";
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
       ps.setInt(1, annuncio.getIdAnnuncio());
@@ -95,7 +96,7 @@ public class ImmaginiDAO {
         }
       }
     } catch (SQLException e) {
-      Logger.error("Errore recupero immagini", e);
+      throw new DatabaseException("Errore recupero immagini per annuncio " + annuncio.getIdAnnuncio(), e);
     }
     return lista;
   }
@@ -106,8 +107,9 @@ public class ImmaginiDAO {
    *
    * @param annuncio annuncio di cui recuperare la prima immagine
    * @return byte array della prima immagine, o null se non presente
+   * @throws DatabaseException se il recupero fallisce
    */
-  public byte[] getPrimaImmagine(Annuncio annuncio) {
+  public byte[] getPrimaImmagine(Annuncio annuncio) throws DatabaseException {
     Validator.requireNonNull(annuncio, "annuncio");
     Validator.requirePositive(annuncio.getIdAnnuncio(), "annuncio.idAnnuncio");
 
@@ -122,7 +124,7 @@ public class ImmaginiDAO {
         }
       }
     } catch (SQLException e) {
-      Logger.error("Errore recupero prima immagine", e);
+      throw new DatabaseException("Errore recupero prima immagine per annuncio " + annuncio.getIdAnnuncio(), e);
     }
     return null;
   }

@@ -1,7 +1,9 @@
 package gui;
 
 import controller.DettaglioAnnuncioController;
+import exception.DatabaseException;
 import model.Annuncio;
+import utils.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -89,7 +91,17 @@ public class DettaglioAnnuncio extends JFrame {
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     setLocationRelativeTo(null);
 
-    this.controller = new DettaglioAnnuncioController(this, annuncio);
+    try {
+      this.controller = new DettaglioAnnuncioController(this, annuncio);
+    } catch (DatabaseException e) {
+      Logger.error("Errore inizializzazione controller dettaglio annuncio", e);
+      JOptionPane.showMessageDialog(this,
+        "Errore durante il caricamento del dettaglio annuncio: " + e.getMessage(),
+        "Errore",
+        JOptionPane.ERROR_MESSAGE);
+      dispose();
+      return;
+    }
 
     setupListeners();
   }

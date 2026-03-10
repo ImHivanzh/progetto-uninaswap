@@ -1,18 +1,18 @@
 package model;
 
+import model.enums.StatoProposta;
+
 /**
  * Riepilogo proposta per visualizzazione.
  *
- * @param idAnnuncio id annuncio
- * @param titoloAnnuncio titolo annuncio
- * @param tipoAnnuncio tipo annuncio
+ * @param annuncio annuncio
  * @param utenteCoinvolto utente coinvolto
  * @param dettaglio dettaglio proposta
  * @param accettata flag accettata
  * @param inattesa flag in attesa
  * @param immagine immagine proposta
  */
-public record PropostaRiepilogo(int idAnnuncio, String titoloAnnuncio, String tipoAnnuncio, Utente utenteCoinvolto,
+public record PropostaRiepilogo(Annuncio annuncio, Utente utenteCoinvolto,
                                 String dettaglio, boolean accettata, boolean inattesa, byte[] immagine) {
 
   /**
@@ -21,12 +21,6 @@ public record PropostaRiepilogo(int idAnnuncio, String titoloAnnuncio, String ti
    * @return testo stato
    */
   public String getStatoTestuale() {
-    if (accettata) {
-      return "Accettata";
-    }
-    if (inattesa) {
-      return "In attesa";
-    }
-    return "Rifiutato";
+    return StatoProposta.fromFlags(accettata, inattesa).getDescrizione();
   }
 }

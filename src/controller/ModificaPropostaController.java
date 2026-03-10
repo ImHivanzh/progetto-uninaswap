@@ -30,24 +30,35 @@ public class ModificaPropostaController {
    * Immagine proposta in bytes.
    */
   private byte[] immagineProposta;
+  /**
+   * DAO per operazioni su proposte.
+   */
+  private final PropostaDAO propostaDAO;
 
   /**
    * Crea controller per modifica proposta.
    *
    * @param view dialogo vista
    * @param proposta proposta da modificare
+   * @throws DatabaseException se inizializzazione DAO fallisce
    */
-  public ModificaPropostaController(ModificaPropostaDialog view, PropostaRiepilogo proposta) {
+  public ModificaPropostaController(ModificaPropostaDialog view, PropostaRiepilogo proposta) throws DatabaseException {
     this.view = view;
     this.proposta = proposta;
     this.immagineProposta = proposta.immagine();
+    this.propostaDAO = new PropostaDAO();
   }
 
   /**
    * Popola campi iniziali dialogo.
    */
   public void popolaDati() {
-    TipoAnnuncio tipo = TipoAnnuncio.valueOf(proposta.tipoAnnuncio().toUpperCase());
+    if (proposta.annuncio() == null || proposta.annuncio().getTipoAnnuncio() == null) {
+      view.mostraErrore("Tipo annuncio non disponibile.");
+      return;
+    }
+
+    TipoAnnuncio tipo = proposta.annuncio().getTipoAnnuncio();
     if (tipo == TipoAnnuncio.VENDITA) {
       view.setPrezzoInput(proposta.dettaglio().replaceAll("[^0-9,.]", ""));
       return;
@@ -85,9 +96,8 @@ public class ModificaPropostaController {
    * Salva modifica proposta.
    */
   public void azioneSalva() {
-    TipoAnnuncio tipo = TipoAnnuncio.valueOf(proposta.tipoAnnuncio().toUpperCase());
+    TipoAnnuncio tipo = proposta.annuncio().getTipoAnnuncio();
     try {
-      PropostaDAO propostaDAO = new PropostaDAO();
       int idUtente = SessionManager.getInstance().getUtente().getIdUtente();
       boolean success = false;
 
@@ -103,7 +113,7 @@ public class ModificaPropostaController {
           view.mostraErrore("Inserisci un prezzo valido maggiore di 0.");
           return;
         }
-        success = propostaDAO.modificaPropostaVendita(proposta.idAnnuncio(), idUtente, nuovaOfferta);
+        success = propostaDAO.modificaPropostaVendita(proposta.annuncio().getIdAnnuncio(), idUtente, nuovaOfferta);
       } else if (tipo == TipoAnnuncio.SCAMBIO) {
         String nuovaDescrizione = view.getDescrizioneInput();
         if (nuovaDescrizione.isEmpty()) {
@@ -111,7 +121,7 @@ public class ModificaPropostaController {
           return;
         }
         success = propostaDAO.modificaPropostaScambio(
-                proposta.idAnnuncio(), idUtente, nuovaDescrizione, immagineProposta);
+                proposta.annuncio().getIdAnnuncio(), idUtente, nuovaDescrizione, immagineProposta);
       } else {
         view.mostraErrore("Tipo proposta non supportato.");
         return;
