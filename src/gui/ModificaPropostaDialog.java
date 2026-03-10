@@ -1,8 +1,10 @@
 package gui;
 
 import controller.ModificaPropostaController;
+import exception.DatabaseException;
 import model.PropostaRiepilogo;
 import model.enums.TipoAnnuncio;
+import utils.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -55,7 +57,7 @@ public class ModificaPropostaDialog extends JDialog {
   /**
    * Controller dialogo.
    */
-  private final ModificaPropostaController controller;
+  private ModificaPropostaController controller;
 
   /**
    * Crea dialogo modifica proposta.
@@ -69,8 +71,19 @@ public class ModificaPropostaDialog extends JDialog {
     setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     getRootPane().setDefaultButton(btnSalva);
 
-    this.controller = new ModificaPropostaController(this, proposta);
-    configuraInterfaccia(TipoAnnuncio.valueOf(proposta.tipoAnnuncio().toUpperCase()));
+    try {
+      this.controller = new ModificaPropostaController(this, proposta);
+    } catch (DatabaseException e) {
+      Logger.error("Errore inizializzazione controller modifica proposta", e);
+      JOptionPane.showMessageDialog(this,
+        "Errore durante l'inizializzazione: " + e.getMessage(),
+        "Errore",
+        JOptionPane.ERROR_MESSAGE);
+      dispose();
+      return;
+    }
+
+    configuraInterfaccia(proposta.annuncio().getTipoAnnuncio());
     setupListeners();
     popolaDati();
 

@@ -107,7 +107,10 @@ public class AnnuncioDAO {
   public List<Annuncio> findAll() {
     List<Annuncio> annunci = new ArrayList<>();
 
-    String sql = "SELECT * FROM annuncio";
+    String sql = "SELECT a.idannuncio, a.titolo, a.descrizione, a.categoria, a.tipoannuncio, a.prezzo, a.oggetto_richiesto, a.stato, a.spedizione, "
+            + "u.idutente, u.nomeutente, u.email, u.password, u.numerotelefono "
+            + "FROM annuncio a "
+            + "JOIN utente u ON a.idutente = u.idutente";
 
     try (Statement stmt = con.createStatement();
          ResultSet rs = stmt.executeQuery(sql)) {
@@ -138,7 +141,12 @@ public class AnnuncioDAO {
     List<Annuncio> annunci = new ArrayList<>();
 
     // Costruisce query dinamica in base ai filtri
-    StringBuilder sql = new StringBuilder("SELECT * FROM annuncio WHERE stato = true");
+    StringBuilder sql = new StringBuilder(
+            "SELECT a.idannuncio, a.titolo, a.descrizione, a.categoria, a.tipoannuncio, a.prezzo, a.oggetto_richiesto, a.stato, a.spedizione, " +
+            "u.idutente, u.nomeutente, u.email, u.password, u.numerotelefono " +
+            "FROM annuncio a " +
+            "JOIN utente u ON a.idutente = u.idutente " +
+            "WHERE a.stato = true");
     List<Object> parametri = new ArrayList<>();
 
     // Filtro testo (cerca in titolo e descrizione)
@@ -198,7 +206,11 @@ public class AnnuncioDAO {
     Validator.requireNonNull(utente, "utente");
     Validator.requirePositive(utente.getIdUtente(), "utente.idUtente");
 
-    String sql = "SELECT * FROM annuncio WHERE idutente = ?";
+    String sql = "SELECT a.idannuncio, a.titolo, a.descrizione, a.categoria, a.tipoannuncio, a.prezzo, a.oggetto_richiesto, a.stato, a.spedizione, " +
+                 "u.idutente, u.nomeutente, u.email, u.password, u.numerotelefono " +
+                 "FROM annuncio a " +
+                 "JOIN utente u ON a.idutente = u.idutente " +
+                 "WHERE a.idutente = ?";
     List<Annuncio> annunci = new ArrayList<>();
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
@@ -226,7 +238,11 @@ public class AnnuncioDAO {
   public Annuncio findById(int idAnnuncio) throws DatabaseException {
     Validator.requirePositive(idAnnuncio, "idAnnuncio");
 
-    String sql = "SELECT * FROM annuncio WHERE idannuncio = ?";
+    String sql = "SELECT a.idannuncio, a.titolo, a.descrizione, a.categoria, a.tipoannuncio, a.prezzo, a.oggetto_richiesto, a.stato, a.spedizione, "
+            + "u.idutente, u.nomeutente, u.email, u.password, u.numerotelefono "
+            + "FROM annuncio a "
+            + "JOIN utente u ON a.idutente = u.idutente "
+            + "WHERE a.idannuncio = ?";
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
       ps.setInt(1, idAnnuncio);
@@ -273,20 +289,18 @@ public class AnnuncioDAO {
     int id = rs.getInt("idannuncio");
     String titolo = rs.getString("titolo");
     String descrizione = rs.getString("descrizione");
-    int idUtente = rs.getInt("idutente");
     boolean stato = rs.getBoolean("stato");
 
     Categoria categoria = parseCategoria(rs.getString("categoria"));
     TipoAnnuncio tipo = parseTipoAnnuncio(rs.getString("tipoannuncio"));
 
-    // Carica l'oggetto Utente completo
-    UtenteDAO utenteDAO = new UtenteDAO();
-    Utente utente = null;
-    try {
-      utente = utenteDAO.getUserByID(idUtente);
-    } catch (DatabaseException e) {
-      Logger.error("Errore caricamento utente per annuncio " + id, e);
-    }
+    // Costruisce oggetto Utente direttamente dal ResultSet (già incluso nel JOIN)
+    Utente utente = new Utente();
+    utente.setIdUtente(rs.getInt("idutente"));
+    utente.setUsername(rs.getString("nomeutente"));
+    utente.setEmail(rs.getString("email"));
+    utente.setPassword(rs.getString("password"));
+    utente.setNumeroTelefono(rs.getString("numerotelefono"));
 
     Annuncio annuncio = creaAnnuncioPerTipo(tipo, titolo, descrizione, categoria, utente, rs);
 

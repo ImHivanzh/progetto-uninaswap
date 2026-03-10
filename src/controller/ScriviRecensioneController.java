@@ -6,6 +6,7 @@ import dao.UtenteDAO;
 import model.Recensione;
 import model.Utente;
 import utils.SessionManager;
+import utils.Logger;
 import exception.DatabaseException;
 
 import java.awt.event.ActionEvent;
@@ -123,7 +124,7 @@ public class ScriviRecensioneController {
       }
     } catch (DatabaseException ex) {
       view.mostraErrore("Errore Database: " + ex.getMessage());
-      ex.printStackTrace();
+      Logger.error("Errore database scrittura recensione", ex);
     }
   }
 }

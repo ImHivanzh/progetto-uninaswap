@@ -88,7 +88,7 @@ public class UtenteDAO {
      * @throws DatabaseException se la query fallisce
      */
     public Utente autenticaUtente(String username, String password) throws DatabaseException {
-        String sql = "SELECT * FROM utente WHERE nomeutente = ? AND password = ?";
+        String sql = "SELECT idutente, nomeutente, password, mail, numerotelefono FROM utente WHERE nomeutente = ? AND password = ?";
 
         if (con == null) return null;
 
@@ -121,7 +121,7 @@ public class UtenteDAO {
      * @throws DatabaseException se la query fallisce
      */
     public Utente getUserByID(int id) throws DatabaseException {
-        String sql = "SELECT * FROM utente WHERE idutente = ?";
+        String sql = "SELECT idutente, nomeutente, password, mail, numerotelefono FROM utente WHERE idutente = ?";
 
         if (con == null) throw new DatabaseException("Connessione non disponibile");
 
@@ -153,7 +153,7 @@ public class UtenteDAO {
      * @throws DatabaseException se la query fallisce
      */
     public Utente getUserByUsername(String username) throws DatabaseException {
-        String sql = "SELECT * FROM utente WHERE nomeutente = ?";
+        String sql = "SELECT idutente, nomeutente, password, mail, numerotelefono FROM utente WHERE nomeutente = ?";
 
         if (con == null) throw new DatabaseException("Connessione non disponibile");
 

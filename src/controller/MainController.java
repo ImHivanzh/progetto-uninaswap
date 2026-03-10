@@ -2,6 +2,7 @@ package controller;
 
 import dao.AnnuncioDAO;
 import dao.ImmaginiDAO;
+import exception.DatabaseException;
 import gui.DettaglioAnnuncio;
 import gui.LoginForm;
 import gui.MainApp;
@@ -10,6 +11,7 @@ import gui.PubblicaAnnuncio;
 import model.Annuncio;
 import model.Immagini;
 import model.Vendita;
+import utils.Logger;
 import utils.SessionManager;
 import utils.WindowManager;
 
@@ -269,7 +271,12 @@ public class MainController implements ActionListener {
     if (annuncio == null) {
       return null;
     }
-    return immaginiDAO.getPrimaImmagine(annuncio);
+    try {
+      return immaginiDAO.getPrimaImmagine(annuncio);
+    } catch (DatabaseException e) {
+      Logger.error("Errore caricamento prima immagine per annuncio " + annuncio.getIdAnnuncio(), e);
+      return null;
+    }
   }
 
   /**

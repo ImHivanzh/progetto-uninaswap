@@ -49,20 +49,23 @@ public class ConsegnaHelper {
     }
 
     try {
-      if (spedizioneDAO.esistePerAnnuncio(proposta.idAnnuncio())) {
-        model.Spedizione spedizione = spedizioneDAO.getSpedizioneByAnnuncio(proposta.idAnnuncio());
-        if (spedizione != null) {
-          mostraDettagliSpedizione(spedizione);
-          return;
-        }
+      if (proposta == null || proposta.annuncio() == null) {
+        onError.accept("Proposta o annuncio non disponibile.");
+        return;
       }
 
-      if (ritiroDAO.esistePerAnnuncio(proposta.idAnnuncio())) {
-        model.Ritiro ritiro = ritiroDAO.getRitiroByAnnuncio(proposta.idAnnuncio());
-        if (ritiro != null) {
-          mostraDettagliRitiro(ritiro);
-          return;
-        }
+      int idAnnuncio = proposta.annuncio().getIdAnnuncio();
+
+      model.Spedizione spedizione = spedizioneDAO.getSpedizioneByAnnuncio(idAnnuncio);
+      if (spedizione != null) {
+        mostraDettagliSpedizione(spedizione);
+        return;
+      }
+
+      model.Ritiro ritiro = ritiroDAO.getRitiroByAnnuncio(idAnnuncio);
+      if (ritiro != null) {
+        mostraDettagliRitiro(ritiro);
+        return;
       }
 
       onNoDetails.run();

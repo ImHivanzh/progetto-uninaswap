@@ -16,30 +16,11 @@ public class Immagini {
      * Annuncio associato.
      */
     private Annuncio annuncio;
-    /**
-     * Scambio associato.
-     */
-    private Scambio scambio;
 
     /**
      * Crea vuoto immagine contenitore.
      */
     public Immagini() {
-    }
-
-    /**
-     * Crea immagine contenitore con tutti campi.
-     *
-     * @param idImmagine immagine id
-     * @param immagine byte immagine
-     * @param annuncio collegato annuncio
-     * @param scambio collegato scambio
-     */
-    public Immagini(int idImmagine, byte[] immagine, Annuncio annuncio, Scambio scambio) {
-        this.idImmagine = idImmagine;
-        this.immagine = immagine;
-        this.annuncio = annuncio;
-        this.scambio = scambio;
     }
 
     /**
@@ -105,23 +86,5 @@ public class Immagini {
      */
     public void setAnnuncio(Annuncio annuncio) {
         this.annuncio = annuncio;
-    }
-
-    /**
-     * Restituisce collegato scambio.
-     *
-     * @return collegato scambio
-     */
-    public Scambio getScambio() {
-        return scambio;
-    }
-
-    /**
-     * Imposta collegato scambio.
-     *
-     * @param scambio collegato scambio
-     */
-    public void setScambio(Scambio scambio) {
-        this.scambio = scambio;
     }
 }

@@ -18,7 +18,6 @@ public class SpedizioneDAO {
    * Connessione al database.
    */
   private final Connection con;
-  private final AnnuncioDAO annuncioDAO;
 
   /**
    * Crea DAO e inizializza database connessione.
@@ -29,28 +28,6 @@ public class SpedizioneDAO {
     this.con = dbConnection.getInstance().getConnection();
     if (this.con == null) {
       throw new DatabaseException("Connessione al database non disponibile.");
-    }
-    this.annuncioDAO = new AnnuncioDAO();
-  }
-
-  /**
-   * Verifica se spedizione esiste per annuncio.
-   *
-   * @param idAnnuncio id annuncio
-   * @return true quando esiste già una spedizione
-   * @throws DatabaseException quando query fallisce
-   */
-  public boolean esistePerAnnuncio(int idAnnuncio) throws DatabaseException {
-    if (con == null) throw new DatabaseException("Connessione al database non disponibile.");
-
-    String sql = "SELECT 1 FROM spedizione WHERE idannuncio = ? LIMIT 1";
-    try (PreparedStatement ps = con.prepareStatement(sql)) {
-      ps.setInt(1, idAnnuncio);
-      try (ResultSet rs = ps.executeQuery()) {
-        return rs.next();
-      }
-    } catch (SQLException e) {
-      throw new DatabaseException("Errore durante la verifica spedizione", e);
     }
   }
 
@@ -97,23 +74,18 @@ public class SpedizioneDAO {
   public model.Spedizione getSpedizioneByAnnuncio(int idAnnuncio) throws DatabaseException {
     if (con == null) throw new DatabaseException("Connessione al database non disponibile.");
 
-    String sql = "SELECT * FROM spedizione WHERE idannuncio = ?";
+    String sql = "SELECT idspedizione, datainvio, dataarrivo, indirizzo, numerotelefono, spedito, idannuncio, idspedito FROM spedizione WHERE idannuncio = ?";
     try (PreparedStatement ps = con.prepareStatement(sql)) {
       ps.setInt(1, idAnnuncio);
       try (ResultSet rs = ps.executeQuery()) {
         if (rs.next()) {
           model.Spedizione spedizione = new model.Spedizione();
-          try {
-            spedizione.setIdSpedizione(rs.getInt("idspedizione"));
-          } catch (SQLException ignored) {
-            // Colonna opzionale in alcuni schemi.
-          }
+          spedizione.setIdSpedizione(rs.getInt("idspedizione"));
           spedizione.setIndirizzo(rs.getString("indirizzo"));
           spedizione.setNumeroTelefono(rs.getString("numerotelefono"));
           spedizione.setDataInvio(rs.getDate("datainvio"));
           spedizione.setDataArrivo(rs.getDate("dataarrivo"));
           spedizione.setSpedito(rs.getBoolean("spedito"));
-          spedizione.setAnnuncio(annuncioDAO.findById(rs.getInt("idannuncio")));
           return spedizione;
         }
       }

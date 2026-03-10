@@ -2,6 +2,7 @@ package controller;
 
 import gui.RegistrazioneForm;
 import dao.UtenteDAO;
+import utils.Logger;
 import model.Utente;
 
 import java.awt.event.ActionEvent;
@@ -74,7 +75,7 @@ public class RegistrazioneController {
 
     } catch (Exception ex) {
       view.mostraErrore("Errore tecnico: " + ex.getMessage());
-      ex.printStackTrace();
+      Logger.error("Errore durante registrazione", ex);
     }
   }
 }

@@ -76,11 +76,12 @@ public class RecensioneDAO {
     Validator.requireNonNull(utenteRecensito, "utenteRecensito");
     Validator.requirePositive(utenteRecensito.getIdUtente(), "utenteRecensito.idUtente");
 
-    String sql = "SELECT r.idutente, r.idutenterecensito, r.voto, r.descrizione "
+    String sql = "SELECT r.idutente, r.idutenterecensito, r.voto, r.descrizione, "
+            + "u.nomeutente, u.email, u.password, u.numerotelefono "
             + "FROM recensione r "
+            + "JOIN utente u ON r.idutente = u.idutente "
             + "WHERE r.idutenterecensito = ?";
     List<Recensione> recensioni = new ArrayList<>();
-    UtenteDAO utenteDAO = new UtenteDAO();
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -88,15 +89,13 @@ public class RecensioneDAO {
 
       try (ResultSet rs = ps.executeQuery()) {
         while (rs.next()) {
-          int idUtenteRecensore = rs.getInt("idutente");
-
-          // Carica l'oggetto Utente completo per il recensore
-          Utente utenteRecensore = null;
-          try {
-            utenteRecensore = utenteDAO.getUserByID(idUtenteRecensore);
-          } catch (DatabaseException e) {
-            Logger.error("Errore caricamento utente recensore " + idUtenteRecensore, e);
-          }
+          // Costruisce oggetto Utente direttamente dal ResultSet
+          Utente utenteRecensore = new Utente();
+          utenteRecensore.setIdUtente(rs.getInt("idutente"));
+          utenteRecensore.setUsername(rs.getString("nomeutente"));
+          utenteRecensore.setEmail(rs.getString("email"));
+          utenteRecensore.setPassword(rs.getString("password"));
+          utenteRecensore.setNumeroTelefono(rs.getString("numerotelefono"));
 
           Recensione r = new Recensione();
           r.setUtenteRecensore(utenteRecensore);
