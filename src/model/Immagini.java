@@ -5,10 +5,6 @@ package model;
  */
 public class Immagini {
     /**
-     * Identificativo immagine.
-     */
-    private int idImmagine;
-    /**
      * Contenuto immagine in bytes.
      */
     private byte[] immagine;
@@ -32,24 +28,6 @@ public class Immagini {
     public Immagini(byte[] immagine, Annuncio annuncio) {
         this.immagine = immagine;
         this.annuncio = annuncio;
-    }
-
-    /**
-     * Restituisce immagine id.
-     *
-     * @return immagine id
-     */
-    public int getIdImmagine() {
-        return idImmagine;
-    }
-
-    /**
-     * Imposta immagine id.
-     *
-     * @param idImmagine immagine id
-     */
-    public void setIdImmagine(int idImmagine) {
-        this.idImmagine = idImmagine;
     }
 
     /**

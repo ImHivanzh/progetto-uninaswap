@@ -572,8 +572,8 @@ public class MainApp extends BaseFrame {
     String tipo = annuncio.getTipoAnnuncio() != null ? annuncio.getTipoAnnuncio().toString() : "N/A";
     String consegna = annuncio.getConsegnaLabel();
     String extra = "";
-    if (annuncio instanceof Vendita) {
-      extra = " - EUR " + String.format("%.2f", ((Vendita) annuncio).getPrezzo());
+    if (annuncio instanceof Vendita vendita) {
+      extra = " - EUR " + String.format("%.2f", vendita.getPrezzo());
     }
     return categoria + " | " + tipo + " | Consegna: " + consegna + extra;
   }

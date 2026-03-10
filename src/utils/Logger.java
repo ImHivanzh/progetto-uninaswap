@@ -16,6 +16,7 @@ public class Logger {
      *
      * @param message messaggio da registrare
      */
+    @SuppressWarnings("java:S106")
     public static void error(String message) {
         System.err.println("[ERROR] " + LocalDateTime.now().format(FORMATTER) + " - " + message);
     }
@@ -26,6 +27,7 @@ public class Logger {
      * @param message messaggio da registrare
      * @param throwable eccezione associata
      */
+    @SuppressWarnings("java:S106")
     public static void error(String message, Throwable throwable) {
         System.err.println("[ERROR] " + LocalDateTime.now().format(FORMATTER) + " - " + message);
         if (throwable != null) {
@@ -38,6 +40,7 @@ public class Logger {
      *
      * @param message messaggio da registrare
      */
+    @SuppressWarnings("java:S106")
     public static void info(String message) {
         System.out.println("[INFO] " + LocalDateTime.now().format(FORMATTER) + " - " + message);
     }

@@ -203,15 +203,6 @@ public class Annuncio {
     }
 
     /**
-     * Restituisce se consegna e spedizione.
-     *
-     * @return true per spedizione, false per ritiro, null se non definito
-     */
-    public Boolean getSpedizione() {
-        return spedizione;
-    }
-
-    /**
      * Imposta consegna spedizione/ritiro.
      *
      * @param spedizione true per spedizione, false per ritiro, null se non definito
@@ -229,7 +220,7 @@ public class Annuncio {
         if (spedizione == null) {
             return "N/A";
         }
-        return spedizione ? "Spedizione" : "Ritiro";
+        return Boolean.TRUE.equals(spedizione) ? "Spedizione" : "Ritiro";
     }
 
     /**

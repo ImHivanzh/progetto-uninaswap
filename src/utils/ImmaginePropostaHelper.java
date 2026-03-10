@@ -2,15 +2,26 @@ package utils;
 
 import model.PropostaRiepilogo;
 
-import javax.swing.*;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 /**
  * Helper per la gestione delle immagini delle proposte.
  */
 public class ImmaginePropostaHelper {
+
+  /**
+   * Costruttore privato per nascondere quello pubblico implicito.
+   */
+  private ImmaginePropostaHelper() {
+    throw new AssertionError("Utility class non deve essere istanziata");
+  }
 
   /**
    * Verifica presenza immagine nella proposta.

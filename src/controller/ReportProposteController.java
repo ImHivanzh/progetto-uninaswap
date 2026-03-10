@@ -38,10 +38,10 @@ public class ReportProposteController {
     PropostaDAO dao = null;
     try {
       dao = new PropostaDAO();
-    } catch (DatabaseException e) {
+    } catch (DatabaseException _) {
       JOptionPane.showMessageDialog(
               view,
-              "Errore di connessione al database: " + e.getMessage(),
+              "Errore di connessione al database",
               "Errore",
               JOptionPane.ERROR_MESSAGE
       );

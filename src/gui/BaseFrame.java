@@ -1,9 +1,9 @@
 package gui;
 
-import utils.Logger;
-
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
+
+import utils.Logger;
 
 /**
  * Finestra base con comportamenti comuni.

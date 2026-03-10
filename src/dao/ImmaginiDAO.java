@@ -20,6 +20,8 @@ import java.util.List;
  */
 public class ImmaginiDAO {
 
+  private static final String COLUMN_IMMAGINE = "immagine";
+
   /**
    * Connessione al database.
    */
@@ -44,7 +46,7 @@ public class ImmaginiDAO {
    * @throws DatabaseException se l'inserimento fallisce
    */
   public boolean salvaImmagine(Immagini immagine) throws DatabaseException {
-    Validator.requireNonNull(immagine, "immagine");
+    Validator.requireNonNull(immagine, COLUMN_IMMAGINE);
 
     String sql = "INSERT INTO immagini (immagine, idannuncio) VALUES (?, ?)";
 
@@ -88,8 +90,8 @@ public class ImmaginiDAO {
       try (ResultSet rs = ps.executeQuery()) {
         while (rs.next()) {
           Immagini img = new Immagini();
-          img.setIdImmagine(rs.getInt("idimmagine"));
-          img.setImmagine(rs.getBytes("immagine"));
+          int idImmagine = rs.getInt("idimmagine");
+          img.setImmagine(rs.getBytes(COLUMN_IMMAGINE));
           img.setAnnuncio(annuncio);
 
           lista.add(img);
@@ -120,12 +122,12 @@ public class ImmaginiDAO {
 
       try (ResultSet rs = ps.executeQuery()) {
         if (rs.next()) {
-          return rs.getBytes("immagine");
+          return rs.getBytes(COLUMN_IMMAGINE);
         }
       }
     } catch (SQLException e) {
       throw new DatabaseException("Errore recupero prima immagine per annuncio " + annuncio.getIdAnnuncio(), e);
     }
-    return null;
+    return new byte[0];
   }
 }

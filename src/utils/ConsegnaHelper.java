@@ -5,11 +5,15 @@ import dao.SpedizioneDAO;
 import exception.DatabaseException;
 import model.PropostaRiepilogo;
 
-import javax.swing.*;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.sql.Date;
 import java.sql.Time;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
 
 /**
  * Helper per la gestione delle consegne (spedizione e ritiro).
@@ -81,17 +85,23 @@ public class ConsegnaHelper {
    * @param spedizione spedizione da visualizzare
    */
   public void mostraDettagliSpedizione(model.Spedizione spedizione) {
-    StringBuilder message = new StringBuilder("Dettagli Spedizione:\n");
-    if (spedizione.getIdSpedizione() != 0) {
-      message.append("ID Spedizione: ").append(spedizione.getIdSpedizione()).append("\n");
-    }
-    message.append("Indirizzo: ").append(spedizione.getIndirizzo()).append("\n");
-    message.append("Numero di Telefono: ").append(spedizione.getNumeroTelefono()).append("\n");
-    message.append("Data Invio: ").append(spedizione.getDataInvio().toString()).append("\n");
-    message.append("Data Arrivo: ").append(spedizione.getDataArrivo().toString()).append("\n");
-    message.append("Spedito: ").append(spedizione.isSpedito() ? "Si" : "No");
+    String message = """
+            Dettagli Spedizione:
+            ID Spedizione: %d
+            Indirizzo: %s
+            Numero di Telefono: %s
+            Data Invio: %s
+            Data Arrivo: %s
+            Spedito: %s""".formatted(
+            spedizione.getIdSpedizione(),
+            spedizione.getIndirizzo(),
+            spedizione.getNumeroTelefono(),
+            spedizione.getDataInvio().toString(),
+            spedizione.getDataArrivo().toString(),
+            spedizione.isSpedito() ? "Si" : "No"
+    );
 
-    JOptionPane.showMessageDialog(parent, message.toString(), "Dettagli Spedizione", JOptionPane.INFORMATION_MESSAGE);
+    JOptionPane.showMessageDialog(parent, message, "Dettagli Spedizione", JOptionPane.INFORMATION_MESSAGE);
   }
 
   /**
@@ -100,14 +110,14 @@ public class ConsegnaHelper {
    * @param ritiro ritiro da visualizzare
    */
   public void mostraDettagliRitiro(model.Ritiro ritiro) {
-    String message = String.format(
-            "Dettagli Ritiro:\n" +
-            "ID Ritiro: %d\n" +
-            "Sede: %s\n" +
-            "Orario: %s\n" +
-            "Data: %s\n" +
-            "Numero di Telefono: %s\n" +
-            "Ritirato: %s",
+    String message = """
+            Dettagli Ritiro:
+            ID Ritiro: %d
+            Sede: %s
+            Orario: %s
+            Data: %s
+            Numero di Telefono: %s
+            Ritirato: %s""".formatted(
             ritiro.getIdRitiro(),
             ritiro.getSede(),
             ritiro.getOrario(),
@@ -141,7 +151,8 @@ public class ConsegnaHelper {
     FormHelper.addFormRow(panel, gbc, 2, "Data invio:", dataInvioSpinner);
     FormHelper.addFormRow(panel, gbc, 3, "Data arrivo:", dataArrivoSpinner);
 
-    while (true) {
+    boolean inputValido = false;
+    while (!inputValido) {
       int result = JOptionPane.showConfirmDialog(
               parent,
               panel,
@@ -157,41 +168,76 @@ public class ConsegnaHelper {
       java.util.Date dataInvio = (java.util.Date) dataInvioSpinner.getValue();
       java.util.Date dataArrivo = (java.util.Date) dataArrivoSpinner.getValue();
 
-      if (indirizzo.isEmpty()) {
-        onError.accept("Indirizzo obbligatorio.");
-        continue;
-      }
-      if (!DataCheck.isValidPhoneNumber(telefono)) {
-        onError.accept("Numero di telefono non valido (richieste 10 cifre).");
-        continue;
-      }
-      if (dataInvio == null || dataArrivo == null) {
-        onError.accept("Inserisci date valide.");
-        continue;
-      }
-      if (dataArrivo.before(dataInvio)) {
-        onError.accept("La data di arrivo non puo essere precedente alla data di invio.");
+      String errore = validaInputSpedizione(indirizzo, telefono, dataInvio, dataArrivo);
+      if (errore != null) {
+        onError.accept(errore);
         continue;
       }
 
-      try {
-        boolean ok = spedizioneDAO.inserisciSpedizione(
-                new Date(dataInvio.getTime()),
-                new Date(dataArrivo.getTime()),
-                indirizzo,
-                telefono,
-                idAnnuncio,
-                idUtente);
-        if (ok) {
-          onSuccess.accept("Dettagli spedizione salvati.");
-        } else {
-          onError.accept("Salvataggio spedizione non riuscito.");
-        }
-      } catch (DatabaseException e) {
-        onError.accept("Errore durante il salvataggio della spedizione: " + e.getMessage());
-        Logger.error("Errore salvataggio spedizione", e);
-      }
-      return;
+      SpedizioneData data = new SpedizioneData(indirizzo, telefono, dataInvio, dataArrivo);
+      inputValido = salvaSpedizioneDB(idAnnuncio, idUtente, data, onSuccess, onError);
+    }
+  }
+
+  /**
+   * Dati per spedizione.
+   */
+  private static class SpedizioneData {
+    final String indirizzo;
+    final String telefono;
+    final java.util.Date dataInvio;
+    final java.util.Date dataArrivo;
+
+    SpedizioneData(String indirizzo, String telefono, java.util.Date dataInvio, java.util.Date dataArrivo) {
+      this.indirizzo = indirizzo;
+      this.telefono = telefono;
+      this.dataInvio = dataInvio;
+      this.dataArrivo = dataArrivo;
+    }
+  }
+
+  private String validaInputSpedizione(String indirizzo, String telefono, java.util.Date dataInvio, java.util.Date dataArrivo) {
+    if (indirizzo.isEmpty()) {
+      return "Indirizzo obbligatorio.";
+    }
+    if (!DataCheck.isValidPhoneNumber(telefono)) {
+      return "Numero di telefono non valido (richieste 10 cifre).";
+    }
+    if (dataInvio == null || dataArrivo == null) {
+      return "Inserisci date valide.";
+    }
+    if (dataArrivo.before(dataInvio)) {
+      return "La data di arrivo non puo essere precedente alla data di invio.";
+    }
+    return null;
+  }
+
+  private boolean salvaSpedizioneDB(int idAnnuncio, int idUtente, SpedizioneData data,
+                                     java.util.function.Consumer<String> onSuccess,
+                                     java.util.function.Consumer<String> onError) {
+    try {
+      boolean ok = spedizioneDAO.inserisciSpedizione(
+              new Date(data.dataInvio.getTime()),
+              new Date(data.dataArrivo.getTime()),
+              data.indirizzo,
+              data.telefono,
+              idAnnuncio,
+              idUtente);
+      gestisciRisultatoSalvataggio(ok, onSuccess, onError, "spedizione");
+      return ok;
+    } catch (DatabaseException e) {
+      onError.accept("Errore durante il salvataggio della spedizione: " + e.getMessage());
+      Logger.error("Errore salvataggio spedizione", e);
+      return false;
+    }
+  }
+
+  private void gestisciRisultatoSalvataggio(boolean ok, java.util.function.Consumer<String> onSuccess,
+                                             java.util.function.Consumer<String> onError, String tipo) {
+    if (ok) {
+      onSuccess.accept("Dettagli " + tipo + " salvati.");
+    } else {
+      onError.accept("Salvataggio " + tipo + " non riuscito.");
     }
   }
 
@@ -217,7 +263,8 @@ public class ConsegnaHelper {
     FormHelper.addFormRow(panel, gbc, 2, "Data:", dataSpinner);
     FormHelper.addFormRow(panel, gbc, 3, "Orario:", orarioSpinner);
 
-    while (true) {
+    boolean inputValido = false;
+    while (!inputValido) {
       int result = JOptionPane.showConfirmDialog(
               parent,
               panel,
@@ -233,36 +280,46 @@ public class ConsegnaHelper {
       java.util.Date data = (java.util.Date) dataSpinner.getValue();
       java.util.Date orario = (java.util.Date) orarioSpinner.getValue();
 
-      if (sede.isEmpty()) {
-        onError.accept("Sede obbligatoria.");
-        continue;
-      }
-      if (!DataCheck.isValidPhoneNumber(telefono)) {
-        onError.accept("Numero di telefono non valido (richieste 10 cifre).");
-        continue;
-      }
-      if (data == null || orario == null) {
-        onError.accept("Inserisci data e orario validi.");
+      String errore = validaInputRitiro(sede, telefono, data, orario);
+      if (errore != null) {
+        onError.accept(errore);
         continue;
       }
 
-      try {
-        boolean ok = ritiroDAO.inserisciRitiro(
-                sede,
-                new Time(orario.getTime()),
-                new Date(data.getTime()),
-                telefono,
-                idAnnuncio);
-        if (ok) {
-          onSuccess.accept("Dettagli ritiro salvati.");
-        } else {
-          onError.accept("Salvataggio ritiro non riuscito.");
-        }
-      } catch (DatabaseException e) {
-        onError.accept("Errore durante il salvataggio del ritiro: " + e.getMessage());
-        Logger.error("Errore salvataggio ritiro", e);
-      }
-      return;
+      inputValido = salvaRitiroDB(idAnnuncio, sede, telefono, data, orario, onSuccess, onError);
+    }
+  }
+
+  private String validaInputRitiro(String sede, String telefono, java.util.Date data, java.util.Date orario) {
+    if (sede.isEmpty()) {
+      return "Sede obbligatoria.";
+    }
+    if (!DataCheck.isValidPhoneNumber(telefono)) {
+      return "Numero di telefono non valido (richieste 10 cifre).";
+    }
+    if (data == null || orario == null) {
+      return "Inserisci data e orario validi.";
+    }
+    return null;
+  }
+
+  private boolean salvaRitiroDB(int idAnnuncio, String sede, String telefono,
+                                 java.util.Date data, java.util.Date orario,
+                                 java.util.function.Consumer<String> onSuccess,
+                                 java.util.function.Consumer<String> onError) {
+    try {
+      boolean ok = ritiroDAO.inserisciRitiro(
+              sede,
+              new Time(orario.getTime()),
+              new Date(data.getTime()),
+              telefono,
+              idAnnuncio);
+      gestisciRisultatoSalvataggio(ok, onSuccess, onError, "ritiro");
+      return ok;
+    } catch (DatabaseException e) {
+      onError.accept("Errore durante il salvataggio del ritiro: " + e.getMessage());
+      Logger.error("Errore salvataggio ritiro", e);
+      return false;
     }
   }
 }

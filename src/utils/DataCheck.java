@@ -10,11 +10,19 @@ public class DataCheck {
     public static final int MIN_PASSWORD_LENGTH = 8;
 
     /**
+     * Costruttore privato per nascondere quello pubblico implicito.
+     */
+    private DataCheck() {
+        throw new AssertionError("Utility class non deve essere istanziata");
+    }
+
+    /**
      * Valida email indirizzo contro base regex pattern.
      *
      * @param email email indirizzo a valida
      * @return true quando email corrisponde atteso formato
      */
+    @SuppressWarnings("java:S3400")
     public static boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         return email != null && email.matches(emailRegex);
@@ -27,7 +35,7 @@ public class DataCheck {
      * @return true quando valore e numero 10 cifre
      */
     public static boolean isValidPhoneNumber(String phoneNumber) {
-        String phoneRegex = "^[0-9]{10}$";
+        String phoneRegex = "^\\d{10}$";
         return phoneNumber != null && phoneNumber.matches(phoneRegex);
     }
 
@@ -41,7 +49,10 @@ public class DataCheck {
         if (password == null || password.length() < MIN_PASSWORD_LENGTH) {
             return false;
         }
-        boolean hasUpper = false, hasLower = false, hasDigit = false, hasSpecial = false;
+        boolean hasUpper = false;
+        boolean hasLower = false;
+        boolean hasDigit = false;
+        boolean hasSpecial = false;
         String specialChars = "!@#$%^&*()_+-=[]{}|;':\",./<>?";
 
         for (char c : password.toCharArray()) {

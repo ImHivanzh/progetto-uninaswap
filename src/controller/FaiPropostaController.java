@@ -3,11 +3,11 @@ package controller;
 import gui.FaiPropostaDialog;
 import model.enums.TipoAnnuncio;
 
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * Controller per dialogo proposta.
@@ -81,7 +81,7 @@ public class FaiPropostaController {
         if (testoPrezzo == null || testoPrezzo.isEmpty()) throw new NumberFormatException();
         offertaPrezzo = Double.parseDouble(testoPrezzo.replace(",", "."));
         if (offertaPrezzo <= 0) throw new NumberFormatException();
-      } catch (NumberFormatException e) {
+      } catch (NumberFormatException _) {
         view.mostraErrore("Inserisci un prezzo valido maggiore di 0.");
         return;
       }

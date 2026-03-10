@@ -110,18 +110,12 @@ public class MainController implements ActionListener {
   private void mostraLogin() {
     LoginForm loginForm = new LoginForm();
     loginForm.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
-    new LoginController(loginForm, new Runnable() {
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public void run() {
-        view.setNavigazioneAbilitata(true);
-        aggiornaTitoloUtente();
-        view.mostra();
-        view.toFront();
-        caricaAnnunciInEvidenza();
-      }
+    new LoginController(loginForm, () -> {
+      view.setNavigazioneAbilitata(true);
+      aggiornaTitoloUtente();
+      view.mostra();
+      view.toFront();
+      caricaAnnunciInEvidenza();
     });
 
     loginForm.addWindowListener(new WindowAdapter() {
@@ -210,7 +204,7 @@ public class MainController implements ActionListener {
     String normalized = trimmed.replace(',', '.');
     try {
       return Double.parseDouble(normalized);
-    } catch (NumberFormatException ex) {
+    } catch (NumberFormatException _) {
       return null;
     }
   }
@@ -283,14 +277,13 @@ public class MainController implements ActionListener {
    * @param e azione evento
    */
   private void apriDettaglio(ActionEvent e) {
-    if (!(e.getSource() instanceof javax.swing.JButton)) {
+    if (!(e.getSource() instanceof javax.swing.JButton button)) {
       return;
     }
-    Object data = ((javax.swing.JButton) e.getSource()).getClientProperty(MainApp.KEY_ANNUNCIO);
-    if (!(data instanceof Annuncio)) {
+    Object data = button.getClientProperty(MainApp.KEY_ANNUNCIO);
+    if (!(data instanceof Annuncio annuncio)) {
       return;
     }
-    Annuncio annuncio = (Annuncio) data;
     DettaglioAnnuncio dettaglio = new DettaglioAnnuncio(annuncio);
     WindowManager.open(view, dettaglio);
   }

@@ -5,9 +5,18 @@ import exception.DatabaseException;
 import model.Annuncio;
 import utils.Logger;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Image;
 import java.awt.event.MouseListener;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.UIManager;
 
 /**
  * Finestra per dettaglio annuncio.
@@ -46,10 +55,6 @@ public class DettaglioAnnuncio extends JFrame {
    */
   private JButton btnSuccessivo;
   /**
-   * Etichetta prefisso utente.
-   */
-  private JLabel lblUtentePrefix;
-  /**
    * Etichetta nome utente.
    */
   private JLabel lblUtenteNome;
@@ -77,7 +82,7 @@ public class DettaglioAnnuncio extends JFrame {
   /**
    * Controller associato alla vista.
    */
-  private DettaglioAnnuncioController controller;
+  private transient DettaglioAnnuncioController controller;
 
   /**
    * Crea finestra dettaglio annuncio.
@@ -88,7 +93,7 @@ public class DettaglioAnnuncio extends JFrame {
     setContentPane(mainPanel);
     setTitle("UninaSwap - Dettaglio Annuncio");
     setSize(800, 600);
-    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setLocationRelativeTo(null);
 
     try {
