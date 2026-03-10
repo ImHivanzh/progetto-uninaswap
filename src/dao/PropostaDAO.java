@@ -4,6 +4,7 @@ import db.dbConnection;
 import exception.DatabaseException;
 import model.Annuncio;
 import model.PropostaRiepilogo;
+import model.ReportProposte;
 import model.Utente;
 import utils.Constanti;
 import utils.Logger;
@@ -442,5 +443,57 @@ public class PropostaDAO {
         } catch (SQLException e) {
             throw new DatabaseException("Errore durante la modifica della proposta di scambio", e);
         }
+    }
+
+    /**
+     * Genera report statistico delle proposte per utente.
+     *
+     * @param idUtente id utente
+     * @return report proposte o null se nessun dato
+     * @throws DatabaseException quando query fallisce
+     */
+    public ReportProposte getReportProposte(int idUtente) throws DatabaseException {
+        String sql = "SELECT " +
+                "    SUM(CASE WHEN tipo = 'VENDITA' THEN 1 ELSE 0 END) as totaleVendita, " +
+                "    SUM(CASE WHEN tipo = 'VENDITA' AND accettato = TRUE THEN 1 ELSE 0 END) as accettateVendita, " +
+                "    MIN(CASE WHEN tipo = 'VENDITA' AND accettato = TRUE THEN valore END) as valoreMinimoVendita, " +
+                "    MAX(CASE WHEN tipo = 'VENDITA' AND accettato = TRUE THEN valore END) as valoreMassimoVendita, " +
+                "    AVG(CASE WHEN tipo = 'VENDITA' AND accettato = TRUE THEN valore END) as valoreMedioVendita, " +
+                "    SUM(CASE WHEN tipo = 'SCAMBIO' THEN 1 ELSE 0 END) as totaleScambio, " +
+                "    SUM(CASE WHEN tipo = 'SCAMBIO' AND accettato = TRUE THEN 1 ELSE 0 END) as accettateScambio, " +
+                "    SUM(CASE WHEN tipo = 'REGALO' THEN 1 ELSE 0 END) as totaleRegalo, " +
+                "    SUM(CASE WHEN tipo = 'REGALO' AND accettato = TRUE THEN 1 ELSE 0 END) as accettateRegalo " +
+                "FROM ( " +
+                "    SELECT 'VENDITA' as tipo, accettato, controofferta as valore FROM vendita WHERE idutente = ? " +
+                "    UNION ALL " +
+                "    SELECT 'SCAMBIO' as tipo, accettato, NULL as valore FROM scambio WHERE idutente = ? " +
+                "    UNION ALL " +
+                "    SELECT 'REGALO' as tipo, accettato, NULL as valore FROM regalo WHERE idutente = ? " +
+                ") as proposte";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idUtente);
+            ps.setInt(2, idUtente);
+            ps.setInt(3, idUtente);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new ReportProposte(
+                            rs.getInt("totaleVendita"),
+                            rs.getInt("accettateVendita"),
+                            rs.getInt("totaleScambio"),
+                            rs.getInt("accettateScambio"),
+                            rs.getInt("totaleRegalo"),
+                            rs.getInt("accettateRegalo"),
+                            rs.getDouble("valoreMinimoVendita"),
+                            rs.getDouble("valoreMassimoVendita"),
+                            rs.getDouble("valoreMedioVendita")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Errore durante la generazione del report delle proposte", e);
+        }
+        return null;
     }
 }
