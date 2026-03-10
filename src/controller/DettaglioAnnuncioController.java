@@ -105,7 +105,11 @@ public class DettaglioAnnuncioController {
 
     UtenteDAO utenteDAO = new UtenteDAO();
     try {
-      pubblicatore = utenteDAO.getUserByID(annuncio.getIdUtente());
+      pubblicatore = annuncio.getUtente();
+      if (pubblicatore == null) {
+        // Fallback: carica da database se non presente
+        pubblicatore = utenteDAO.getUserByID(annuncio.getUtente() != null ? annuncio.getUtente().getIdUtente() : 0);
+      }
       if (pubblicatore != null) {
         view.setUtenteNome(pubblicatore.getUsername(), true);
         view.addUtenteListener(new MouseAdapter() {
@@ -118,11 +122,11 @@ public class DettaglioAnnuncioController {
           }
         });
       } else {
-        view.setUtenteNome("Utente ID " + annuncio.getIdUtente(), false);
+        view.setUtenteNome("Utente sconosciuto", false);
       }
-    } catch (DatabaseException e) {
+    } catch (Exception e) {
       Logger.error("Errore caricamento info utente", e);
-      view.setUtenteNome("Utente ID " + annuncio.getIdUtente(), false);
+      view.setUtenteNome("Utente sconosciuto", false);
     }
 
     aggiornaVistaImmagine();
@@ -185,7 +189,7 @@ public class DettaglioAnnuncioController {
       return;
     }
 
-    if (utenteCorrente.getIdUtente() == annuncio.getIdUtente()) {
+    if (utenteCorrente.getIdUtente() == annuncio.getUtente().getIdUtente()) {
       JOptionPane.showMessageDialog(view,
               "Non puoi fare una proposta al tuo stesso annuncio!",
               "Operazione non consentita",

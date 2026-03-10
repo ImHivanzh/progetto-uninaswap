@@ -44,6 +44,8 @@ public class RecensioneDAO {
    */
   public boolean inserisciRecensione(Recensione recensione) throws DatabaseException {
     Validator.requireNonNull(recensione, "recensione");
+    Validator.requireNonNull(recensione.getUtenteRecensore(), "recensione.utenteRecensore");
+    Validator.requireNonNull(recensione.getUtenteRecensito(), "recensione.utenteRecensito");
 
     if (con == null) throw new DatabaseException("Connessione DB non disponibile.");
 
@@ -51,8 +53,8 @@ public class RecensioneDAO {
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
 
-      ps.setInt(1, recensione.getIdUtente());
-      ps.setInt(2, recensione.getIdUtenteRecensito());
+      ps.setInt(1, recensione.getUtenteRecensore().getIdUtente());
+      ps.setInt(2, recensione.getUtenteRecensito().getIdUtente());
       ps.setInt(3, recensione.getVoto());
       ps.setString(4, recensione.getDescrizione());
 
@@ -74,10 +76,11 @@ public class RecensioneDAO {
     Validator.requireNonNull(utenteRecensito, "utenteRecensito");
     Validator.requirePositive(utenteRecensito.getIdUtente(), "utenteRecensito.idUtente");
 
-    String sql = "SELECT r.idutente, r.idutenterecensito, r.voto, r.descrizione, u.nomeutente "
-            + "FROM recensione r LEFT JOIN utente u ON u.idutente = r.idutente "
+    String sql = "SELECT r.idutente, r.idutenterecensito, r.voto, r.descrizione "
+            + "FROM recensione r "
             + "WHERE r.idutenterecensito = ?";
     List<Recensione> recensioni = new ArrayList<>();
+    UtenteDAO utenteDAO = new UtenteDAO();
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -85,12 +88,21 @@ public class RecensioneDAO {
 
       try (ResultSet rs = ps.executeQuery()) {
         while (rs.next()) {
+          int idUtenteRecensore = rs.getInt("idutente");
+
+          // Carica l'oggetto Utente completo per il recensore
+          Utente utenteRecensore = null;
+          try {
+            utenteRecensore = utenteDAO.getUserByID(idUtenteRecensore);
+          } catch (DatabaseException e) {
+            Logger.error("Errore caricamento utente recensore " + idUtenteRecensore, e);
+          }
+
           Recensione r = new Recensione();
-          r.setIdUtente(rs.getInt("idutente"));
-          r.setIdUtenteRecensito(rs.getInt("idutenterecensito"));
+          r.setUtenteRecensore(utenteRecensore);
+          r.setUtenteRecensito(utenteRecensito);
           r.setVoto(rs.getInt("voto"));
           r.setDescrizione(rs.getString("descrizione"));
-          r.setNomeUtente(rs.getString("nomeutente"));
           recensioni.add(r);
         }
       }
