@@ -1,0 +1,12 @@
+=== UninaSwap Unused Classes/Enums Analysis ===
+Generated: mar 10 mar 2026 16:29:57 CET
+
+UNUSED CLASS: src/controller/ReportProposteController.java - ReportProposteController
+  References: 0
+
+UNUSED ENUM: src/model/enums/StatoOfferta.java - StatoOfferta
+  References: 0
+
+
+=== Analysis Complete ===
+Total unused classes/enums: 2
