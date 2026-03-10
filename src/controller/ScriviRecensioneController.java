@@ -76,10 +76,10 @@ public class ScriviRecensioneController {
    * Valida input e invia recensione.
    */
   private void inviaRecensione() {
-    String descrizione = view.getDescrizione();
+    String descrizione = view.getDescrizione().trim();
     int voto = view.getVoto();
 
-    if (descrizione == null || descrizione.trim().isEmpty()) {
+    if (descrizione.isEmpty()) {
       view.mostraErrore("Per favore, inserisci una descrizione.");
       return;
     }

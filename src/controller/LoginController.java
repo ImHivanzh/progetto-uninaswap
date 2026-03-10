@@ -98,8 +98,8 @@ public class LoginController {
    * Valida input utente e esegue autenticazione.
    */
   private void controllaLogin() {
-    String user = view.getUsername();
-    String password = view.getPassword();
+    String user = view.getUsername().trim();
+    String password = view.getPassword().trim();
 
     if (user.isEmpty() || password.isEmpty()) {
       view.mostraErrore("Inserire user e password!");

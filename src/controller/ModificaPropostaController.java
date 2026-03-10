@@ -115,7 +115,7 @@ public class ModificaPropostaController {
         }
         success = propostaDAO.modificaPropostaVendita(proposta.annuncio().getIdAnnuncio(), idUtente, nuovaOfferta);
       } else if (tipo == TipoAnnuncio.SCAMBIO) {
-        String nuovaDescrizione = view.getDescrizioneInput();
+        String nuovaDescrizione = view.getDescrizioneInput().trim();
         if (nuovaDescrizione.isEmpty()) {
           view.mostraErrore("La descrizione dell'oggetto di scambio e obbligatoria.");
           return;
