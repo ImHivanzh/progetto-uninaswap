@@ -83,7 +83,6 @@ uninaswap/
 + Annuncio(Utente, String, String, Categoria, TipoAnnuncio)
 + Annuncio(int, String, String, Categoria, Utente, TipoAnnuncio)
 + getConsegnaLabel(): String
-+ addImmagine(Immagini): void
 ```
 
 #### Utente
@@ -181,19 +180,6 @@ uninaswap/
 + getStatoTestuale(): String
 ```
 
-#### ReportProposte (record)
-```
-+ totaleVendita: int
-+ accettateVendita: int
-+ totaleScambio: int
-+ accettateScambio: int
-+ totaleRegalo: int
-+ accettateRegalo: int
-+ valoreMinimoVendita: double
-+ valoreMassimoVendita: double
-+ valoreMedioVendita: double
-```
-
 ### Enums
 
 #### Categoria
@@ -217,13 +203,6 @@ IN_ATTESA, ACCETTATA, RIFIUTATA
 - descrizione: String
 
 + fromFlags(boolean, boolean): StatoProposta
-```
-
-#### StatoOfferta
-```
-IN_ATTESA, ACCETTATA, RIFIUTATA
-
-- descrizione: String
 ```
 
 #### StatoConsegna
@@ -258,8 +237,6 @@ IN_ATTESA, DA_SPEDIRE, DA_RITIRARE, CONCLUSO, RIFIUTATO
 + findAll(): List<Annuncio>
 + search(String, String, String, Double): List<Annuncio>
 + findAllByUtente(Utente): List<Annuncio>
-+ findById(int): Annuncio
-+ deleteAnnuncio(int): boolean
 - mapResultSetToAnnuncio(ResultSet): Annuncio
 - parseCategoria(String): Categoria
 - parseTipoAnnuncio(String): TipoAnnuncio
@@ -284,7 +261,6 @@ IN_ATTESA, DA_SPEDIRE, DA_RITIRARE, CONCLUSO, RIFIUTATO
 + eliminaProposta(int, String, String): boolean
 + modificaPropostaVendita(int, int, double): boolean
 + modificaPropostaScambio(int, int, String, byte[]): boolean
-+ getReportProposte(int): ReportProposte
 - getProposte(int, String): List<PropostaRiepilogo>
 - resolveTabellaProposta(String): String
 ```
