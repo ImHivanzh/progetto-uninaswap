@@ -180,6 +180,19 @@ uninaswap/
 + getStatoTestuale(): String
 ```
 
+#### ReportProposte (record)
+```
++ totaleVendita: int
++ accettateVendita: int
++ totaleScambio: int
++ accettateScambio: int
++ totaleRegalo: int
++ accettateRegalo: int
++ valoreMinimoVendita: double
++ valoreMassimoVendita: double
++ valoreMedioVendita: double
+```
+
 ### Enums
 
 #### Categoria
@@ -261,6 +274,7 @@ IN_ATTESA, DA_SPEDIRE, DA_RITIRARE, CONCLUSO, RIFIUTATO
 + eliminaProposta(int, String, String): boolean
 + modificaPropostaVendita(int, int, double): boolean
 + modificaPropostaScambio(int, int, String, byte[]): boolean
++ getReportProposte(int): ReportProposte
 - getProposte(int, String): List<PropostaRiepilogo>
 - resolveTabellaProposta(String): String
 ```
