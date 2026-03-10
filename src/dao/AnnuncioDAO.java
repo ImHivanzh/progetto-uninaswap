@@ -69,14 +69,14 @@ public class AnnuncioDAO {
       ps.setInt(4, annuncio.getUtente().getIdUtente());
       ps.setString(5, annuncio.getTipoAnnuncio().name());
 
-      if (annuncio instanceof Vendita) {
-        ps.setDouble(6, ((Vendita) annuncio).getPrezzo());
+      if (annuncio instanceof Vendita vendita) {
+        ps.setDouble(6, vendita.getPrezzo());
       } else {
         ps.setNull(6, java.sql.Types.DOUBLE);
       }
 
-      if (annuncio instanceof Scambio) {
-        ps.setString(7, ((Scambio) annuncio).getOggettoRichiesto());
+      if (annuncio instanceof Scambio scambio) {
+        ps.setString(7, scambio.getOggettoRichiesto());
       } else {
         ps.setNull(7, java.sql.Types.VARCHAR);
       }
@@ -108,7 +108,7 @@ public class AnnuncioDAO {
     List<Annuncio> annunci = new ArrayList<>();
 
     String sql = "SELECT a.idannuncio, a.titolo, a.descrizione, a.categoria, a.tipoannuncio, a.prezzo, a.oggetto_richiesto, a.stato, a.spedizione, "
-            + "u.idutente, u.nomeutente, u.email, u.password, u.numerotelefono "
+            + "u.idutente, u.nomeutente, u.mail, u.numerotelefono "
             + "FROM annuncio a "
             + "JOIN utente u ON a.idutente = u.idutente";
 
@@ -117,9 +117,7 @@ public class AnnuncioDAO {
 
       while (rs.next()) {
         Annuncio a = mapResultSetToAnnuncio(rs);
-        if (a != null) {
-          annunci.add(a);
-        }
+        annunci.add(a);
       }
     } catch (SQLException e) {
       Logger.error("Errore durante il recupero degli annunci", e);
@@ -143,7 +141,7 @@ public class AnnuncioDAO {
     // Costruisce query dinamica in base ai filtri
     StringBuilder sql = new StringBuilder(
             "SELECT a.idannuncio, a.titolo, a.descrizione, a.categoria, a.tipoannuncio, a.prezzo, a.oggetto_richiesto, a.stato, a.spedizione, " +
-            "u.idutente, u.nomeutente, u.email, u.password, u.numerotelefono " +
+            "u.idutente, u.nomeutente, u.mail, u.numerotelefono " +
             "FROM annuncio a " +
             "JOIN utente u ON a.idutente = u.idutente " +
             "WHERE a.stato = true");
@@ -184,9 +182,7 @@ public class AnnuncioDAO {
       try (ResultSet rs = ps.executeQuery()) {
         while (rs.next()) {
           Annuncio a = mapResultSetToAnnuncio(rs);
-          if (a != null) {
-            annunci.add(a);
-          }
+          annunci.add(a);
         }
       }
     } catch (SQLException e) {
@@ -207,7 +203,7 @@ public class AnnuncioDAO {
     Validator.requirePositive(utente.getIdUtente(), "utente.idUtente");
 
     String sql = "SELECT a.idannuncio, a.titolo, a.descrizione, a.categoria, a.tipoannuncio, a.prezzo, a.oggetto_richiesto, a.stato, a.spedizione, " +
-                 "u.idutente, u.nomeutente, u.email, u.password, u.numerotelefono " +
+                 "u.idutente, u.nomeutente, u.mail, u.numerotelefono " +
                  "FROM annuncio a " +
                  "JOIN utente u ON a.idutente = u.idutente " +
                  "WHERE a.idutente = ?";
@@ -219,7 +215,7 @@ public class AnnuncioDAO {
       try (ResultSet rs = ps.executeQuery()) {
         while (rs.next()) {
           Annuncio a = mapResultSetToAnnuncio(rs);
-          if (a != null) annunci.add(a);
+          annunci.add(a);
         }
       }
     } catch (SQLException e) {
@@ -248,8 +244,7 @@ public class AnnuncioDAO {
     Utente utente = new Utente();
     utente.setIdUtente(rs.getInt("idutente"));
     utente.setUsername(rs.getString("nomeutente"));
-    utente.setEmail(rs.getString("email"));
-    utente.setPassword(rs.getString("password"));
+    utente.setEmail(rs.getString("mail"));
     utente.setNumeroTelefono(rs.getString("numerotelefono"));
 
     Annuncio annuncio = creaAnnuncioPerTipo(tipo, titolo, descrizione, categoria, utente, rs);
@@ -275,7 +270,7 @@ public class AnnuncioDAO {
   private Categoria parseCategoria(String categoriaStr) {
     try {
       return Categoria.valueOf(categoriaStr.toUpperCase());
-    } catch (Exception e) {
+    } catch (Exception _) {
       return Categoria.ALTRO;
     }
   }
@@ -289,7 +284,7 @@ public class AnnuncioDAO {
   private TipoAnnuncio parseTipoAnnuncio(String tipoStr) {
     try {
       return TipoAnnuncio.valueOf(tipoStr.toUpperCase());
-    } catch (Exception e) {
+    } catch (Exception _) {
       return TipoAnnuncio.VENDITA;
     }
   }
@@ -335,25 +330,24 @@ public class AnnuncioDAO {
     try {
       Object spedizioneObj = rs.getObject("spedizione");
       if (spedizioneObj == null) {
-        return null;
+        return Boolean.FALSE;
       }
-      if (spedizioneObj instanceof Boolean) {
-        return (Boolean) spedizioneObj;
+      if (spedizioneObj instanceof Boolean booleanValue) {
+        return booleanValue;
       }
-      if (spedizioneObj instanceof Number) {
-        return ((Number) spedizioneObj).intValue() == 1;
+      if (spedizioneObj instanceof Number number) {
+        return number.intValue() == 1;
       }
       String valore = spedizioneObj.toString().trim().toLowerCase();
       if (valore.equals("1") || valore.equals("true") || valore.equals("t")) {
-        return true;
+        return Boolean.TRUE;
       }
       if (valore.equals("0") || valore.equals("false") || valore.equals("f")) {
-        return false;
+        return Boolean.FALSE;
       }
     } catch (SQLException e) {
       Logger.error("Errore lettura campo spedizione", e);
-      return null;
     }
-    return null;
+    return Boolean.FALSE;
   }
 }

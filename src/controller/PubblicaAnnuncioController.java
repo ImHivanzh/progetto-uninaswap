@@ -116,7 +116,7 @@ public class PubblicaAnnuncioController {
         JOptionPane.showMessageDialog(view, "Errore nel salvataggio dell'annuncio.", "Errore", JOptionPane.ERROR_MESSAGE);
       }
 
-    } catch (NumberFormatException e) {
+    } catch (NumberFormatException _) {
       JOptionPane.showMessageDialog(view, "Il prezzo deve essere un numero valido (usa il punto per i decimali).", "Errore", JOptionPane.ERROR_MESSAGE);
     } catch (DatabaseException e) {
       JOptionPane.showMessageDialog(view, "Errore database: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);

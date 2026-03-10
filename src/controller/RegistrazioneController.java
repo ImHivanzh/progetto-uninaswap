@@ -38,15 +38,7 @@ public class RegistrazioneController {
    * Registra UI listener per vista registrazione.
    */
   private void initListeners() {
-    this.view.addRegistraListener(new ActionListener() {
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        registraUtente();
-      }
-    });
+    this.view.addRegistraListener(e -> registraUtente());
   }
 
   /**

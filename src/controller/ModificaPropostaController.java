@@ -109,7 +109,7 @@ public class ModificaPropostaController {
           if (nuovaOfferta <= 0) {
             throw new NumberFormatException();
           }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException _) {
           view.mostraErrore("Inserisci un prezzo valido maggiore di 0.");
           return;
         }

@@ -61,15 +61,7 @@ public class ScriviRecensioneController {
    * Registra UI listener per form recensione.
    */
   private void initListeners() {
-    this.view.addInviaListener(new ActionListener() {
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        inviaRecensione();
-      }
-    });
+    this.view.addInviaListener(e -> inviaRecensione());
   }
 
   /**

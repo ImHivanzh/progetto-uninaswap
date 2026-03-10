@@ -7,17 +7,21 @@ import exception.DatabaseException;
 import gui.DettaglioAnnuncio;
 import gui.FaiPropostaDialog;
 import gui.Profilo;
-import model.*;
+import model.Annuncio;
+import model.Immagini;
+import model.Proposta;
+import model.Utente;
 import model.enums.TipoAnnuncio;
+import utils.Logger;
 import utils.SessionManager;
 import utils.WindowManager;
-import utils.Logger;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import java.util.List;
 
 /**
@@ -82,8 +86,8 @@ public class DettaglioAnnuncioController {
   private void caricaDati() {
     try {
       this.listaImmagini = immaginiDAO.getImmaginiByAnnuncio(annuncio);
-    } catch (Exception e) {
-      Logger.error("Errore caricamento immagini", e);
+    } catch (Exception _) {
+      Logger.error("Errore caricamento immagini");
     }
 
     view.setTitolo(annuncio.getTitolo());
@@ -95,11 +99,11 @@ public class DettaglioAnnuncioController {
     String prezzoTesto;
     Color prezzoColore;
 
-    if (annuncio instanceof Vendita) {
-      prezzoTesto = String.format("€ %.2f", ((Vendita) annuncio).getPrezzo());
+    if (annuncio instanceof Vendita vendita) {
+      prezzoTesto = String.format("€ %.2f", vendita.getPrezzo());
       prezzoColore = new Color(34, 139, 34);
-    } else if (annuncio instanceof Scambio) {
-      prezzoTesto = "Scambia con: " + ((Scambio) annuncio).getOggettoRichiesto();
+    } else if (annuncio instanceof Scambio scambio) {
+      prezzoTesto = "Scambia con: " + scambio.getOggettoRichiesto();
       prezzoColore = new Color(255, 140, 0);
     } else if (annuncio instanceof Regalo) {
       prezzoTesto = "IN REGALO";
@@ -134,8 +138,8 @@ public class DettaglioAnnuncioController {
       } else {
         view.setUtenteNome("Utente sconosciuto", false);
       }
-    } catch (Exception e) {
-      Logger.error("Errore caricamento info utente", e);
+    } catch (Exception _) {
+      Logger.error("Errore caricamento info utente");
       view.setUtenteNome("Utente sconosciuto", false);
     }
 
@@ -176,19 +180,18 @@ public class DettaglioAnnuncioController {
       String descrizione = dialogController.getDescrizioneProposta();
       byte[] immagine = dialogController.getImmagineProposta();
 
-      salvaProposta(annuncio.getIdAnnuncio(), prezzo, descrizione, immagine);
+      salvaProposta(prezzo, descrizione, immagine);
     }
   }
 
   /**
    * Salva proposta per corrente annuncio.
    *
-   * @param idAnnuncio id annuncio
    * @param prezzo proposto prezzo
    * @param descrizione descrizione proposta
    * @param immagine proposta immagine
    */
-  private void salvaProposta(int idAnnuncio, Double prezzo, String descrizione, byte[] immagine) {
+  private void salvaProposta(Double prezzo, String descrizione, byte[] immagine) {
     Utente utenteCorrente = SessionManager.getInstance().getUtente();
 
     if (utenteCorrente == null) {

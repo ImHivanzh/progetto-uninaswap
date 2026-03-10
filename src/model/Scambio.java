@@ -50,13 +50,6 @@ public class Scambio extends Annuncio {
     public String getOggettoRichiesto() { return oggettoRichiesto; }
 
     /**
-     * Imposta descrizione oggetto richiesto.
-     *
-     * @param oggettoRichiesto oggetto richiesto
-     */
-    public void setOggettoRichiesto(String oggettoRichiesto) { this.oggettoRichiesto = oggettoRichiesto; }
-
-    /**
      * Restituisce rappresentazione stringa di scambio annuncio.
      *
      * @return rappresentazione stringa

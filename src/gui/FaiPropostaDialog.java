@@ -3,8 +3,16 @@ package gui;
 import controller.FaiPropostaController;
 import model.enums.TipoAnnuncio;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Frame;
+import java.awt.Image;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 /**
  * Dialogo per invio proposta.
@@ -54,7 +62,7 @@ public class FaiPropostaDialog extends JDialog {
   /**
    * Controller associato al dialogo.
    */
-  private FaiPropostaController controller;
+  private transient FaiPropostaController controller;
 
   /**
    * Crea dialogo proposta per fornito tipo annuncio.
@@ -65,7 +73,7 @@ public class FaiPropostaDialog extends JDialog {
   public FaiPropostaDialog(Frame owner, TipoAnnuncio tipoAnnuncio) {
     super(owner, "Fai una Proposta", true);
     setContentPane(contentPane);
-    setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     getRootPane().setDefaultButton(btnInvia);
 
     this.controller = new FaiPropostaController(this, tipoAnnuncio);

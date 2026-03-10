@@ -19,7 +19,19 @@ Il progetto segue il pattern **MVC (Model-View-Controller)**:
 - **View** (`src/gui`): Interfacce grafiche Swing
 - **Controller** (`src/controller`): Logica di business e coordinamento
 - **DAO** (`src/dao`): Data Access Objects per persistenza database
+- **DB** (`src/db`): Gestione connessione al database
 - **Utils** (`src/utils`): Classi di utilità (Logger, SessionManager, DataCheck, ecc.)
+
+### Vantaggi del Pattern MVC
+
+Il pattern MVC offre numerosi vantaggi per lo sviluppo e la manutenzione del progetto:
+
+- **Separazione delle Responsabilità**: Ogni componente ha un ruolo ben definito, rendendo il codice più organizzato e comprensibile
+- **Manutenibilità**: Le modifiche a una componente (es. interfaccia grafica) non richiedono cambiamenti alle altre (es. logica di business)
+- **Testabilità**: La logica di business nei Controller e nei DAO può essere testata indipendentemente dall'interfaccia grafica
+- **Riusabilità**: I Model e i DAO possono essere riutilizzati in contesti diversi (es. API REST, applicazione mobile)
+- **Sviluppo Parallelo**: Team diversi possono lavorare simultaneamente su View, Controller e Model senza conflitti
+- **Scalabilità**: Facilita l'aggiunta di nuove funzionalità mantenendo la struttura esistente
 
 ## Requisiti
 
@@ -27,7 +39,8 @@ Il progetto segue il pattern **MVC (Model-View-Controller)**:
 - **Database**: PostgreSQL
 - **Librerie**:
   - PostgreSQL JDBC Driver (42.7.8)
-  - FlatLaf (Look and Feel moderno per Swing)
+  - FlatLaf (3.6.2) - Look and Feel moderno per Swing
+  - JFreeChart (1.5.6) - Grafici e visualizzazioni statistiche
 
 ## Interfaccia Grafica
 
@@ -53,14 +66,18 @@ uninaswap/
 ├── src/
 │   ├── controller/     # Controller MVC
 │   ├── dao/           # Data Access Objects
+│   ├── db/            # Gestione connessione database
 │   ├── exception/     # Eccezioni custom
 │   ├── gui/           # Interfacce grafiche Swing
+│   ├── img/           # Risorse immagini
 │   ├── model/         # Entità del dominio
 │   │   └── enums/     # Enumerazioni
 │   └── utils/         # Classi di utilità
-├── lib/               # Dipendenze esterne
-├── out/               # File compilati
-└── scripts/           # Script di utilità
+├── test/              # Test unitari
+├── lib/               # Dipendenze esterne (JAR)
+├── bin/               # File compilati
+├── out/               # Output compilazione
+└── scripts/           # Script SQL e utilità
 ```
 
 ## Documentazione Classi
@@ -456,6 +473,72 @@ IN_ATTESA, DA_SPEDIRE, DA_RITIRARE, CONCLUSO, RIFIUTATO
 - aggiungiPropostaInviataAllaVista(PropostaRiepilogo): void
 ```
 
+#### DettaglioAnnuncioController
+```
+- view: DettaglioAnnuncio
+- annuncio: Annuncio
+- immaginiDAO: ImmaginiDAO
+
++ DettaglioAnnuncioController(DettaglioAnnuncio, Annuncio)
+- caricaImmagini(): void
+- setupInteraction(): void
+- apriProfilo(): void
+- apriPropostaDialog(): void
+```
+
+#### FaiPropostaController
+```
+- view: FaiProposta
+- annuncio: Annuncio
+- propostaDAO: PropostaDAO
+
++ FaiPropostaController(FaiProposta, Annuncio)
+- setupInteraction(): void
+- inviaProposta(): void
+```
+
+#### ModificaPropostaController
+```
+- view: ModificaProposta
+- proposta: PropostaRiepilogo
+- propostaDAO: PropostaDAO
+
++ ModificaPropostaController(ModificaProposta, PropostaRiepilogo)
+- setupInteraction(): void
+- modificaProposta(): void
+```
+
+#### PassDimenticataController
+```
+- view: PassDimenticata
+- utenteDAO: UtenteDAO
+
++ PassDimenticataController(PassDimenticata)
+- setupInteraction(): void
+- recuperaPassword(): void
+```
+
+#### ReportProposteController
+```
+- view: ReportProposte
+- propostaDAO: PropostaDAO
+
++ ReportProposteController(ReportProposte, int)
+- caricaReport(): void
+- creaGrafico(ReportProposte): JFreeChart
+```
+
+#### ScriviRecensioneController
+```
+- view: ScriviRecensione
+- utenteRecensito: Utente
+- recensioneDAO: RecensioneDAO
+
++ ScriviRecensioneController(ScriviRecensione, Utente)
+- setupInteraction(): void
+- inviaRecensione(): void
+```
+
 ### Utils
 
 #### SessionManager
@@ -518,4 +601,30 @@ IN_ATTESA, DA_SPEDIRE, DA_RITIRARE, CONCLUSO, RIFIUTATO
 + TABELLA_VENDITA: String
 + TABELLA_SCAMBIO: String
 + TABELLA_REGALO: String
+```
+
+#### ConsegnaHelper
+```
++ mostraDialogSpedizione(Annuncio): boolean
++ mostraDialogRitiro(Annuncio): boolean
++ inserisciSpedizione(SpedizioneDAO, int, int): void
++ inserisciRitiro(RitiroDAO, int): void
+```
+
+#### ImmaginePropostaHelper
+```
++ selezionaImmagine(): byte[]
++ mostraImmagine(byte[]): void
+```
+
+### Database
+
+#### dbConnection
+```
+- instance: dbConnection
+- connection: Connection
+
+- dbConnection()
++ getInstance(): dbConnection
++ getConnection(): Connection
 ```

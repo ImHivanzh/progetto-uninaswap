@@ -12,6 +12,13 @@ import java.util.Date;
 public class FormHelper {
 
   /**
+   * Costruttore privato per nascondere quello pubblico implicito.
+   */
+  private FormHelper() {
+    throw new AssertionError("Utility class non deve essere istanziata");
+  }
+
+  /**
    * Crea spinner data con formato yyyy-MM-dd.
    *
    * @return spinner data

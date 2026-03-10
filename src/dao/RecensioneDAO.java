@@ -77,7 +77,7 @@ public class RecensioneDAO {
     Validator.requirePositive(utenteRecensito.getIdUtente(), "utenteRecensito.idUtente");
 
     String sql = "SELECT r.idutente, r.idutenterecensito, r.voto, r.descrizione, "
-            + "u.nomeutente, u.email, u.password, u.numerotelefono "
+            + "u.nomeutente, u.mail, u.numerotelefono "
             + "FROM recensione r "
             + "JOIN utente u ON r.idutente = u.idutente "
             + "WHERE r.idutenterecensito = ?";
@@ -93,8 +93,7 @@ public class RecensioneDAO {
           Utente utenteRecensore = new Utente();
           utenteRecensore.setIdUtente(rs.getInt("idutente"));
           utenteRecensore.setUsername(rs.getString("nomeutente"));
-          utenteRecensore.setEmail(rs.getString("email"));
-          utenteRecensore.setPassword(rs.getString("password"));
+          utenteRecensore.setEmail(rs.getString("mail"));
           utenteRecensore.setNumeroTelefono(rs.getString("numerotelefono"));
 
           Recensione r = new Recensione();

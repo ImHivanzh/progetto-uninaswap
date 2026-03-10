@@ -147,8 +147,8 @@ public class PropostaHandler {
           if (ritiro != null && !ritiro.isRitirato()) {
             opzioni.add("Ritirato");
           }
-        } catch (DatabaseException e) {
-          Logger.error("Errore controllo stato consegna", e);
+        } catch (DatabaseException _) {
+          Logger.error("Errore controllo stato consegna");
         }
       }
     } else {

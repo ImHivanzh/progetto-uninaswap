@@ -59,20 +59,9 @@ public class LoginController {
    * Registra UI listener per vista login.
    */
   private void initListeners() {
-    this.view.addLoginListener(new ActionListener() {
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        controllaLogin();
-      }
-    });
+    this.view.addLoginListener(e -> controllaLogin());
 
     this.view.addRegisterListener(new MouseAdapter() {
-      /**
-       * {@inheritDoc}
-       */
       @Override
       public void mouseClicked(MouseEvent e) {
         RegistrazioneForm regForm = new RegistrazioneForm();
@@ -82,9 +71,6 @@ public class LoginController {
     });
 
     this.view.addForgotPassListener(new MouseAdapter() {
-      /**
-       * {@inheritDoc}
-       */
       @Override
       public void mouseClicked(MouseEvent e) {
         PassDimenticataForm passForm = new PassDimenticataForm();

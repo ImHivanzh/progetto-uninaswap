@@ -34,7 +34,7 @@ public class PropostaDAO {
      */
     private static final String SQL_PROPOSTE_RICEVUTE =
             "SELECT a.idannuncio, a.titolo, a.tipoannuncio, a.descrizione, a.categoria, a.stato, a.spedizione, " +
-            "       u.idutente, u.nomeutente AS utente, u.email, u.numerotelefono, " +
+            "       u.idutente, u.nomeutente AS utente, u.numerotelefono, " +
             "       ('Offerta: ' || COALESCE(CAST(v.controofferta AS VARCHAR), 'N/A')) AS dettaglio, " +
             "       v.accettato, v.inattesa, CAST(NULL AS bytea) AS immagine " +
             "  FROM vendita v " +
@@ -43,7 +43,7 @@ public class PropostaDAO {
             " WHERE a.idutente = ? " +
             "UNION ALL " +
             "SELECT a.idannuncio, a.titolo, a.tipoannuncio, a.descrizione, a.categoria, a.stato, a.spedizione, " +
-            "       u.idutente, u.nomeutente AS utente, u.email, u.numerotelefono, " +
+            "       u.idutente, u.nomeutente AS utente, u.numerotelefono, " +
             "       ('Scambio proposto: ' || COALESCE(s.propscambio, 'N/A')) AS dettaglio, " +
             "       s.accettato, s.inattesa, s.immagine AS immagine " +
             "  FROM scambio s " +
@@ -52,7 +52,7 @@ public class PropostaDAO {
             " WHERE a.idutente = ? " +
             "UNION ALL " +
             "SELECT a.idannuncio, a.titolo, a.tipoannuncio, a.descrizione, a.categoria, a.stato, a.spedizione, " +
-            "       u.idutente, u.nomeutente AS utente, u.email, u.numerotelefono, " +
+            "       u.idutente, u.nomeutente AS utente, u.numerotelefono, " +
             "       ('Richiesta regalo' || COALESCE(' del ' || r.dataprenotazione, '')) AS dettaglio, " +
             "       r.accettato, r.inattesa, CAST(NULL AS bytea) AS immagine " +
             "  FROM regalo r " +
@@ -66,7 +66,7 @@ public class PropostaDAO {
      */
     private static final String SQL_PROPOSTE_INVIATE =
             "SELECT a.idannuncio, a.titolo, a.tipoannuncio, a.descrizione, a.categoria, a.stato, a.spedizione, " +
-            "       u.idutente, u.nomeutente AS utente, u.email, u.numerotelefono, " +
+            "       u.idutente, u.nomeutente AS utente, u.numerotelefono, " +
             "       ('Offerta: ' || COALESCE(CAST(v.controofferta AS VARCHAR), 'N/A')) AS dettaglio, " +
             "       v.accettato, v.inattesa, CAST(NULL AS bytea) AS immagine " +
             "  FROM vendita v " +
@@ -75,7 +75,7 @@ public class PropostaDAO {
             " WHERE v.idutente = ? " +
             "UNION ALL " +
             "SELECT a.idannuncio, a.titolo, a.tipoannuncio, a.descrizione, a.categoria, a.stato, a.spedizione, " +
-            "       u.idutente, u.nomeutente AS utente, u.email, u.numerotelefono, " +
+            "       u.idutente, u.nomeutente AS utente, u.numerotelefono, " +
             "       ('Scambio proposto: ' || COALESCE(s.propscambio, 'N/A')) AS dettaglio, " +
             "       s.accettato, s.inattesa, s.immagine AS immagine " +
             "  FROM scambio s " +
@@ -84,7 +84,7 @@ public class PropostaDAO {
             " WHERE s.idutente = ? " +
             "UNION ALL " +
             "SELECT a.idannuncio, a.titolo, a.tipoannuncio, a.descrizione, a.categoria, a.stato, a.spedizione, " +
-            "       u.idutente, u.nomeutente AS utente, u.email, u.numerotelefono, " +
+            "       u.idutente, u.nomeutente AS utente, u.numerotelefono, " +
             "       ('Richiesta regalo' || COALESCE(' del ' || r.dataprenotazione, '')) AS dettaglio, " +
             "       r.accettato, r.inattesa, CAST(NULL AS bytea) AS immagine " +
             "  FROM regalo r " +
@@ -257,7 +257,6 @@ public class PropostaDAO {
                     Utente utenteCoinvolto = new Utente();
                     utenteCoinvolto.setIdUtente(rs.getInt("idutente"));
                     utenteCoinvolto.setUsername(rs.getString("utente"));
-                    utenteCoinvolto.setEmail(rs.getString("email"));
                     utenteCoinvolto.setNumeroTelefono(rs.getString("numerotelefono"));
 
                     // Costruisci oggetto Annuncio direttamente dal ResultSet
@@ -272,8 +271,8 @@ public class PropostaDAO {
                     if (categoriaStr != null) {
                         try {
                             annuncio.setCategoria(model.enums.Categoria.valueOf(categoriaStr.toUpperCase()));
-                        } catch (IllegalArgumentException e) {
-                            Logger.error("Categoria non valida: " + categoriaStr, e);
+                        } catch (IllegalArgumentException _) {
+                            Logger.error("Categoria non valida: " + categoriaStr);
                         }
                     }
 
@@ -281,8 +280,8 @@ public class PropostaDAO {
                     if (tipoStr != null) {
                         try {
                             annuncio.setTipoAnnuncio(model.enums.TipoAnnuncio.valueOf(tipoStr.toUpperCase()));
-                        } catch (IllegalArgumentException e) {
-                            Logger.error("Tipo annuncio non valido: " + tipoStr, e);
+                        } catch (IllegalArgumentException _) {
+                            Logger.error("Tipo annuncio non valido: " + tipoStr);
                         }
                     }
 
@@ -383,16 +382,16 @@ public class PropostaDAO {
             return null;
         }
         String normalizzato = tipoAnnuncio.trim().toUpperCase();
+
         if (normalizzato.contains(Constanti.TIPO_VENDITA)) {
             return Constanti.TABELLA_VENDITA;
-        }
-        if (normalizzato.contains(Constanti.TIPO_SCAMBIO)) {
+        } else if (normalizzato.contains(Constanti.TIPO_SCAMBIO)) {
             return Constanti.TABELLA_SCAMBIO;
-        }
-        if (normalizzato.contains(Constanti.TIPO_REGALO)) {
+        } else if (normalizzato.contains(Constanti.TIPO_REGALO)) {
             return Constanti.TABELLA_REGALO;
+        } else {
+            return null;
         }
-        return null;
     }
     
     /**

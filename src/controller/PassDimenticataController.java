@@ -38,15 +38,7 @@ public class PassDimenticataController {
      * Registra UI listener per vista recupero password.
      */
     private void initListeners() {
-        this.view.addInvioListener(new ActionListener() {
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                gestisciCambioPassword();
-            }
-        });
+        this.view.addInvioListener(e -> gestisciCambioPassword());
     }
 
     /**
