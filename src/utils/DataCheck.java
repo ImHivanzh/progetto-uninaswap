@@ -23,8 +23,11 @@ public class DataCheck {
      * @return true quando email corrisponde atteso formato
      */
     public static boolean isValidEmail(String email) {
+        if (email == null) {
+            return false;
+        }
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
-        return email != null && email.matches(emailRegex);
+        return email.matches(emailRegex);
     }
 
     /**
@@ -34,8 +37,11 @@ public class DataCheck {
      * @return true quando valore e numero 10 cifre
      */
     public static boolean isValidPhoneNumber(String phoneNumber) {
+        if (phoneNumber == null) {
+            return false;
+        }
         String phoneRegex = "^\\d{10}$";
-        return phoneNumber != null && phoneNumber.matches(phoneRegex);
+        return phoneNumber.matches(phoneRegex);
     }
 
     /**
@@ -55,10 +61,20 @@ public class DataCheck {
         String specialChars = "!@#$%^&*()_+-=[]{}|;':\",./<>?";
 
         for (char c : password.toCharArray()) {
-            if (Character.isUpperCase(c)) hasUpper = true;
-            else if (Character.isLowerCase(c)) hasLower = true;
-            else if (Character.isDigit(c)) hasDigit = true;
-            else if (specialChars.indexOf(c) >= 0) hasSpecial = true;
+            if (Character.isUpperCase(c)) {
+                hasUpper = true;
+            } else if (Character.isLowerCase(c)) {
+                hasLower = true;
+            } else if (Character.isDigit(c)) {
+                hasDigit = true;
+            } else if (specialChars.indexOf(c) >= 0) {
+                hasSpecial = true;
+            }
+
+            // Early exit se tutti i requisiti sono soddisfatti
+            if (hasUpper && hasLower && hasDigit && hasSpecial) {
+                return true;
+            }
         }
         return hasUpper && hasLower && hasDigit && hasSpecial;
     }
