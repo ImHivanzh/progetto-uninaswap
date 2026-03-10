@@ -4,22 +4,29 @@ import dao.AnnuncioDAO;
 import dao.ImmaginiDAO;
 import exception.DatabaseException;
 import gui.PubblicaAnnuncio;
-import model.*;
+import model.Annuncio;
+import model.Immagini;
+import model.Regalo;
+import model.Scambio;
+import model.Utente;
+import model.Vendita;
 import model.enums.Categoria;
 import model.enums.TipoAnnuncio;
 import utils.SessionManager;
 import utils.Logger;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  * Controller per pubblicazione annunci.
  */
 public class PubblicaAnnuncioController {
+
+  private static final String ERRORE_TITLE = "Errore";
 
   /**
    * Vista pubblica annuncio.
@@ -63,7 +70,7 @@ public class PubblicaAnnuncioController {
     List<File> immaginiFiles = view.getImmagini();
 
     if (titolo.isEmpty() || descrizione.isEmpty() || categoria == null || tipo == null) {
-      JOptionPane.showMessageDialog(view, "Compila tutti i campi obbligatori.", "Errore", JOptionPane.ERROR_MESSAGE);
+      JOptionPane.showMessageDialog(view, "Compila tutti i campi obbligatori.", ERRORE_TITLE, JOptionPane.ERROR_MESSAGE);
       return;
     }
 
@@ -113,16 +120,16 @@ public class PubblicaAnnuncioController {
         JOptionPane.showMessageDialog(view, "Annuncio pubblicato con successo!");
         view.dispose();
       } else {
-        JOptionPane.showMessageDialog(view, "Errore nel salvataggio dell'annuncio.", "Errore", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(view, "Errore nel salvataggio dell'annuncio.", ERRORE_TITLE, JOptionPane.ERROR_MESSAGE);
       }
 
     } catch (NumberFormatException _) {
-      JOptionPane.showMessageDialog(view, "Il prezzo deve essere un numero valido (usa il punto per i decimali).", "Errore", JOptionPane.ERROR_MESSAGE);
+      JOptionPane.showMessageDialog(view, "Il prezzo deve essere un numero valido (usa il punto per i decimali).", ERRORE_TITLE, JOptionPane.ERROR_MESSAGE);
     } catch (DatabaseException e) {
-      JOptionPane.showMessageDialog(view, "Errore database: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+      JOptionPane.showMessageDialog(view, "Errore database: " + e.getMessage(), ERRORE_TITLE, JOptionPane.ERROR_MESSAGE);
       Logger.error("Errore database pubblicazione annuncio", e);
     } catch (Exception e) {
-      JOptionPane.showMessageDialog(view, "Errore generico: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+      JOptionPane.showMessageDialog(view, "Errore generico: " + e.getMessage(), ERRORE_TITLE, JOptionPane.ERROR_MESSAGE);
       Logger.error("Errore generico pubblicazione annuncio", e);
     }
   }

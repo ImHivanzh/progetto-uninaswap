@@ -5,9 +5,6 @@ import dao.UtenteDAO;
 import utils.Logger;
 import model.Utente;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 /**
  * Controller per registrazione utente.
  */

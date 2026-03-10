@@ -7,11 +7,12 @@ import model.PropostaRiepilogo;
 import model.enums.TipoAnnuncio;
 import utils.SessionManager;
 
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * Controller per modifica proposta.
@@ -59,17 +60,19 @@ public class ModificaPropostaController {
     }
 
     TipoAnnuncio tipo = proposta.annuncio().getTipoAnnuncio();
-    if (tipo == TipoAnnuncio.VENDITA) {
-      view.setPrezzoInput(proposta.dettaglio().replaceAll("[^0-9,.]", ""));
-      return;
-    }
-    if (tipo == TipoAnnuncio.SCAMBIO) {
-      String dettaglio = proposta.dettaglio();
-      int delimiter = dettaglio.indexOf(':');
-      String descrizione = delimiter >= 0 ? dettaglio.substring(delimiter + 1).trim() : dettaglio.trim();
-      view.setDescrizioneInput(descrizione);
-      if (proposta.immagine() != null) {
-        view.aggiornaAnteprimaImmagine(proposta.immagine());
+    switch (tipo) {
+      case VENDITA -> view.setPrezzoInput(proposta.dettaglio().replaceAll("[^0-9,.]", ""));
+      case SCAMBIO -> {
+        String dettaglio = proposta.dettaglio();
+        int delimiter = dettaglio.indexOf(':');
+        String descrizione = delimiter >= 0 ? dettaglio.substring(delimiter + 1).trim() : dettaglio.trim();
+        view.setDescrizioneInput(descrizione);
+        if (proposta.immagine() != null) {
+          view.aggiornaAnteprimaImmagine(proposta.immagine());
+        }
+      }
+      default -> {
+        // No action needed for other types
       }
     }
   }
@@ -83,12 +86,21 @@ public class ModificaPropostaController {
 
     if (fileChooser.showOpenDialog(view) == JFileChooser.APPROVE_OPTION) {
       File file = fileChooser.getSelectedFile();
-      try (FileInputStream fis = new FileInputStream(file)) {
-        this.immagineProposta = fis.readAllBytes();
-        view.aggiornaAnteprimaImmagine(this.immagineProposta);
-      } catch (IOException ex) {
-        view.mostraErrore("Errore durante il caricamento dell'immagine: " + ex.getMessage());
-      }
+      caricaImmagine(file);
+    }
+  }
+
+  /**
+   * Carica immagine da file.
+   *
+   * @param file file immagine
+   */
+  private void caricaImmagine(File file) {
+    try (FileInputStream fis = new FileInputStream(file)) {
+      this.immagineProposta = fis.readAllBytes();
+      view.aggiornaAnteprimaImmagine(this.immagineProposta);
+    } catch (IOException ex) {
+      view.mostraErrore("Errore durante il caricamento dell'immagine: " + ex.getMessage());
     }
   }
 
@@ -99,33 +111,14 @@ public class ModificaPropostaController {
     TipoAnnuncio tipo = proposta.annuncio().getTipoAnnuncio();
     try {
       int idUtente = SessionManager.getInstance().getUtente().getIdUtente();
-      boolean success = false;
-
-      if (tipo == TipoAnnuncio.VENDITA) {
-        String testoPrezzo = view.getPrezzoInput();
-        double nuovaOfferta;
-        try {
-          nuovaOfferta = Double.parseDouble(testoPrezzo.replace(",", "."));
-          if (nuovaOfferta <= 0) {
-            throw new NumberFormatException();
-          }
-        } catch (NumberFormatException _) {
-          view.mostraErrore("Inserisci un prezzo valido maggiore di 0.");
-          return;
+      boolean success = switch (tipo) {
+        case VENDITA -> salvaPropostaVendita(idUtente);
+        case SCAMBIO -> salvaPropostaScambio(idUtente);
+        default -> {
+          view.mostraErrore("Tipo proposta non supportato.");
+          yield false;
         }
-        success = propostaDAO.modificaPropostaVendita(proposta.annuncio().getIdAnnuncio(), idUtente, nuovaOfferta);
-      } else if (tipo == TipoAnnuncio.SCAMBIO) {
-        String nuovaDescrizione = view.getDescrizioneInput().trim();
-        if (nuovaDescrizione.isEmpty()) {
-          view.mostraErrore("La descrizione dell'oggetto di scambio e obbligatoria.");
-          return;
-        }
-        success = propostaDAO.modificaPropostaScambio(
-                proposta.annuncio().getIdAnnuncio(), idUtente, nuovaDescrizione, immagineProposta);
-      } else {
-        view.mostraErrore("Tipo proposta non supportato.");
-        return;
-      }
+      };
 
       if (success) {
         JOptionPane.showMessageDialog(view, "Proposta modificata con successo!");
@@ -136,6 +129,45 @@ public class ModificaPropostaController {
     } catch (DatabaseException e) {
       view.mostraErrore("Errore durante la modifica della proposta: " + e.getMessage());
     }
+  }
+
+  /**
+   * Salva proposta vendita.
+   *
+   * @param idUtente ID utente
+   * @return true se successo
+   * @throws DatabaseException se errore database
+   */
+  private boolean salvaPropostaVendita(int idUtente) throws DatabaseException {
+    String testoPrezzo = view.getPrezzoInput();
+    double nuovaOfferta;
+    try {
+      nuovaOfferta = Double.parseDouble(testoPrezzo.replace(",", "."));
+      if (nuovaOfferta <= 0) {
+        throw new NumberFormatException();
+      }
+    } catch (NumberFormatException _) {
+      view.mostraErrore("Inserisci un prezzo valido maggiore di 0.");
+      return false;
+    }
+    return propostaDAO.modificaPropostaVendita(proposta.annuncio().getIdAnnuncio(), idUtente, nuovaOfferta);
+  }
+
+  /**
+   * Salva proposta scambio.
+   *
+   * @param idUtente ID utente
+   * @return true se successo
+   * @throws DatabaseException se errore database
+   */
+  private boolean salvaPropostaScambio(int idUtente) throws DatabaseException {
+    String nuovaDescrizione = view.getDescrizioneInput().trim();
+    if (nuovaDescrizione.isEmpty()) {
+      view.mostraErrore("La descrizione dell'oggetto di scambio e obbligatoria.");
+      return false;
+    }
+    return propostaDAO.modificaPropostaScambio(
+            proposta.annuncio().getIdAnnuncio(), idUtente, nuovaDescrizione, immagineProposta);
   }
 
   /**

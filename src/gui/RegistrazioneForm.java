@@ -39,7 +39,7 @@ public class RegistrazioneForm extends BaseFrame {
         super("Registrazione");
         
         setContentPane(mainPanel);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         pack();
         
         centraFinestra();

@@ -3,11 +3,36 @@ package gui;
 import model.Annuncio;
 import model.Vendita;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.LayoutManager;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.Scrollable;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 /**
  * Finestra principale della bacheca annunci.
@@ -21,6 +46,10 @@ public class MainApp extends BaseFrame {
    * Action command per logout.
    */
   public static final String ACTION_LOGOUT = "main.logout";
+  /**
+   * Testo pulsante logout.
+   */
+  private static final String LOGOUT_TEXT = "Logout";
   /**
    * Action command per pubblica annuncio.
    */
@@ -64,7 +93,7 @@ public class MainApp extends BaseFrame {
   /**
    * Lista categorie.
    */
-  private JList categoryList;
+  private JList<String> categoryList;
   /**
    * Radio tutti.
    */
@@ -100,15 +129,6 @@ public class MainApp extends BaseFrame {
   private JButton resetButton;
 
   /**
-   * Pulsante vista 1.
-   */
-  private JButton btnView1;
-  /**
-   * Pulsante vista 2.
-   */
-  private JButton btnView2;
-
-  /**
    * Pulsante profilo.
    */
   private JButton btnProfilo;
@@ -123,44 +143,31 @@ public class MainApp extends BaseFrame {
 
   /**
    * Contenitore annuncio con immagine in evidenza.
+   *
+   * @param annuncio annuncio associato
+   * @param immagine immagine associata
    */
-  public static final class AnnuncioEvidenza {
-    /**
-     * Annuncio associato.
-     */
-    private final Annuncio annuncio;
-    /**
-     * Immagine associata.
-     */
-    private final byte[] immagine;
-
-    /**
-     * Crea contenitore annuncio con immagine opzionale.
-     *
-     * @param annuncio annuncio in evidenza
-     * @param immagine bytes immagine
-     */
-    public AnnuncioEvidenza(Annuncio annuncio, byte[] immagine) {
-      this.annuncio = annuncio;
-      this.immagine = immagine;
+  public record AnnuncioEvidenza(Annuncio annuncio, byte[] immagine) {
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      AnnuncioEvidenza that = (AnnuncioEvidenza) o;
+      return java.util.Objects.equals(annuncio, that.annuncio) &&
+             java.util.Arrays.equals(immagine, that.immagine);
     }
 
-    /**
-     * Restituisce annuncio collegato.
-     *
-     * @return annuncio
-     */
-    public Annuncio getAnnuncio() {
-      return annuncio;
+    @Override
+    public int hashCode() {
+      return java.util.Objects.hash(annuncio, java.util.Arrays.hashCode(immagine));
     }
 
-    /**
-     * Restituisce immagine associata.
-     *
-     * @return bytes immagine
-     */
-    public byte[] getImmagine() {
-      return immagine;
+    @Override
+    public String toString() {
+      return "AnnuncioEvidenza{" +
+             "annuncio=" + annuncio +
+             ", immagine=" + (immagine != null ? immagine.length + " bytes" : "null") +
+             '}';
     }
   }
   /**
@@ -172,7 +179,7 @@ public class MainApp extends BaseFrame {
     initActionCommands();
     initFiltri();
 
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setDefaultCloseOperation(EXIT_ON_CLOSE);
     setMinimumSize(new Dimension(900, 650));
 
     pack();
@@ -239,9 +246,9 @@ public class MainApp extends BaseFrame {
             BorderFactory.createEmptyBorder(4, 10, 4, 10)
     ));
 
-    btnLogout = new JButton("Logout");
-    btnLogout.setToolTipText("Logout");
-    btnLogout.getAccessibleContext().setAccessibleName("Logout");
+    btnLogout = new JButton(LOGOUT_TEXT);
+    btnLogout.setToolTipText(LOGOUT_TEXT);
+    btnLogout.getAccessibleContext().setAccessibleName(LOGOUT_TEXT);
     btnLogout.setBackground(LOGOUT_COLOR);
     btnLogout.setForeground(Color.WHITE);
     btnLogout.setOpaque(true);
@@ -498,8 +505,8 @@ public class MainApp extends BaseFrame {
       }
 
       JScrollPane scrollPane = new JScrollPane(contentPanel);
-      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-      scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      scrollPane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED);
+      scrollPane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
 
       cardsPanel.setLayout(new BorderLayout());
       cardsPanel.add(scrollPane, BorderLayout.CENTER);
@@ -517,7 +524,7 @@ public class MainApp extends BaseFrame {
    * @return scheda pannello
    */
   private JPanel creaCardEvidenza(AnnuncioEvidenza annuncioEvidenza, ActionListener listener) {
-    Annuncio annuncio = annuncioEvidenza.getAnnuncio();
+    Annuncio annuncio = annuncioEvidenza.annuncio();
     JPanel card = new JPanel(new BorderLayout(6, 6));
     card.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(210, 210, 210)),
@@ -528,7 +535,7 @@ public class MainApp extends BaseFrame {
     lblImmagine.setHorizontalAlignment(SwingConstants.CENTER);
     lblImmagine.setPreferredSize(new Dimension(180, 120));
 
-    ImageIcon icon = creaIcona(annuncioEvidenza.getImmagine(), 180, 120);
+    ImageIcon icon = creaIcona(annuncioEvidenza.immagine(), 180, 120);
     if (icon != null) {
       lblImmagine.setIcon(icon);
     } else {

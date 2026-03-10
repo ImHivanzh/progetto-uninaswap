@@ -4,11 +4,19 @@ import controller.PubblicaAnnuncioController;
 import model.enums.Categoria;
 import model.enums.TipoAnnuncio;
 
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * Form per pubblicazione annuncio.
@@ -58,7 +66,7 @@ public class PubblicaAnnuncio extends BaseFrame {
   public PubblicaAnnuncio() {
     super("Pubblica Annuncio");
     setContentPane(mainPanel);
-    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
     immaginiSelezionate = new ArrayList<>();
     initUI();
@@ -90,9 +98,7 @@ public class PubblicaAnnuncio extends BaseFrame {
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
           File[] files = fileChooser.getSelectedFiles();
-          for (File file : files) {
-            immaginiSelezionate.add(file);
-          }
+          immaginiSelezionate.addAll(Arrays.asList(files));
           JOptionPane.showMessageDialog(this, "Hai selezionato " + files.length + " immagini.");
         }
       });
