@@ -1,14 +1,6 @@
 import com.formdev.flatlaf.FlatLightLaf;
 import controller.LoginController;
-import controller.MainController;
-import controller.ProfiloController;
-import dao.UtenteDAO;
 import gui.LoginForm;
-import gui.MainApp;
-import gui.Profilo;
-import gui.PubblicaAnnuncio;
-import model.Utente;
-import utils.SessionManager;
 
 import javax.swing.SwingUtilities;
 
