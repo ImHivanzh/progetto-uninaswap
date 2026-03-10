@@ -15,14 +15,18 @@ import utils.ImmaginePropostaHelper;
 import utils.Logger;
 import utils.WindowManager;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  * Gestisce tutte le operazioni relative alle proposte nel profilo utente.
  */
 public class PropostaHandler {
+
+  private static final String TESTO_CHIUDI = "Chiudi";
+  private static final String TESTO_MOSTRA_IMMAGINE = "Mostra immagine";
+  private static final String TESTO_DETTAGLI_CONSEGNA = "Dettagli consegna";
 
   private final Profilo view;
   private final PropostaDAO propostaDAO;
@@ -69,6 +73,8 @@ public class PropostaHandler {
    * @param isRicevuta true se è una proposta ricevuta, false se inviata
    */
   private void mostraDialogProposta(PropostaRiepilogo proposta, boolean isRicevuta) {
+    if (proposta == null) return;
+
     boolean mostraImmagine = isPropostaScambio(proposta);
     String labelUtente = isRicevuta ? "Da" : "A";
     String dettaglio = buildDettaglioProposta(proposta, labelUtente);
@@ -101,7 +107,7 @@ public class PropostaHandler {
     StatoConsegna statoConsegna = formatStato(proposta);
 
     while (true) {
-      List<String> opzioni = buildOpzioniAccettata(proposta, statoConsegna, mostraImmagine, isRicevuta, idAnnuncio);
+      List<String> opzioni = buildOpzioniAccettata(statoConsegna, mostraImmagine, isRicevuta, idAnnuncio);
       String messaggio = dettaglio + "\n\n" + (isRicevuta ? "Questa proposta è stata accettata." : "La proposta è stata accettata.");
       String titolo = isRicevuta ? "Proposta ricevuta" : "Proposta inviata";
 
@@ -120,47 +126,64 @@ public class PropostaHandler {
   /**
    * Costruisce la lista delle opzioni disponibili per una proposta accettata.
    *
-   * @param proposta la proposta accettata
    * @param stato lo stato corrente della consegna
    * @param mostraImmagine true se c'è un'immagine da mostrare
    * @param isRicevuta true se è una proposta ricevuta
    * @param idAnnuncio l'ID dell'annuncio associato
    * @return lista delle opzioni disponibili
    */
-  private List<String> buildOpzioniAccettata(PropostaRiepilogo proposta, StatoConsegna stato,
+  private List<String> buildOpzioniAccettata(StatoConsegna stato,
                                               boolean mostraImmagine, boolean isRicevuta, int idAnnuncio) {
     List<String> opzioni = new ArrayList<>();
 
+    aggiungiOpzioneRecensione(opzioni, stato);
+    aggiungiOpzioniPerTipoProposta(opzioni, isRicevuta, idAnnuncio);
+    aggiungiOpzioneImmagine(opzioni, mostraImmagine);
+    opzioni.add(TESTO_CHIUDI);
+    return opzioni;
+  }
+
+  private void aggiungiOpzioneRecensione(List<String> opzioni, StatoConsegna stato) {
     if (StatoConsegna.CONCLUSO.equals(stato)) {
       opzioni.add("Lascia recensione");
     }
+  }
 
+  private void aggiungiOpzioniPerTipoProposta(List<String> opzioni, boolean isRicevuta, int idAnnuncio) {
     if (isRicevuta) {
-      opzioni.add("Dettagli consegna");
-      if (spedizioneDAO != null && ritiroDAO != null) {
-        try {
-          model.Spedizione spedizione = spedizioneDAO.getSpedizioneByAnnuncio(idAnnuncio);
-          if (spedizione != null && !spedizione.isSpedito()) {
-            opzioni.add("Ho spedito");
-          }
-          model.Ritiro ritiro = ritiroDAO.getRitiroByAnnuncio(idAnnuncio);
-          if (ritiro != null && !ritiro.isRitirato()) {
-            opzioni.add("Ritirato");
-          }
-        } catch (DatabaseException _) {
-          Logger.error("Errore controllo stato consegna");
-        }
-      }
+      aggiungiOpzioniRicevuta(opzioni, idAnnuncio);
     } else {
-      boolean dettagliEsistono = verificaDettagliConsegna(idAnnuncio);
-      opzioni.add(dettagliEsistono ? "Dettagli consegna" : "Scegli consegna");
+      aggiungiOpzioniInviata(opzioni, idAnnuncio);
     }
+  }
 
+  private void aggiungiOpzioneImmagine(List<String> opzioni, boolean mostraImmagine) {
     if (mostraImmagine) {
-      opzioni.add("Mostra immagine");
+      opzioni.add(TESTO_MOSTRA_IMMAGINE);
     }
-    opzioni.add("Chiudi");
-    return opzioni;
+  }
+
+  private void aggiungiOpzioniRicevuta(List<String> opzioni, int idAnnuncio) {
+    opzioni.add(TESTO_DETTAGLI_CONSEGNA);
+    if (spedizioneDAO != null && ritiroDAO != null) {
+      try {
+        model.Spedizione spedizione = spedizioneDAO.getSpedizioneByAnnuncio(idAnnuncio);
+        if (spedizione != null && !spedizione.isSpedito()) {
+          opzioni.add("Ho spedito");
+        }
+        model.Ritiro ritiro = ritiroDAO.getRitiroByAnnuncio(idAnnuncio);
+        if (ritiro != null && !ritiro.isRitirato()) {
+          opzioni.add("Ritirato");
+        }
+      } catch (DatabaseException _) {
+        Logger.error("Errore controllo stato consegna");
+      }
+    }
+  }
+
+  private void aggiungiOpzioniInviata(List<String> opzioni, int idAnnuncio) {
+    boolean dettagliEsistono = verificaDettagliConsegna(idAnnuncio);
+    opzioni.add(dettagliEsistono ? TESTO_DETTAGLI_CONSEGNA : "Scegli consegna");
   }
 
   /**
@@ -178,7 +201,7 @@ public class PropostaHandler {
       case "Lascia recensione":
         apriScriviRecensione(proposta.utenteCoinvolto());
         return false;
-      case "Dettagli consegna":
+      case TESTO_DETTAGLI_CONSEGNA:
         if (isRicevuta) {
           visualizzaDettagliConsegna(proposta);
         } else {
@@ -194,7 +217,7 @@ public class PropostaHandler {
       case "Ritirato":
         aggiornaStatoConsegna(idAnnuncio, false, "Ritiro aggiornato a 'ritirato'.");
         return false;
-      case "Mostra immagine":
+      case TESTO_MOSTRA_IMMAGINE:
         mostraImmagineProposta(proposta);
         return true;
       default:
@@ -218,7 +241,7 @@ public class PropostaHandler {
     }
 
     while (true) {
-      Object[] opzioni = {"Mostra immagine", "Chiudi"};
+      Object[] opzioni = {TESTO_MOSTRA_IMMAGINE, TESTO_CHIUDI};
       int scelta = JOptionPane.showOptionDialog(view, messaggio, "Proposta",
               JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
               null, opzioni, opzioni[1]);
@@ -250,24 +273,36 @@ public class PropostaHandler {
               isRicevuta ? JOptionPane.QUESTION_MESSAGE : JOptionPane.INFORMATION_MESSAGE,
               null, opzioni, opzioni[0]);
 
-      if (isRicevuta && scelta == 0) {
-        aggiornaEsitoProposta(proposta, proposta.utenteCoinvolto(),
-                             true, false, "Proposta accettata con successo.");
+      if (handleSceltaPropostaInAttesa(scelta, proposta, mostraImmagine, isRicevuta)) {
         return;
       }
-      if (isRicevuta && scelta == 1) {
-        aggiornaEsitoProposta(proposta, proposta.utenteCoinvolto(),
-                             false, false, "Proposta rifiutata.");
-        return;
-      }
-
-      int imgIndex = isRicevuta ? 2 : 0;
-      if (mostraImmagine && scelta == imgIndex) {
-        mostraImmagineProposta(proposta);
-        continue;
-      }
-      return;
     }
+  }
+
+  /**
+   * Gestisce la scelta dell'utente per una proposta in attesa.
+   *
+   * @return true se il dialog deve chiudersi, false se deve rimanere aperto
+   */
+  private boolean handleSceltaPropostaInAttesa(int scelta, PropostaRiepilogo proposta,
+                                                 boolean mostraImmagine, boolean isRicevuta) {
+    if (isRicevuta && scelta == 0) {
+      aggiornaEsitoProposta(proposta, proposta.utenteCoinvolto(),
+                           true, false, "Proposta accettata con successo.");
+      return true;
+    }
+    if (isRicevuta && scelta == 1) {
+      aggiornaEsitoProposta(proposta, proposta.utenteCoinvolto(),
+                           false, false, "Proposta rifiutata.");
+      return true;
+    }
+
+    int imgIndex = isRicevuta ? 2 : 0;
+    if (mostraImmagine && scelta == imgIndex) {
+      mostraImmagineProposta(proposta);
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -280,12 +315,12 @@ public class PropostaHandler {
   private Object[] buildOpzioniInAttesa(boolean mostraImmagine, boolean isRicevuta) {
     if (isRicevuta) {
       return mostraImmagine
-          ? new Object[]{"Accetta", "Rifiuta", "Mostra immagine", "Chiudi"}
-          : new Object[]{"Accetta", "Rifiuta", "Chiudi"};
+          ? new Object[]{"Accetta", "Rifiuta", TESTO_MOSTRA_IMMAGINE, TESTO_CHIUDI}
+          : new Object[]{"Accetta", "Rifiuta", TESTO_CHIUDI};
     } else {
       return mostraImmagine
-          ? new Object[]{"Mostra immagine", "Chiudi"}
-          : new Object[]{"Chiudi"};
+          ? new Object[]{TESTO_MOSTRA_IMMAGINE, TESTO_CHIUDI}
+          : new Object[]{TESTO_CHIUDI};
     }
   }
 
@@ -524,15 +559,15 @@ public class PropostaHandler {
     Object[] opzioni = {"Spedizione", "Ritiro", "Annulla"};
     int scelta = JOptionPane.showOptionDialog(view,
         "Seleziona il metodo di consegna per la proposta accettata.",
-        "Dettagli consegna", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+        TESTO_DETTAGLI_CONSEGNA, JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
         null, opzioni, opzioni[0]);
 
     if (scelta == 0) {
       consegnaHelper.salvaSpedizione(idAnnuncio, utenteTarget.getIdUtente(),
-          msg -> view.mostraMessaggio(msg), view::mostraErrore);
+          view::mostraMessaggio, view::mostraErrore);
     } else if (scelta == 1) {
       consegnaHelper.salvaRitiro(idAnnuncio,
-          msg -> view.mostraMessaggio(msg), view::mostraErrore);
+          view::mostraMessaggio, view::mostraErrore);
     }
   }
 
@@ -543,7 +578,11 @@ public class PropostaHandler {
    */
   private void visualizzaDettagliConsegna(PropostaRiepilogo proposta) {
     consegnaHelper.visualizzaDettagli(proposta, view::mostraErrore,
-        () -> view.mostraMessaggio("Dettagli di consegna non ancora forniti dall'acquirente."));
+        this::mostraMessaggioDettagliNonForniti);
+  }
+
+  private void mostraMessaggioDettagliNonForniti() {
+    view.mostraMessaggio("Dettagli di consegna non ancora forniti dall'acquirente.");
   }
 
   /**
@@ -563,7 +602,7 @@ public class PropostaHandler {
     String tipoAnnuncio = proposta.annuncio() != null && proposta.annuncio().getTipoAnnuncio() != null
         ? proposta.annuncio().getTipoAnnuncio().toString() : "N/A";
 
-    return String.format("%s: %s\nAnnuncio: %s\nTipo: %s\nDettaglio: %s\nStato: %s",
+    return String.format("%s: %s%nAnnuncio: %s%nTipo: %s%nDettaglio: %s%nStato: %s",
         labelUtente, nomeUtente, titoloAnnuncio, tipoAnnuncio,
         proposta.dettaglio(), formatStato(proposta).getDescrizione());
   }

@@ -1,16 +1,13 @@
 package controller;
 
-import gui.ScriviRecensione;
 import dao.RecensioneDAO;
 import dao.UtenteDAO;
+import exception.DatabaseException;
+import gui.ScriviRecensione;
 import model.Recensione;
 import model.Utente;
-import utils.SessionManager;
 import utils.Logger;
-import exception.DatabaseException;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import utils.SessionManager;
 
 /**
  * Controller per invio recensioni.

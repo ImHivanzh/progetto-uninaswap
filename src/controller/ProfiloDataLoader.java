@@ -19,6 +19,8 @@ import java.util.List;
  */
 public class ProfiloDataLoader {
 
+  private static final String UNKNOWN_USER = "Sconosciuto";
+
   private final Profilo view;
   private final RecensioneDAO recensioneDAO;
   private final AnnuncioDAO annuncioDAO;
@@ -55,22 +57,22 @@ public class ProfiloDataLoader {
 
     try {
       caricaRecensioni(utenteTarget);
-      dati.listaAnnunci = caricaAnnunci(utenteTarget);
+      dati.setListaAnnunci(caricaAnnunci(utenteTarget));
 
       if (mostraDatiSensibili && propostaDAO != null) {
-        dati.proposteRicevute = caricaProposteRicevute(utenteTarget);
-        dati.proposteInviate = caricaProposteInviate(utenteTarget);
+        dati.setProposteRicevute(caricaProposteRicevute(utenteTarget));
+        dati.setProposteInviate(caricaProposteInviate(utenteTarget));
       } else {
-        dati.proposteRicevute = Collections.emptyList();
-        dati.proposteInviate = Collections.emptyList();
+        dati.setProposteRicevute(Collections.emptyList());
+        dati.setProposteInviate(Collections.emptyList());
       }
 
     } catch (DatabaseException e) {
       view.mostraErrore("Errore nel caricamento dati: " + e.getMessage());
       Logger.error("Errore caricamento dati profilo", e);
-      dati.listaAnnunci = Collections.emptyList();
-      dati.proposteRicevute = Collections.emptyList();
-      dati.proposteInviate = Collections.emptyList();
+      dati.setListaAnnunci(Collections.emptyList());
+      dati.setProposteRicevute(Collections.emptyList());
+      dati.setProposteInviate(Collections.emptyList());
     }
 
     return dati;
@@ -109,7 +111,7 @@ public class ProfiloDataLoader {
     double sommaVoti = 0;
     for (Recensione r : recensioni) {
       String nomeUtente = r.getUtenteRecensore() != null && r.getUtenteRecensore().getUsername() != null
-          ? r.getUtenteRecensore().getUsername() : "Sconosciuto";
+          ? r.getUtenteRecensore().getUsername() : UNKNOWN_USER;
       view.aggiungiRecensione(nomeUtente, r.getVoto(), r.getDescrizione());
       sommaVoti += r.getVoto();
     }
@@ -176,7 +178,7 @@ public class ProfiloDataLoader {
    */
   private void aggiungiPropostaRicevutaAllaVista(PropostaRiepilogo proposta) {
     String nomeUtente = proposta.utenteCoinvolto() != null
-        ? proposta.utenteCoinvolto().getUsername() : "Sconosciuto";
+        ? proposta.utenteCoinvolto().getUsername() : UNKNOWN_USER;
     String titoloAnnuncio = proposta.annuncio() != null
         ? proposta.annuncio().getTitolo() : "N/A";
     String tipoAnnuncio = proposta.annuncio() != null && proposta.annuncio().getTipoAnnuncio() != null
@@ -193,7 +195,7 @@ public class ProfiloDataLoader {
    */
   private void aggiungiPropostaInviataAllaVista(PropostaRiepilogo proposta) {
     String nomeUtente = proposta.utenteCoinvolto() != null
-        ? proposta.utenteCoinvolto().getUsername() : "Sconosciuto";
+        ? proposta.utenteCoinvolto().getUsername() : UNKNOWN_USER;
     String titoloAnnuncio = proposta.annuncio() != null
         ? proposta.annuncio().getTitolo() : "N/A";
     String tipoAnnuncio = proposta.annuncio() != null && proposta.annuncio().getTipoAnnuncio() != null
@@ -208,8 +210,32 @@ public class ProfiloDataLoader {
    * Contiene le liste di annunci e proposte (ricevute e inviate).
    */
   public static class DatiProfilo {
-    public List<Annuncio> listaAnnunci = Collections.emptyList();
-    public List<PropostaRiepilogo> proposteRicevute = Collections.emptyList();
-    public List<PropostaRiepilogo> proposteInviate = Collections.emptyList();
+    private List<Annuncio> listaAnnunci = Collections.emptyList();
+    private List<PropostaRiepilogo> proposteRicevute = Collections.emptyList();
+    private List<PropostaRiepilogo> proposteInviate = Collections.emptyList();
+
+    public List<Annuncio> getListaAnnunci() {
+      return listaAnnunci;
+    }
+
+    public void setListaAnnunci(List<Annuncio> listaAnnunci) {
+      this.listaAnnunci = listaAnnunci;
+    }
+
+    public List<PropostaRiepilogo> getProposteRicevute() {
+      return proposteRicevute;
+    }
+
+    public void setProposteRicevute(List<PropostaRiepilogo> proposteRicevute) {
+      this.proposteRicevute = proposteRicevute;
+    }
+
+    public List<PropostaRiepilogo> getProposteInviate() {
+      return proposteInviate;
+    }
+
+    public void setProposteInviate(List<PropostaRiepilogo> proposteInviate) {
+      this.proposteInviate = proposteInviate;
+    }
   }
 }

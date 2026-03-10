@@ -1,7 +1,14 @@
 package dao;
 
-import db.dbConnection;
+import db.DbConnection;
 import exception.DatabaseException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import model.Annuncio;
 import model.Regalo;
 import model.Scambio;
@@ -12,14 +19,6 @@ import model.enums.TipoAnnuncio;
 import utils.Constanti;
 import utils.Logger;
 import utils.Validator;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * DAO per l'accesso ai dati degli annunci.
@@ -36,7 +35,7 @@ public class AnnuncioDAO {
    */
   public AnnuncioDAO() {
     try {
-      this.con = dbConnection.getInstance().getConnection();
+      this.con = DbConnection.getInstance().getConnection();
     } catch (DatabaseException e) {
       Logger.error("Errore di connessione al database in AnnuncioDAO", e);
     }

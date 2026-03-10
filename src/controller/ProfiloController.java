@@ -5,6 +5,14 @@ import dao.PropostaDAO;
 import dao.RecensioneDAO;
 import dao.RitiroDAO;
 import dao.SpedizioneDAO;
+import exception.DatabaseException;
+import gui.DettaglioAnnuncio;
+import gui.Profilo;
+import gui.ReportProposteDialog;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
+import javax.swing.JTable;
 import model.Annuncio;
 import model.PropostaRiepilogo;
 import model.Utente;
@@ -12,21 +20,14 @@ import model.enums.StatoConsegna;
 import utils.Logger;
 import utils.SessionManager;
 import utils.WindowManager;
-import exception.DatabaseException;
-import gui.DettaglioAnnuncio;
-import gui.Profilo;
-import gui.ReportProposteDialog;
-
-import javax.swing.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.List;
 
 /**
  * Controller per gestione profilo utente.
  * Coordina PropostaHandler e ProfiloDataLoader.
  */
 public class ProfiloController {
+
+  private static final String OPERAZIONE_SOLO_TUO_PROFILO = "Operazione disponibile solo nel tuo profilo.";
 
   private final Profilo view;
   private final Utente utenteTarget;
@@ -147,9 +148,9 @@ public class ProfiloController {
   private void caricaDati() {
     ProfiloDataLoader.DatiProfilo dati = dataLoader.caricaDatiCompleti(utenteTarget, mostraDatiSensibili);
     if (dati != null) {
-      listaAnnunci = dati.listaAnnunci;
-      proposteRicevute = dati.proposteRicevute;
-      proposteInviate = dati.proposteInviate;
+      listaAnnunci = dati.getListaAnnunci();
+      proposteRicevute = dati.getProposteRicevute();
+      proposteInviate = dati.getProposteInviate();
     }
   }
 
@@ -178,7 +179,7 @@ public class ProfiloController {
    */
   private PropostaRiepilogo validaSelezioneProposta(int selectedRow, List<PropostaRiepilogo> lista) {
     if (!mostraDatiSensibili) {
-      view.mostraErrore("Operazione disponibile solo nel tuo profilo.");
+      view.mostraErrore(OPERAZIONE_SOLO_TUO_PROFILO);
       return null;
     }
     if (selectedRow < 0 || lista == null || selectedRow >= lista.size()) {
@@ -199,7 +200,7 @@ public class ProfiloController {
    */
   private void handleRecensioneDaProposta(boolean ricevuta) {
     if (!mostraDatiSensibili) {
-      view.mostraErrore("Operazione disponibile solo nel tuo profilo.");
+      view.mostraErrore(OPERAZIONE_SOLO_TUO_PROFILO);
       return;
     }
 
@@ -239,7 +240,7 @@ public class ProfiloController {
    */
   private PropostaRiepilogo validaPropostaPerModifica() {
     if (!mostraDatiSensibili) {
-      view.mostraErrore("Operazione disponibile solo nel tuo profilo.");
+      view.mostraErrore(OPERAZIONE_SOLO_TUO_PROFILO);
       return null;
     }
 
@@ -257,7 +258,7 @@ public class ProfiloController {
    */
   private void apriReportProposte() {
     if (!mostraDatiSensibili) {
-      view.mostraErrore("Operazione disponibile solo nel tuo profilo.");
+      view.mostraErrore(OPERAZIONE_SOLO_TUO_PROFILO);
       return;
     }
 

@@ -37,11 +37,11 @@ public class ScriviRecensione extends BaseFrame {
     /**
      * Colore stella selezionata.
      */
-    private final Color COLORE_PIENA = new Color(255, 200, 0);
+    private static final Color COLORE_PIENA = new Color(255, 200, 0);
     /**
      * Colore stella non selezionata.
      */
-    private final Color COLORE_VUOTA = Color.LIGHT_GRAY;
+    private static final Color COLORE_VUOTA = Color.LIGHT_GRAY;
 
     /**
      * Crea form recensione.
@@ -49,7 +49,7 @@ public class ScriviRecensione extends BaseFrame {
     public ScriviRecensione() {
         super("Scrivi Recensione");
         setContentPane(mainPanel);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         inizializzaStelle();
 
@@ -75,9 +75,7 @@ public class ScriviRecensione extends BaseFrame {
 
             final int votoStella = i + 1;
 
-            stella.addActionListener(e -> {
-                setVoto(votoStella);
-            });
+            stella.addActionListener(e -> setVoto(votoStella));
 
             stelleButtons[i] = stella;
             pnlStelle.add(stella);

@@ -14,15 +14,15 @@ public class PassDimenticataForm extends JFrame {
     /**
      * Campo username.
      */
-    private JTextField UserField;
+    private JTextField userField;
     /**
      * Campo nuova password.
      */
-    private JPasswordField NPassField;
+    private JPasswordField nPassField;
     /**
      * Campo conferma password.
      */
-    private JPasswordField CPassField;
+    private JPasswordField cPassField;
     /**
      * Pulsante invio.
      */
@@ -34,7 +34,7 @@ public class PassDimenticataForm extends JFrame {
     public PassDimenticataForm() {
         setContentPane(mainPanel);
         setTitle("Recupero Password");
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         pack();
         setLocationRelativeTo(null);
     }
@@ -45,7 +45,7 @@ public class PassDimenticataForm extends JFrame {
      * @return username
      */
     public String getUsername() {
-        return UserField.getText();
+        return userField.getText();
     }
 
     /**
@@ -54,7 +54,7 @@ public class PassDimenticataForm extends JFrame {
      * @return nuovo password
      */
     public String getNuovaPassword() {
-        return new String(NPassField.getPassword());
+        return new String(nPassField.getPassword());
     }
 
     /**
@@ -63,7 +63,7 @@ public class PassDimenticataForm extends JFrame {
      * @return conferma password
      */
     public String getConfermaPassword() {
-        return new String(CPassField.getPassword());
+        return new String(cPassField.getPassword());
     }
 
     /**

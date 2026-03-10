@@ -1,11 +1,18 @@
 package gui;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * Vista profilo utente.
@@ -98,7 +105,7 @@ public class Profilo extends BaseFrame {
   public Profilo() {
     super("Profilo Utente");
     setContentPane(mainPanel);
-    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setMinimumSize(new Dimension(600, 550));
 
     setupTables();

@@ -1,12 +1,7 @@
 package dao;
 
-import db.dbConnection;
+import db.DbConnection;
 import exception.DatabaseException;
-import model.Immagini;
-import model.Annuncio;
-import utils.Logger;
-import utils.Validator;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,6 +9,10 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+import model.Annuncio;
+import model.Immagini;
+import utils.Logger;
+import utils.Validator;
 
 /**
  * DAO per l'accesso ai dati delle immagini.
@@ -32,7 +31,7 @@ public class ImmaginiDAO {
    */
   public ImmaginiDAO() {
     try {
-      this.con = dbConnection.getInstance().getConnection();
+      this.con = DbConnection.getInstance().getConnection();
     } catch (DatabaseException e) {
       Logger.error("Errore connessione DB in ImmaginiDAO", e);
     }

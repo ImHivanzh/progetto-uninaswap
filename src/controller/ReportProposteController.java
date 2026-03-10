@@ -3,6 +3,8 @@ package controller;
 import dao.PropostaDAO;
 import exception.DatabaseException;
 import gui.ReportProposteDialog;
+import java.awt.Dimension;
+import javax.swing.JOptionPane;
 import model.ReportProposte;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -11,13 +13,13 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import utils.SessionManager;
 
-import javax.swing.*;
-import java.awt.Dimension;
-
 /**
  * Controller per report proposte inviate.
  */
 public class ReportProposteController {
+
+  private static final String ETICHETTA_TOTALE = "Totale";
+  private static final String ETICHETTA_ACCETTATE = "Accettate";
 
   /**
    * Vista dialogo report.
@@ -83,12 +85,12 @@ public class ReportProposteController {
 
   private void createChart(ReportProposte report) {
     DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-    dataset.addValue(report.totaleVendita(), "Totale", "Vendita");
-    dataset.addValue(report.accettateVendita(), "Accettate", "Vendita");
-    dataset.addValue(report.totaleScambio(), "Totale", "Scambio");
-    dataset.addValue(report.accettateScambio(), "Accettate", "Scambio");
-    dataset.addValue(report.totaleRegalo(), "Totale", "Regalo");
-    dataset.addValue(report.accettateRegalo(), "Accettate", "Regalo");
+    dataset.addValue(report.totaleVendita(), ETICHETTA_TOTALE, "Vendita");
+    dataset.addValue(report.accettateVendita(), ETICHETTA_ACCETTATE, "Vendita");
+    dataset.addValue(report.totaleScambio(), ETICHETTA_TOTALE, "Scambio");
+    dataset.addValue(report.accettateScambio(), ETICHETTA_ACCETTATE, "Scambio");
+    dataset.addValue(report.totaleRegalo(), ETICHETTA_TOTALE, "Regalo");
+    dataset.addValue(report.accettateRegalo(), ETICHETTA_ACCETTATE, "Regalo");
 
     JFreeChart barChart = ChartFactory.createBarChart(
             "Riepilogo Proposte Inviate",

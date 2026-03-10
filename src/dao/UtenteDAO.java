@@ -1,20 +1,24 @@
 package dao;
 
-import model.Utente;
-import utils.DataCheck;
-import utils.Logger;
-import db.dbConnection;
+import db.DbConnection;
 import exception.DatabaseException;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import model.Utente;
+import utils.DataCheck;
+import utils.Logger;
 
 /**
  * DAO per l'accesso ai dati degli utenti.
  */
 public class UtenteDAO {
+
+    private static final String COL_ID_UTENTE = "idutente";
+    private static final String COL_NUMERO_TELEFONO = "numerotelefono";
+    private static final String SQL_SELECT_PREFIX = "SELECT ";
+    private static final String SQL_USER_COLUMNS = ", nomeutente, password, mail, ";
 
     /**
      * Connessione al database.
@@ -26,7 +30,7 @@ public class UtenteDAO {
      */
     public UtenteDAO() {
         try {
-            this.con = dbConnection.getInstance().getConnection();
+            this.con = DbConnection.getInstance().getConnection();
         } catch (DatabaseException e) {
             Logger.error("Errore connessione DB in UtenteDAO", e);
         }
@@ -88,7 +92,7 @@ public class UtenteDAO {
      * @throws DatabaseException se la query fallisce
      */
     public Utente autenticaUtente(String username, String password) throws DatabaseException {
-        String sql = "SELECT idutente, nomeutente, password, mail, numerotelefono FROM utente WHERE nomeutente = ? AND password = ?";
+        String sql = SQL_SELECT_PREFIX + COL_ID_UTENTE + SQL_USER_COLUMNS + COL_NUMERO_TELEFONO + " FROM utente WHERE nomeutente = ? AND password = ?";
 
         if (con == null) return null;
 
@@ -99,11 +103,11 @@ public class UtenteDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return new Utente(
-                            rs.getInt("idutente"),
+                            rs.getInt(COL_ID_UTENTE),
                             username,
                             password,
                             rs.getString("mail"),
-                            rs.getString("numerotelefono")
+                            rs.getString(COL_NUMERO_TELEFONO)
                     );
                 }
             }
@@ -121,7 +125,7 @@ public class UtenteDAO {
      * @throws DatabaseException se la query fallisce
      */
     public Utente getUserByID(int id) throws DatabaseException {
-        String sql = "SELECT idutente, nomeutente, password, mail, numerotelefono FROM utente WHERE idutente = ?";
+        String sql = SQL_SELECT_PREFIX + COL_ID_UTENTE + SQL_USER_COLUMNS + COL_NUMERO_TELEFONO + " FROM utente WHERE " + COL_ID_UTENTE + " = ?";
 
         if (con == null) throw new DatabaseException("Connessione non disponibile");
 
@@ -153,7 +157,7 @@ public class UtenteDAO {
      * @throws DatabaseException se la query fallisce
      */
     public Utente getUserByUsername(String username) throws DatabaseException {
-        String sql = "SELECT idutente, nomeutente, password, mail, numerotelefono FROM utente WHERE nomeutente = ?";
+        String sql = SQL_SELECT_PREFIX + COL_ID_UTENTE + SQL_USER_COLUMNS + COL_NUMERO_TELEFONO + " FROM utente WHERE nomeutente = ?";
 
         if (con == null) throw new DatabaseException("Connessione non disponibile");
 

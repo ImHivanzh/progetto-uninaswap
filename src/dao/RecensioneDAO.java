@@ -1,18 +1,17 @@
 package dao;
 
-import model.Recensione;
-import model.Utente;
-import db.dbConnection;
+import db.DbConnection;
 import exception.DatabaseException;
-import utils.Logger;
-import utils.Validator;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import model.Recensione;
+import model.Utente;
+import utils.Logger;
+import utils.Validator;
 
 /**
  * DAO per l'accesso ai dati delle recensioni.
@@ -29,7 +28,7 @@ public class RecensioneDAO {
    */
   public RecensioneDAO() {
     try {
-      this.con = dbConnection.getInstance().getConnection();
+      this.con = DbConnection.getInstance().getConnection();
     } catch (DatabaseException e) {
       Logger.error("Errore di connessione al database in RecensioneDAO", e);
     }

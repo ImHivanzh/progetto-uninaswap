@@ -4,7 +4,11 @@ import model.Utente;
 
 /**
  * Gestisce la sessione dell'utente corrente.
+ *
+ * Implementa il pattern Singleton per garantire una singola istanza
+ * della sessione utente condivisa in tutta l'applicazione.
  */
+@SuppressWarnings("java:S6548") // Singleton pattern è richiesto per gestire la sessione globale
 public class SessionManager {
 
   /**
