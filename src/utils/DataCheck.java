@@ -3,6 +3,7 @@ package utils;
 /**
  * Utility per validazioni input.
  */
+@SuppressWarnings("java:S3516") // I metodi di validazione restituiscono valori diversi in base all'input - falso positivo di analisi statica
 public class DataCheck {
     /**
      * Lunghezza minima password.
@@ -69,11 +70,6 @@ public class DataCheck {
                 hasDigit = true;
             } else if (specialChars.indexOf(c) >= 0) {
                 hasSpecial = true;
-            }
-
-            // Early exit se tutti i requisiti sono soddisfatti
-            if (hasUpper && hasLower && hasDigit && hasSpecial) {
-                return true;
             }
         }
         return hasUpper && hasLower && hasDigit && hasSpecial;
