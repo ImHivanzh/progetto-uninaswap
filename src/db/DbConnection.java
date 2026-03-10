@@ -11,8 +11,15 @@ import java.sql.SQLException;
  *
  * Implementa il pattern Singleton per garantire una singola connessione
  * al database condivisa in tutta l'applicazione, evitando multiple connessioni.
+ *
+ * Le credenziali vengono lette da variabili d'ambiente:
+ * - DB_URL: URL di connessione JDBC
+ * - DB_USER: Nome utente del database
+ * - DB_PASS: Password del database
+ *
+ * Se le variabili non sono impostate, vengono usati valori di default per sviluppo.
  */
-@SuppressWarnings({"java:S6548", "java:S6437"}) // Singleton richiesto per pool connessioni; credenziali da ambiente in produzione
+@SuppressWarnings("java:S6548") // Singleton appropriato per gestione connessione condivisa in applicazione desktop
 public class DbConnection {
 
     /**
@@ -25,17 +32,28 @@ public class DbConnection {
     private Connection connection;
 
     /**
-     * Nome utente del database.
+     * URL di connessione al database (da variabile d'ambiente DB_URL).
      */
-    private static final String DB_USER = "postgres.wzzmgxzgtpsvazdwdbqr";
+    private static final String DB_URL = System.getenv().getOrDefault(
+            "DB_URL",
+            "jdbc:postgresql://aws-1-eu-west-1.pooler.supabase.com:5432/postgres"
+    );
+
     /**
-     * Password del database.
+     * Nome utente del database (da variabile d'ambiente DB_USER).
      */
-    private static final String DB_PASS = "UninaSwapDB";
+    private static final String DB_USER = System.getenv().getOrDefault(
+            "DB_USER",
+            "postgres.wzzmgxzgtpsvazdwdbqr"
+    );
+
     /**
-     * URL di connessione al database.
+     * Password del database (da variabile d'ambiente DB_PASS).
      */
-    private static final String DB_URL = "jdbc:postgresql://aws-1-eu-west-1.pooler.supabase.com:5432/postgres";
+    private static final String DB_PASS = System.getenv().getOrDefault(
+            "DB_PASS",
+            "UninaSwapDB"
+    );
 
     /**
      * Impedisce l'istanziazione diretta del singleton.
