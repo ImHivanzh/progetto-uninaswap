@@ -9,7 +9,6 @@ out
 gui/MainApp.form
 gui/MainApp.java
 docs/javadoc/
-test/
 test-bin/
 lib/junit-platform-console-standalone-*.jar
 lib/mockito-core-*.jar
