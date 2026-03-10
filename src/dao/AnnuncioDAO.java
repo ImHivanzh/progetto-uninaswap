@@ -53,7 +53,8 @@ public class AnnuncioDAO {
     Validator.requireNonNull(annuncio, "annuncio");
     Validator.requireNonEmpty(annuncio.getTitolo(), "titolo");
     Validator.requireNonEmpty(annuncio.getDescrizione(), "descrizione");
-    Validator.requirePositive(annuncio.getIdUtente(), "idUtente");
+    Validator.requireNonNull(annuncio.getUtente(), "utente");
+    Validator.requirePositive(annuncio.getUtente().getIdUtente(), "utente.idUtente");
 
     if (con == null) {
       throw new DatabaseException("Connessione al database non disponibile.");
@@ -65,7 +66,7 @@ public class AnnuncioDAO {
       ps.setString(1, annuncio.getTitolo());
       ps.setString(2, annuncio.getDescrizione());
       ps.setString(3, annuncio.getCategoria().name());
-      ps.setInt(4, annuncio.getIdUtente());
+      ps.setInt(4, annuncio.getUtente().getIdUtente());
       ps.setString(5, annuncio.getTipoAnnuncio().name());
 
       if (annuncio instanceof Vendita) {
@@ -278,10 +279,19 @@ public class AnnuncioDAO {
     Categoria categoria = parseCategoria(rs.getString("categoria"));
     TipoAnnuncio tipo = parseTipoAnnuncio(rs.getString("tipoannuncio"));
 
-    Annuncio annuncio = creaAnnuncioPerTipo(tipo, titolo, descrizione, categoria, idUtente, rs);
+    // Carica l'oggetto Utente completo
+    UtenteDAO utenteDAO = new UtenteDAO();
+    Utente utente = null;
+    try {
+      utente = utenteDAO.getUserByID(idUtente);
+    } catch (DatabaseException e) {
+      Logger.error("Errore caricamento utente per annuncio " + id, e);
+    }
+
+    Annuncio annuncio = creaAnnuncioPerTipo(tipo, titolo, descrizione, categoria, utente, rs);
 
     annuncio.setIdAnnuncio(id);
-    annuncio.setIdUtente(idUtente);
+    annuncio.setUtente(utente);
     annuncio.setTitolo(titolo);
     annuncio.setDescrizione(descrizione);
     annuncio.setCategoria(categoria);
@@ -327,13 +337,13 @@ public class AnnuncioDAO {
    * @param titolo titolo annuncio
    * @param descrizione descrizione annuncio
    * @param categoria categoria annuncio
-   * @param idUtente ID utente proprietario
+   * @param utente utente proprietario
    * @param rs ResultSet per leggere campi specifici
    * @return istanza di Annuncio (Vendita, Scambio, Regalo)
    * @throws SQLException se la lettura dei campi fallisce
    */
   private Annuncio creaAnnuncioPerTipo(TipoAnnuncio tipo, String titolo, String descrizione,
-                                        Categoria categoria, int idUtente, ResultSet rs) throws SQLException {
+                                        Categoria categoria, Utente utente, ResultSet rs) throws SQLException {
     switch (tipo) {
       case VENDITA:
         double prezzo = rs.getDouble("prezzo");
@@ -342,9 +352,9 @@ public class AnnuncioDAO {
         return v;
       case SCAMBIO:
         String oggettoRichiesto = rs.getString("oggetto_richiesto");
-        return new Scambio(titolo, descrizione, categoria, idUtente, oggettoRichiesto);
+        return new Scambio(titolo, descrizione, categoria, utente, oggettoRichiesto);
       case REGALO:
-        return new Regalo(titolo, descrizione, categoria, idUtente);
+        return new Regalo(titolo, descrizione, categoria, utente);
       default:
         return new Annuncio();
     }

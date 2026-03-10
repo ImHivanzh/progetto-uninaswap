@@ -238,6 +238,7 @@ public class PropostaDAO {
      */
     private List<PropostaRiepilogo> getProposte(int idUtente, String query) throws DatabaseException {
         List<PropostaRiepilogo> proposte = new ArrayList<>();
+        UtenteDAO utenteDAO = new UtenteDAO();
 
         try (PreparedStatement ps = con.prepareStatement(query)) {
             ps.setInt(1, idUtente);
@@ -246,11 +247,22 @@ public class PropostaDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
+                    String nomeUtente = rs.getString("utente");
+
+                    // Carica l'oggetto Utente completo
+                    Utente utenteCoinvolto = null;
+                    try {
+                        utenteCoinvolto = utenteDAO.getUserByUsername(nomeUtente);
+                    } catch (DatabaseException e) {
+                        // Se non troviamo l'utente, logghiamo l'errore ma continuiamo
+                        System.err.println("Errore caricamento utente " + nomeUtente + ": " + e.getMessage());
+                    }
+
                     PropostaRiepilogo proposta = new PropostaRiepilogo(
                             rs.getInt("idannuncio"),
                             rs.getString("titolo"),
                             rs.getString("tipoannuncio"),
-                            rs.getString("utente"),
+                            utenteCoinvolto,
                             rs.getString("dettaglio"),
                             rs.getBoolean("accettato"),
                             rs.getBoolean("inattesa"),

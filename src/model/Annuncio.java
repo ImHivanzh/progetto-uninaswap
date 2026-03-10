@@ -14,9 +14,9 @@ public class Annuncio {
      */
     private int idAnnuncio;
     /**
-     * Identificativo utente proprietario.
+     * Utente proprietario.
      */
-    private int idUtente;
+    private Utente utente;
     /**
      * Titolo annuncio.
      */
@@ -56,14 +56,14 @@ public class Annuncio {
     /**
      * Crea annuncio con principali campi.
      *
-     * @param idUtente proprietario id
+     * @param utente proprietario
      * @param titolo titolo
      * @param descrizione descrizione
      * @param categoria categoria
      * @param tipoAnnuncio tipo annuncio
      */
-    public Annuncio(int idUtente, String titolo, String descrizione, Categoria categoria, TipoAnnuncio tipoAnnuncio) {
-        this.idUtente = idUtente;
+    public Annuncio(Utente utente, String titolo, String descrizione, Categoria categoria, TipoAnnuncio tipoAnnuncio) {
+        this.utente = utente;
         this.titolo = titolo;
         this.descrizione = descrizione;
         this.categoria = categoria;
@@ -79,16 +79,16 @@ public class Annuncio {
      * @param titolo titolo
      * @param descrizione descrizione
      * @param categoria categoria
-     * @param idUtente proprietario id
+     * @param utente proprietario
      * @param tipoAnnuncio tipo annuncio
      */
-    public Annuncio(int idAnnuncio, String titolo, String descrizione, Categoria categoria, int idUtente,
+    public Annuncio(int idAnnuncio, String titolo, String descrizione, Categoria categoria, Utente utente,
                     TipoAnnuncio tipoAnnuncio) {
         this.idAnnuncio = idAnnuncio;
         this.titolo = titolo;
         this.descrizione = descrizione;
         this.categoria = categoria;
-        this.idUtente = idUtente;
+        this.utente = utente;
         this.tipoAnnuncio = tipoAnnuncio;
         this.stato = true;
         this.immagini = new ArrayList<>();
@@ -113,21 +113,21 @@ public class Annuncio {
     }
 
     /**
-     * Restituisce proprietario utente id.
+     * Restituisce proprietario utente.
      *
-     * @return proprietario id
+     * @return proprietario
      */
-    public int getIdUtente() {
-        return idUtente;
+    public Utente getUtente() {
+        return utente;
     }
 
     /**
-     * Imposta proprietario utente id.
+     * Imposta proprietario utente.
      *
-     * @param idUtente proprietario id
+     * @param utente proprietario
      */
-    public void setIdUtente(int idUtente) {
-        this.idUtente = idUtente;
+    public void setUtente(Utente utente) {
+        this.utente = utente;
     }
 
     /**
@@ -289,7 +289,7 @@ public class Annuncio {
     public String toString() {
         return "Annuncio{" +
                 "idAnnuncio=" + idAnnuncio +
-                ", idUtente=" + idUtente +
+                ", utente=" + (utente != null ? utente.getUsername() : "null") +
                 ", titolo='" + titolo + '\'' +
                 ", categoria=" + categoria +
                 ", tipo=" + tipoAnnuncio +

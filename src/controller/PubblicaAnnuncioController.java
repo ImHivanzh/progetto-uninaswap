@@ -77,7 +77,7 @@ public class PubblicaAnnuncioController {
           vendita.setDescrizione(descrizione);
           vendita.setCategoria(categoria);
           vendita.setTipoAnnuncio(TipoAnnuncio.VENDITA);
-          vendita.setIdUtente(utente.getIdUtente());
+          vendita.setUtente(utente);
 
           String prezzoStr = view.getPrezzo();
           if (prezzoStr == null || prezzoStr.isEmpty()) {
@@ -90,15 +90,15 @@ public class PubblicaAnnuncioController {
 
         case SCAMBIO:
           String oggettoRichiesto = "";
-          nuovoAnnuncio = new Scambio(titolo, descrizione, categoria, utente.getIdUtente(), oggettoRichiesto);
+          nuovoAnnuncio = new Scambio(titolo, descrizione, categoria, utente, oggettoRichiesto);
           break;
 
         case REGALO:
-          nuovoAnnuncio = new Regalo(titolo, descrizione, categoria, utente.getIdUtente());
+          nuovoAnnuncio = new Regalo(titolo, descrizione, categoria, utente);
           break;
 
         default:
-          nuovoAnnuncio = new Annuncio(utente.getIdUtente(), titolo, descrizione, categoria, tipo);
+          nuovoAnnuncio = new Annuncio(utente, titolo, descrizione, categoria, tipo);
       }
 
       int idAnnuncioCreato = annuncioDAO.pubblicaAnnuncio(nuovoAnnuncio);

@@ -12,7 +12,7 @@ package model;
  * @param inattesa flag in attesa
  * @param immagine immagine proposta
  */
-public record PropostaRiepilogo(int idAnnuncio, String titoloAnnuncio, String tipoAnnuncio, String utenteCoinvolto,
+public record PropostaRiepilogo(int idAnnuncio, String titoloAnnuncio, String tipoAnnuncio, Utente utenteCoinvolto,
                                 String dettaglio, boolean accettata, boolean inattesa, byte[] immagine) {
 
   /**

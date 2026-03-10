@@ -13,17 +13,13 @@ public class Recensione {
      */
     private String descrizione;
     /**
-     * Id utente recensore.
+     * Utente recensore.
      */
-    private int idUtente;
+    private Utente utenteRecensore;
     /**
-     * Nome utente recensore.
+     * Utente recensito.
      */
-    private String nomeUtente;
-    /**
-     * Id utente recensito.
-     */
-    private int idUtenteRecensito;
+    private Utente utenteRecensito;
 
     /**
      * Crea vuoto recensione.
@@ -36,14 +32,14 @@ public class Recensione {
      *
      * @param voto valutazione valore
      * @param descrizione testo recensione
-     * @param idUtente recensore id
-     * @param idUtenteRecensito id utente recensito
+     * @param utenteRecensore recensore
+     * @param utenteRecensito utente recensito
      */
-    public Recensione(int voto, String descrizione, int idUtente, int idUtenteRecensito) {
+    public Recensione(int voto, String descrizione, Utente utenteRecensore, Utente utenteRecensito) {
         this.voto = voto;
         this.descrizione = descrizione;
-        this.idUtente = idUtente;
-        this.idUtenteRecensito = idUtenteRecensito;
+        this.utenteRecensore = utenteRecensore;
+        this.utenteRecensito = utenteRecensito;
     }
 
     /**
@@ -83,56 +79,38 @@ public class Recensione {
     }
 
     /**
-     * Restituisce id utente recensore.
+     * Restituisce utente recensore.
      *
-     * @return recensore id
+     * @return recensore
      */
-    public int getIdUtente() {
-        return idUtente;
+    public Utente getUtenteRecensore() {
+        return utenteRecensore;
     }
 
     /**
-     * Imposta id utente recensore.
+     * Imposta utente recensore.
      *
-     * @param idUtente recensore id
+     * @param utenteRecensore recensore
      */
-    public void setIdUtente(int idUtente) {
-        this.idUtente = idUtente;
+    public void setUtenteRecensore(Utente utenteRecensore) {
+        this.utenteRecensore = utenteRecensore;
     }
 
     /**
-     * Restituisce username recensore quando disponibile.
+     * Restituisce utente recensito.
      *
-     * @return username recensore
+     * @return utente recensito
      */
-    public String getNomeUtente() {
-        return nomeUtente;
+    public Utente getUtenteRecensito() {
+        return utenteRecensito;
     }
 
     /**
-     * Imposta username recensore.
+     * Imposta utente recensito.
      *
-     * @param nomeUtente username recensore
+     * @param utenteRecensito utente recensito
      */
-    public void setNomeUtente(String nomeUtente) {
-        this.nomeUtente = nomeUtente;
-    }
-
-    /**
-     * Restituisce id utente recensito.
-     *
-     * @return id utente recensito
-     */
-    public int getIdUtenteRecensito() {
-        return idUtenteRecensito;
-    }
-
-    /**
-     * Imposta id utente recensito.
-     *
-     * @param idUtenteRecensito id utente recensito
-     */
-    public void setIdUtenteRecensito(int idUtenteRecensito) {
-        this.idUtenteRecensito = idUtenteRecensito;
+    public void setUtenteRecensito(Utente utenteRecensito) {
+        this.utenteRecensito = utenteRecensito;
     }
 }

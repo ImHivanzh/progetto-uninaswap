@@ -29,9 +29,9 @@ public class ScriviRecensioneController {
    */
   private final UtenteDAO utenteDAO;
   /**
-   * ID utente destinatario recensione.
+   * Utente destinatario recensione.
    */
-  private final int idUtenteDestinatario;
+  private final Utente utenteDestinatario;
 
   /**
    * Crea controller e registra listener.
@@ -41,9 +41,18 @@ public class ScriviRecensioneController {
    */
   public ScriviRecensioneController(ScriviRecensione view, int idUtenteDestinatario) {
     this.view = view;
-    this.idUtenteDestinatario = idUtenteDestinatario;
     this.recensioneDAO = new RecensioneDAO();
     this.utenteDAO = new UtenteDAO();
+
+    // Carica l'utente destinatario
+    Utente utenteDest = null;
+    try {
+      utenteDest = utenteDAO.getUserByID(idUtenteDestinatario);
+    } catch (DatabaseException e) {
+      view.mostraErrore("Errore nel caricamento dell'utente destinatario: " + e.getMessage());
+    }
+    this.utenteDestinatario = utenteDest;
+
     initListeners();
   }
 
@@ -74,25 +83,24 @@ public class ScriviRecensioneController {
       return;
     }
 
-    Utente utenteLoggato = SessionManager.getInstance().getUtente();
-
-    if (utenteLoggato != null && utenteLoggato.getIdUtente() == idUtenteDestinatario) {
-      view.mostraErrore("Non puoi recensirti da solo!");
+    if (utenteDestinatario == null) {
+      view.mostraErrore("Utente destinatario non trovato.");
       return;
     }
+
+    Utente utenteLoggato = SessionManager.getInstance().getUtente();
 
     if (utenteLoggato == null) {
       view.mostraErrore("Utente non loggato.");
       return;
     }
 
-    try {
-      Utente utenteDestinatario = utenteDAO.getUserByID(idUtenteDestinatario);
-      if (utenteDestinatario == null) {
-        view.mostraErrore("Utente destinatario non trovato.");
-        return;
-      }
+    if (utenteLoggato.getIdUtente() == utenteDestinatario.getIdUtente()) {
+      view.mostraErrore("Non puoi recensirti da solo!");
+      return;
+    }
 
+    try {
       boolean transazioneOk = recensioneDAO.hannoTransazioneCompletata(utenteLoggato, utenteDestinatario);
       if (!transazioneOk) {
         view.mostraErrore("Puoi lasciare una recensione solo dopo una transazione completata.");
@@ -103,7 +111,7 @@ public class ScriviRecensioneController {
       return;
     }
 
-    Recensione recensione = new Recensione(voto, descrizione, utenteLoggato.getIdUtente(), idUtenteDestinatario);
+    Recensione recensione = new Recensione(voto, descrizione, utenteLoggato, utenteDestinatario);
 
     try {
       boolean successo = recensioneDAO.inserisciRecensione(recensione);

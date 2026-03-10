@@ -248,9 +248,9 @@ public class ProfiloController {
       } else {
         double sommaVoti = 0;
         for (Recensione r : recensioni) {
-          String nomeUtente = r.getNomeUtente();
-          if (nomeUtente == null || nomeUtente.trim().isEmpty()) {
-            nomeUtente = "Sconosciuto";
+          String nomeUtente = "Sconosciuto";
+          if (r.getUtenteRecensore() != null && r.getUtenteRecensore().getUsername() != null) {
+            nomeUtente = r.getUtenteRecensore().getUsername();
           }
           view.aggiungiRecensione(nomeUtente, r.getVoto(), r.getDescrizione());
           sommaVoti += r.getVoto();
@@ -273,8 +273,9 @@ public class ProfiloController {
         proposteInviate = propostaDAO.getProposteInviate(utenteTarget.getIdUtente());
 
         for (PropostaRiepilogo proposta : proposteRicevute) {
+          String nomeUtente = proposta.utenteCoinvolto() != null ? proposta.utenteCoinvolto().getUsername() : "Sconosciuto";
           view.aggiungiPropostaRicevuta(
-                  proposta.utenteCoinvolto(),
+                  nomeUtente,
                   proposta.titoloAnnuncio(),
                   proposta.tipoAnnuncio(),
                   proposta.dettaglio(),
@@ -283,8 +284,9 @@ public class ProfiloController {
         }
 
         for (PropostaRiepilogo proposta : proposteInviate) {
+          String nomeUtente = proposta.utenteCoinvolto() != null ? proposta.utenteCoinvolto().getUsername() : "Sconosciuto";
           view.aggiungiPropostaInviata(
-                  proposta.utenteCoinvolto(),
+                  nomeUtente,
                   proposta.titoloAnnuncio(),
                   proposta.tipoAnnuncio(),
                   proposta.dettaglio(),
@@ -726,23 +728,27 @@ public class ProfiloController {
    * Aggiorna stato proposta e aggiorna data in caso di successo.
    *
    * @param proposta riepilogo proposta
-   * @param usernameProponente proponente username
+   * @param utenteProponente proponente
    * @param accettata accettata flag
    * @param inattesa in attesa flag
    * @param messaggioOk successo messaggio
    */
   private boolean aggiornaEsitoProposta(
-          PropostaRiepilogo proposta, String usernameProponente, boolean accettata, boolean inattesa,
+          PropostaRiepilogo proposta, Utente utenteProponente, boolean accettata, boolean inattesa,
           String messaggioOk) {
     if (propostaDAO == null) {
       view.mostraErrore("Connessione per le proposte non disponibile.");
+      return false;
+    }
+    if (utenteProponente == null) {
+      view.mostraErrore("Utente proponente non valido.");
       return false;
     }
     try {
       boolean ok = propostaDAO.aggiornaEsitoProposta(
               proposta.idAnnuncio(),
               proposta.tipoAnnuncio(),
-              usernameProponente,
+              utenteProponente.getUsername(),
               accettata,
               inattesa);
       if (ok) {
@@ -763,19 +769,23 @@ public class ProfiloController {
    * Elimina proposta e aggiorna data in caso di successo.
    *
    * @param proposta riepilogo proposta
-   * @param usernameProponente proponente username
+   * @param utenteProponente proponente
    * @param messaggioOk successo messaggio
    */
-  private void eliminaProposta(PropostaRiepilogo proposta, String usernameProponente, String messaggioOk) {
+  private void eliminaProposta(PropostaRiepilogo proposta, Utente utenteProponente, String messaggioOk) {
     if (propostaDAO == null) {
       view.mostraErrore("Connessione per le proposte non disponibile.");
+      return;
+    }
+    if (utenteProponente == null) {
+      view.mostraErrore("Utente proponente non valido.");
       return;
     }
     try {
       boolean ok = propostaDAO.eliminaProposta(
               proposta.idAnnuncio(),
               proposta.tipoAnnuncio(),
-              usernameProponente);
+              utenteProponente.getUsername());
       if (ok) {
         view.mostraMessaggio(messaggioOk);
         caricaDati();
@@ -884,7 +894,8 @@ public class ProfiloController {
    * @return dettaglio stringa
    */
   private String buildDettaglioProposta(PropostaRiepilogo proposta, String labelUtente) {
-    return labelUtente + ": " + proposta.utenteCoinvolto()
+    String nomeUtente = proposta.utenteCoinvolto() != null ? proposta.utenteCoinvolto().getUsername() : "Sconosciuto";
+    return labelUtente + ": " + nomeUtente
             + "\nAnnuncio: " + proposta.titoloAnnuncio()
             + "\nTipo: " + proposta.tipoAnnuncio()
             + "\nDettaglio: " + proposta.dettaglio()
@@ -920,27 +931,11 @@ public class ProfiloController {
   /**
    * Apre form recensione per utente indicato.
    *
-   * @param usernameDestinatario username destinatario
+   * @param utenteDestinatario utente destinatario
    */
-  private void apriScriviRecensione(String usernameDestinatario) {
-    if (usernameDestinatario == null || usernameDestinatario.trim().isEmpty()) {
-      view.mostraErrore("Utente destinatario non valido.");
-      return;
-    }
-
-    String username = usernameDestinatario.trim();
-    Utente utenteDestinatario;
-    try {
-      UtenteDAO utenteDAO = new UtenteDAO();
-      utenteDestinatario = utenteDAO.getUserByUsername(username);
-    } catch (DatabaseException e) {
-      view.mostraErrore("Errore durante il recupero dell'utente: " + e.getMessage());
-      Logger.error("Errore recupero utente destinatario recensione", e);
-      return;
-    }
-
+  private void apriScriviRecensione(Utente utenteDestinatario) {
     if (utenteDestinatario == null) {
-      view.mostraErrore("Utente destinatario non trovato.");
+      view.mostraErrore("Utente destinatario non valido.");
       return;
     }
 
@@ -1012,7 +1007,7 @@ public class ProfiloController {
     );
 
     if (confirm == JOptionPane.YES_OPTION) {
-      eliminaProposta(proposta, utenteTarget.getUsername(), "Proposta annullata con successo.");
+      eliminaProposta(proposta, utenteTarget, "Proposta annullata con successo.");
     }
   }
 

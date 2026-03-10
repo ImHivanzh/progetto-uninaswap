@@ -15,10 +15,10 @@ public class Regalo extends Annuncio {
      * @param titolo titolo
      * @param descrizione descrizione
      * @param categoria categoria
-     * @param utenteID proprietario id
+     * @param utente proprietario
      */
-    public Regalo(int id, String titolo, String descrizione, Categoria categoria, int utenteID) {
-        super(id, titolo, descrizione, categoria, utenteID, TipoAnnuncio.REGALO);
+    public Regalo(int id, String titolo, String descrizione, Categoria categoria, Utente utente) {
+        super(id, titolo, descrizione, categoria, utente, TipoAnnuncio.REGALO);
     }
 
     /**
@@ -27,9 +27,9 @@ public class Regalo extends Annuncio {
      * @param titolo titolo
      * @param descrizione descrizione
      * @param categoria categoria
-     * @param utenteID proprietario id
+     * @param utente proprietario
      */
-    public Regalo(String titolo, String descrizione, Categoria categoria, int utenteID) {
-        super(utenteID, titolo, descrizione, categoria, TipoAnnuncio.REGALO);
+    public Regalo(String titolo, String descrizione, Categoria categoria, Utente utente) {
+        super(utente, titolo, descrizione, categoria, TipoAnnuncio.REGALO);
     }
 }

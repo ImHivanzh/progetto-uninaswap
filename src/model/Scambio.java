@@ -19,12 +19,12 @@ public class Scambio extends Annuncio {
      * @param titolo titolo
      * @param descrizione descrizione
      * @param categoria categoria
-     * @param utenteID proprietario id
+     * @param utente proprietario
      * @param oggettoRichiesto oggetto richiesto
      */
-    public Scambio(int id, String titolo, String descrizione, Categoria categoria, int utenteID,
+    public Scambio(int id, String titolo, String descrizione, Categoria categoria, Utente utente,
                    String oggettoRichiesto) {
-        super(id, titolo, descrizione, categoria, utenteID, TipoAnnuncio.SCAMBIO);
+        super(id, titolo, descrizione, categoria, utente, TipoAnnuncio.SCAMBIO);
         this.oggettoRichiesto = oggettoRichiesto;
     }
 
@@ -34,11 +34,11 @@ public class Scambio extends Annuncio {
      * @param titolo titolo
      * @param descrizione descrizione
      * @param categoria categoria
-     * @param utenteID proprietario id
+     * @param utente proprietario
      * @param oggettoRichiesto oggetto richiesto
      */
-    public Scambio(String titolo, String descrizione, Categoria categoria, int utenteID, String oggettoRichiesto) {
-        super(utenteID, titolo, descrizione, categoria, TipoAnnuncio.SCAMBIO);
+    public Scambio(String titolo, String descrizione, Categoria categoria, Utente utente, String oggettoRichiesto) {
+        super(utente, titolo, descrizione, categoria, TipoAnnuncio.SCAMBIO);
         this.oggettoRichiesto = oggettoRichiesto;
     }
 
