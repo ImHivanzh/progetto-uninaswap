@@ -268,17 +268,6 @@ public class Annuncio {
         this.immagini = immagini;
     }
 
-    /**
-     * Aggiunge immagine a annuncio.
-     *
-     * @param immagine immagine da aggiungere
-     */
-    public void addImmagine(Immagini immagine) {
-        if (this.immagini == null) {
-            this.immagini = new ArrayList<>();
-        }
-        this.immagini.add(immagine);
-    }
 
     /**
      * Restituisce rappresentazione stringa di annuncio.
