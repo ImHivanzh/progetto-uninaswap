@@ -53,10 +53,10 @@ public class RegistrazioneController {
    * Valida input e invia nuovo registrazione.
    */
   private void registraUtente() {
-    String username = view.getUsername();
-    String mail = view.getMail();
-    String password = view.getPassword();
-    String telefono = view.getTelefono();
+    String username = view.getUsername().trim();
+    String mail = view.getMail().trim();
+    String password = view.getPassword().trim();
+    String telefono = view.getTelefono().trim();
 
     if (username.isEmpty() || mail.isEmpty() || password.isEmpty() || telefono.isEmpty()) {
       view.mostraErrore("Compila i campi obbligatori (Username, Mail, Password, Numero di Telefono).");

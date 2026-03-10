@@ -55,8 +55,8 @@ public class PubblicaAnnuncioController {
       return;
     }
 
-    String titolo = view.getTitolo();
-    String descrizione = view.getDescrizione();
+    String titolo = view.getTitolo().trim();
+    String descrizione = view.getDescrizione().trim();
     Categoria categoria = view.getCategoriaSelezionata();
     TipoAnnuncio tipo = view.getTipoSelezionato();
 
@@ -79,8 +79,8 @@ public class PubblicaAnnuncioController {
           vendita.setTipoAnnuncio(TipoAnnuncio.VENDITA);
           vendita.setUtente(utente);
 
-          String prezzoStr = view.getPrezzo();
-          if (prezzoStr == null || prezzoStr.isEmpty()) {
+          String prezzoStr = view.getPrezzo().trim();
+          if (prezzoStr.isEmpty()) {
             throw new IllegalArgumentException("Inserisci un prezzo valido per la vendita.");
           }
           vendita.setPrezzo(Double.parseDouble(prezzoStr));

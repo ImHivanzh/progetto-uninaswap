@@ -53,9 +53,9 @@ public class PassDimenticataController {
      * Valida input e aggiorna dell'utente password.
      */
     private void gestisciCambioPassword() {
-        String username = view.getUsername();
-        String nuovaPass = view.getNuovaPassword();
-        String confermaPass = view.getConfermaPassword();
+        String username = view.getUsername().trim();
+        String nuovaPass = view.getNuovaPassword().trim();
+        String confermaPass = view.getConfermaPassword().trim();
 
         if (username.isEmpty() || nuovaPass.isEmpty() || confermaPass.isEmpty()) {
             view.mostraErrore("Tutti i campi sono obbligatori.");

@@ -112,8 +112,8 @@ public class AnnuncioDAO {
             + "FROM annuncio a "
             + "JOIN utente u ON a.idutente = u.idutente";
 
-    try (Statement stmt = con.createStatement();
-         ResultSet rs = stmt.executeQuery(sql)) {
+    try (PreparedStatement pstmt = con.prepareStatement(sql);
+         ResultSet rs = pstmt.executeQuery()) {
 
       while (rs.next()) {
         Annuncio a = mapResultSetToAnnuncio(rs);
@@ -400,7 +400,8 @@ public class AnnuncioDAO {
       if (valore.equals("0") || valore.equals("false") || valore.equals("f")) {
         return false;
       }
-    } catch (SQLException ignored) {
+    } catch (SQLException e) {
+      Logger.error("Errore lettura campo spedizione", e);
       return null;
     }
     return null;
