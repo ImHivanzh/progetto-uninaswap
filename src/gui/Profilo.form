@@ -231,7 +231,7 @@
                   </component>
                 </children>
               </scrollpane>
-              <grid id="buttonsProposteInviate" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="true" same-size-vertically="false" hgap="5" vgap="0">
+              <grid id="buttonsProposteInviate" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="true" same-size-vertically="false" hgap="5" vgap="0">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -261,6 +261,14 @@
                     </constraints>
                     <properties>
                       <text value="Lascia Recensione"/>
+                    </properties>
+                  </component>
+                  <component id="btnGeneraReport" class="javax.swing.JButton" binding="btnGeneraReport">
+                    <constraints>
+                      <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Genera Report"/>
                     </properties>
                   </component>
                 </children>
