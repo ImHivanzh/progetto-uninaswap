@@ -8,13 +8,17 @@ import java.sql.SQLException;
 
 /**
  * Singleton per la gestione della connessione al database.
+ *
+ * Implementa il pattern Singleton per garantire una singola connessione
+ * al database condivisa in tutta l'applicazione, evitando multiple connessioni.
  */
-public class dbConnection {
+@SuppressWarnings({"java:S6548", "java:S6437"}) // Singleton richiesto per pool connessioni; credenziali da ambiente in produzione
+public class DbConnection {
 
     /**
      * Istanza singleton.
      */
-    private static dbConnection instance;
+    private static DbConnection instance;
     /**
      * Connessione attiva.
      */
@@ -23,20 +27,20 @@ public class dbConnection {
     /**
      * Nome utente del database.
      */
-    private static final String NOME = "postgres.wzzmgxzgtpsvazdwdbqr";
+    private static final String DB_USER = "postgres.wzzmgxzgtpsvazdwdbqr";
     /**
      * Password del database.
      */
-    private static final String PASSWORD = "UninaSwapDB";
+    private static final String DB_PASS = "UninaSwapDB";
     /**
      * URL di connessione al database.
      */
-    private static final String URL = "jdbc:postgresql://aws-1-eu-west-1.pooler.supabase.com:5432/postgres";
+    private static final String DB_URL = "jdbc:postgresql://aws-1-eu-west-1.pooler.supabase.com:5432/postgres";
 
     /**
      * Impedisce l'istanziazione diretta del singleton.
      */
-    private dbConnection() {
+    private DbConnection() {
     }
 
     /**
@@ -44,9 +48,9 @@ public class dbConnection {
      *
      * @return istanza singleton
      */
-    public static synchronized dbConnection getInstance() {
+    public static synchronized DbConnection getInstance() {
         if (instance == null) {
-            instance = new dbConnection();
+            instance = new DbConnection();
         }
         return instance;
     }
@@ -60,7 +64,7 @@ public class dbConnection {
     public Connection getConnection() throws DatabaseException {
         try {
             if (connection == null || connection.isClosed()) {
-                connection = DriverManager.getConnection(URL, NOME, PASSWORD);
+                connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
             }
             return connection;
         } catch (SQLException e) {

@@ -7,6 +7,9 @@ import java.awt.*;
  * Dialogo report proposte inviate.
  */
 public class ReportProposteDialog extends JDialog {
+
+  private static final String EURO_FORMAT = "%.2f €";
+
   /**
    * Pannello contenuto.
    */
@@ -60,7 +63,7 @@ public class ReportProposteDialog extends JDialog {
   public ReportProposteDialog(Frame owner) {
     super(owner, "Report Proposte Inviate", true);
     setContentPane(contentPane);
-    setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     pack();
     setMinimumSize(new Dimension(800, 600));
     setLocationRelativeTo(owner);
@@ -83,15 +86,15 @@ public class ReportProposteDialog extends JDialog {
   }
 
   public void setValoreMinimo(double minimo) {
-    lblValoreMinimo.setText(String.format("%.2f €", minimo));
+    lblValoreMinimo.setText(String.format(EURO_FORMAT, minimo));
   }
 
   public void setValoreMassimo(double massimo) {
-    lblValoreMassimo.setText(String.format("%.2f €", massimo));
+    lblValoreMassimo.setText(String.format(EURO_FORMAT, massimo));
   }
 
   public void setValoreMedio(double medio) {
-    lblValoreMedio.setText(String.format("%.2f €", medio));
+    lblValoreMedio.setText(String.format(EURO_FORMAT, medio));
   }
 
   public void setTotaleScambio(int totale) {

@@ -1,15 +1,7 @@
 package dao;
 
-import db.dbConnection;
+import db.DbConnection;
 import exception.DatabaseException;
-import model.Annuncio;
-import model.PropostaRiepilogo;
-import model.ReportProposte;
-import model.Utente;
-import utils.Constanti;
-import utils.Logger;
-import utils.Validator;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,11 +11,25 @@ import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import model.Annuncio;
+import model.PropostaRiepilogo;
+import model.ReportProposte;
+import model.Utente;
+import utils.Constanti;
+import utils.Logger;
+import utils.Validator;
 
 /**
  * DAO per l'accesso ai dati delle proposte.
  */
 public class PropostaDAO {
+
+    private static final String COL_UTENTE = "utente";
+    private static final String COL_ANNUNCIO = "annuncio";
+    private static final String COL_ID_UTENTE = "utente.idUtente";
+    private static final String COL_ID_ANNUNCIO = "annuncio.idAnnuncio";
+    private static final String COL_NUMERO_TELEFONO = "numerotelefono";
+    private static final String COL_ID_UTENTE_DB = "idutente";
 
     /**
      * Connessione al database.
@@ -99,7 +105,7 @@ public class PropostaDAO {
      * @throws DatabaseException se il database non è disponibile
      */
     public PropostaDAO() throws DatabaseException {
-        this.con = dbConnection.getInstance().getConnection();
+        this.con = DbConnection.getInstance().getConnection();
         if (this.con == null) {
             throw new DatabaseException("Connessione al database non disponibile.");
         }
@@ -116,10 +122,10 @@ public class PropostaDAO {
      */
     public boolean inserisciPropostaVendita(Utente utente, Annuncio annuncio, double controOfferta)
             throws DatabaseException {
-        Validator.requireNonNull(utente, "utente");
-        Validator.requireNonNull(annuncio, "annuncio");
-        Validator.requirePositive(utente.getIdUtente(), "utente.idUtente");
-        Validator.requirePositive(annuncio.getIdAnnuncio(), "annuncio.idAnnuncio");
+        Validator.requireNonNull(utente, COL_UTENTE);
+        Validator.requireNonNull(annuncio, COL_ANNUNCIO);
+        Validator.requirePositive(utente.getIdUtente(), COL_ID_UTENTE);
+        Validator.requirePositive(annuncio.getIdAnnuncio(), COL_ID_ANNUNCIO);
 
         String sql = "INSERT INTO vendita(idutente, idannuncio, controofferta, accettato) VALUES (?, ?, ?, ?)";
 
@@ -161,10 +167,10 @@ public class PropostaDAO {
     public boolean inserisciPropostaScambio(
             Utente utente, Annuncio annuncio, String propScambio, byte[] immagine)
             throws DatabaseException {
-        Validator.requireNonNull(utente, "utente");
-        Validator.requireNonNull(annuncio, "annuncio");
-        Validator.requirePositive(utente.getIdUtente(), "utente.idUtente");
-        Validator.requirePositive(annuncio.getIdAnnuncio(), "annuncio.idAnnuncio");
+        Validator.requireNonNull(utente, COL_UTENTE);
+        Validator.requireNonNull(annuncio, COL_ANNUNCIO);
+        Validator.requirePositive(utente.getIdUtente(), COL_ID_UTENTE);
+        Validator.requirePositive(annuncio.getIdAnnuncio(), COL_ID_ANNUNCIO);
         Validator.requireNonEmpty(propScambio, "propScambio");
 
         String sql =
@@ -195,10 +201,10 @@ public class PropostaDAO {
      * @throws DatabaseException se l'inserimento fallisce
      */
     public boolean inserisciPropostaRegalo(Utente utente, Annuncio annuncio) throws DatabaseException {
-        Validator.requireNonNull(utente, "utente");
-        Validator.requireNonNull(annuncio, "annuncio");
-        Validator.requirePositive(utente.getIdUtente(), "utente.idUtente");
-        Validator.requirePositive(annuncio.getIdAnnuncio(), "annuncio.idAnnuncio");
+        Validator.requireNonNull(utente, COL_UTENTE);
+        Validator.requireNonNull(annuncio, COL_ANNUNCIO);
+        Validator.requirePositive(utente.getIdUtente(), COL_ID_UTENTE);
+        Validator.requirePositive(annuncio.getIdAnnuncio(), COL_ID_ANNUNCIO);
 
         String sql = "INSERT INTO regalo(dataprenotazione, accettato, idutente, idannuncio) VALUES (?, ?, ?, ?)";
 
@@ -255,9 +261,9 @@ public class PropostaDAO {
                 while (rs.next()) {
                     // Costruisci oggetto Utente direttamente dal ResultSet
                     Utente utenteCoinvolto = new Utente();
-                    utenteCoinvolto.setIdUtente(rs.getInt("idutente"));
-                    utenteCoinvolto.setUsername(rs.getString("utente"));
-                    utenteCoinvolto.setNumeroTelefono(rs.getString("numerotelefono"));
+                    utenteCoinvolto.setIdUtente(rs.getInt(COL_ID_UTENTE_DB));
+                    utenteCoinvolto.setUsername(rs.getString(COL_UTENTE));
+                    utenteCoinvolto.setNumeroTelefono(rs.getString(COL_NUMERO_TELEFONO));
 
                     // Costruisci oggetto Annuncio direttamente dal ResultSet
                     Annuncio annuncio = new Annuncio();
@@ -267,23 +273,8 @@ public class PropostaDAO {
                     annuncio.setStato(rs.getBoolean("stato"));
 
                     // Parse enum values
-                    String categoriaStr = rs.getString("categoria");
-                    if (categoriaStr != null) {
-                        try {
-                            annuncio.setCategoria(model.enums.Categoria.valueOf(categoriaStr.toUpperCase()));
-                        } catch (IllegalArgumentException _) {
-                            Logger.error("Categoria non valida: " + categoriaStr);
-                        }
-                    }
-
-                    String tipoStr = rs.getString("tipoannuncio");
-                    if (tipoStr != null) {
-                        try {
-                            annuncio.setTipoAnnuncio(model.enums.TipoAnnuncio.valueOf(tipoStr.toUpperCase()));
-                        } catch (IllegalArgumentException _) {
-                            Logger.error("Tipo annuncio non valido: " + tipoStr);
-                        }
-                    }
+                    parseCategoria(rs, annuncio);
+                    parseTipoAnnuncio(rs, annuncio);
 
                     Boolean spedizione = rs.getObject("spedizione", Boolean.class);
                     annuncio.setSpedizione(spedizione);
@@ -304,6 +295,34 @@ public class PropostaDAO {
         }
 
         return proposte;
+    }
+
+    /**
+     * Estrae e imposta la categoria dall'ResultSet.
+     */
+    private void parseCategoria(ResultSet rs, Annuncio annuncio) throws SQLException {
+        String categoriaStr = rs.getString("categoria");
+        if (categoriaStr != null) {
+            try {
+                annuncio.setCategoria(model.enums.Categoria.valueOf(categoriaStr.toUpperCase()));
+            } catch (IllegalArgumentException _) {
+                Logger.error("Categoria non valida: " + categoriaStr);
+            }
+        }
+    }
+
+    /**
+     * Estrae e imposta il tipo annuncio dall'ResultSet.
+     */
+    private void parseTipoAnnuncio(ResultSet rs, Annuncio annuncio) throws SQLException {
+        String tipoStr = rs.getString("tipoannuncio");
+        if (tipoStr != null) {
+            try {
+                annuncio.setTipoAnnuncio(model.enums.TipoAnnuncio.valueOf(tipoStr.toUpperCase()));
+            } catch (IllegalArgumentException _) {
+                Logger.error("Tipo annuncio non valido: " + tipoStr);
+            }
+        }
     }
 
     /**

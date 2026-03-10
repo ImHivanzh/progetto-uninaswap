@@ -1,6 +1,6 @@
 package dao;
 
-import db.dbConnection;
+import db.DbConnection;
 import exception.DatabaseException;
 
 import java.sql.Connection;
@@ -26,7 +26,7 @@ public class RitiroDAO {
    * @throws DatabaseException quando database e non disponibile
    */
   public RitiroDAO() throws DatabaseException {
-    this.con = dbConnection.getInstance().getConnection();
+    this.con = DbConnection.getInstance().getConnection();
     if (this.con == null) {
       throw new DatabaseException("Connessione al database non disponibile.");
     }
