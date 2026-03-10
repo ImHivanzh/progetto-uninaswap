@@ -9,8 +9,6 @@ import gui.MainApp;
 import gui.Profilo;
 import gui.PubblicaAnnuncio;
 import model.Annuncio;
-import model.Immagini;
-import model.Vendita;
 import utils.Logger;
 import utils.SessionManager;
 import utils.WindowManager;

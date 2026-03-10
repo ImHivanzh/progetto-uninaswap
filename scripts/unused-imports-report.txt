@@ -1,0 +1,54 @@
+=== Unused Imports Analysis ===
+Generated: mar 10 mar 2026 16:32:58 CET
+
+POTENTIALLY UNUSED: src/controller/MainController.java
+  Import: import model.Immagini;
+  Class: Immagini
+
+POTENTIALLY UNUSED: src/controller/MainController.java
+  Import: import model.Vendita;
+  Class: Vendita
+
+POTENTIALLY UNUSED: src/gui/ScriviRecensione.java
+  Import: import java.awt.event.MouseAdapter;
+  Class: MouseAdapter
+
+POTENTIALLY UNUSED: src/gui/ScriviRecensione.java
+  Import: import java.awt.event.MouseEvent;
+  Class: MouseEvent
+
+POTENTIALLY UNUSED: src/App.java
+  Import: import controller.MainController;
+  Class: MainController
+
+POTENTIALLY UNUSED: src/App.java
+  Import: import controller.ProfiloController;
+  Class: ProfiloController
+
+POTENTIALLY UNUSED: src/App.java
+  Import: import dao.UtenteDAO;
+  Class: UtenteDAO
+
+POTENTIALLY UNUSED: src/App.java
+  Import: import gui.MainApp;
+  Class: MainApp
+
+POTENTIALLY UNUSED: src/App.java
+  Import: import gui.Profilo;
+  Class: Profilo
+
+POTENTIALLY UNUSED: src/App.java
+  Import: import gui.PubblicaAnnuncio;
+  Class: PubblicaAnnuncio
+
+POTENTIALLY UNUSED: src/App.java
+  Import: import model.Utente;
+  Class: Utente
+
+POTENTIALLY UNUSED: src/App.java
+  Import: import utils.SessionManager;
+  Class: SessionManager
+
+
+=== Analysis Complete ===
+Total potentially unused imports: 12
