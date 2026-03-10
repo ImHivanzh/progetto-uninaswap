@@ -1,0 +1,33 @@
+=== Final Cleanup Summary ===
+Date: mar 10 mar 2026 16:31:52 CET
+
+## Methods Removed (5):
+- DettaglioAnnuncio.createUIComponents()
+- Annuncio.addImmagine()
+- dbConnection.closeConnection()
+- AnnuncioDAO.findById()
+- AnnuncioDAO.deleteAnnuncio()
+
+## Classes/Enums Removed (4 files + 1 method):
+- ReportProposteController.java (controller)
+- ReportProposteDialog.java (GUI)
+- ReportProposte.java (model)
+- StatoOfferta.java (enum)
+- PropostaDAO.getReportProposte() (method)
+
+## Statistics:
+- Total files removed: 4
+- Total methods removed: 6
+- Lines of code removed: ~1100+
+- Compilation: SUCCESS
+- Tests: N/A
+
+## Verification:
+- Unused methods remaining: 1 (false positive - paintIcon @Override)
+- Unused classes remaining: 0
+- Unused enums remaining: 0
+
+## Result:
+✓ All genuine dead code removed
+✓ Codebase is cleaner and more maintainable
+✓ No compilation errors
