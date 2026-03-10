@@ -20,6 +20,7 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.swing.JFrame;
 
 /**
  * Controller principale per la bacheca annunci.

@@ -9,20 +9,23 @@ import gui.FaiPropostaDialog;
 import gui.Profilo;
 import model.Annuncio;
 import model.Immagini;
-import model.Proposta;
+import model.Regalo;
+import model.Scambio;
 import model.Utente;
+import model.Vendita;
 import model.enums.TipoAnnuncio;
 import utils.Logger;
 import utils.SessionManager;
 import utils.WindowManager;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import java.util.List;
 
 /**
  * Controller per vista dettaglio annuncio.
