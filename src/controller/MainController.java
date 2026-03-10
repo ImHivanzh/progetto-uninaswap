@@ -20,7 +20,7 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
 /**
  * Controller principale per la bacheca annunci.
@@ -110,7 +110,7 @@ public class MainController implements ActionListener {
    */
   private void mostraLogin() {
     LoginForm loginForm = new LoginForm();
-    loginForm.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    loginForm.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     new LoginController(loginForm, () -> {
       view.setNavigazioneAbilitata(true);
       aggiornaTitoloUtente();

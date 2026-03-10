@@ -135,11 +135,11 @@ public class UtenteDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return new Utente(
-                            rs.getInt("idutente"),
+                            rs.getInt(COL_ID_UTENTE),
                             rs.getString("nomeutente"),
                             rs.getString("password"),
                             rs.getString("mail"),
-                            rs.getString("numerotelefono")
+                            rs.getString(COL_NUMERO_TELEFONO)
                     );
                 }
             }
@@ -167,11 +167,11 @@ public class UtenteDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return new Utente(
-                            rs.getInt("idutente"),
+                            rs.getInt(COL_ID_UTENTE),
                             rs.getString("nomeutente"),
                             rs.getString("password"),
                             rs.getString("mail"),
-                            rs.getString("numerotelefono")
+                            rs.getString(COL_NUMERO_TELEFONO)
                     );
                 }
             }
