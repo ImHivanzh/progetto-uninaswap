@@ -15,6 +15,7 @@ import utils.WindowManager;
 import exception.DatabaseException;
 import gui.DettaglioAnnuncio;
 import gui.Profilo;
+import gui.ReportProposteDialog;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -137,6 +138,7 @@ public class ProfiloController {
     view.addRecensioneInviataListener(e -> handleRecensioneDaProposta(false));
     view.addModificaPropostaListener(e -> propostaHandler.handleModificaProposta(validaPropostaPerModifica()));
     view.addAnnullaPropostaListener(e -> propostaHandler.handleAnnullaProposta(validaPropostaPerModifica()));
+    view.addGeneraReportListener(e -> apriReportProposte());
   }
 
   /**
@@ -248,5 +250,19 @@ public class ProfiloController {
     }
 
     return proposteInviate.get(selectedRow);
+  }
+
+  /**
+   * Apre dialogo report proposte inviate.
+   */
+  private void apriReportProposte() {
+    if (!mostraDatiSensibili) {
+      view.mostraErrore("Operazione disponibile solo nel tuo profilo.");
+      return;
+    }
+
+    ReportProposteDialog reportDialog = new ReportProposteDialog(view);
+    new ReportProposteController(reportDialog);
+    reportDialog.setVisible(true);
   }
 }

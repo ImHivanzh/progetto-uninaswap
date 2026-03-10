@@ -72,6 +72,10 @@ public class Profilo extends BaseFrame {
    */
   private JButton btnAnnullaProposta;
   /**
+   * Pulsante genera report proposte.
+   */
+  private JButton btnGeneraReport;
+  /**
    * Modello tabella recensioni.
    */
   private DefaultTableModel modelRecensioni;
@@ -275,6 +279,17 @@ public class Profilo extends BaseFrame {
   public void addAnnullaPropostaListener(ActionListener listener) {
     if (btnAnnullaProposta != null) {
       btnAnnullaProposta.addActionListener(listener);
+    }
+  }
+
+  /**
+   * Aggiunge listener a pulsante genera report.
+   *
+   * @param listener azione listener
+   */
+  public void addGeneraReportListener(ActionListener listener) {
+    if (btnGeneraReport != null) {
+      btnGeneraReport.addActionListener(listener);
     }
   }
 
