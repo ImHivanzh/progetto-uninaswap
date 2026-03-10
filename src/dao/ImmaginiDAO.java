@@ -90,7 +90,6 @@ public class ImmaginiDAO {
       try (ResultSet rs = ps.executeQuery()) {
         while (rs.next()) {
           Immagini img = new Immagini();
-          int idImmagine = rs.getInt("idimmagine");
           img.setImmagine(rs.getBytes(COLUMN_IMMAGINE));
           img.setAnnuncio(annuncio);
 

@@ -6,8 +6,16 @@ import model.PropostaRiepilogo;
 import model.enums.TipoAnnuncio;
 import utils.Logger;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Frame;
+import java.awt.Image;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 /**
  * Dialogo per modifica proposta.
@@ -25,10 +33,6 @@ public class ModificaPropostaDialog extends JDialog {
    * Campo prezzo.
    */
   private JTextField txtPrezzo;
-  /**
-   * Etichetta descrizione.
-   */
-  private JLabel lblDescrizione;
   /**
    * Area testo descrizione.
    */
@@ -57,7 +61,7 @@ public class ModificaPropostaDialog extends JDialog {
   /**
    * Controller dialogo.
    */
-  private ModificaPropostaController controller;
+  private transient ModificaPropostaController controller;
 
   /**
    * Crea dialogo modifica proposta.
@@ -68,7 +72,7 @@ public class ModificaPropostaDialog extends JDialog {
   public ModificaPropostaDialog(Frame owner, PropostaRiepilogo proposta) {
     super(owner, "Modifica Proposta", true);
     setContentPane(contentPane);
-    setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     getRootPane().setDefaultButton(btnSalva);
 
     try {

@@ -40,7 +40,7 @@ public class LoginForm extends BaseFrame {
         super("Login");
 
         setContentPane(mainPanel);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         pack();
 
         centraFinestra();

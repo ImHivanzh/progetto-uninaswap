@@ -109,7 +109,7 @@ public class MainController implements ActionListener {
    */
   private void mostraLogin() {
     LoginForm loginForm = new LoginForm();
-    loginForm.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
+    loginForm.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     new LoginController(loginForm, () -> {
       view.setNavigazioneAbilitata(true);
       aggiornaTitoloUtente();
@@ -261,13 +261,13 @@ public class MainController implements ActionListener {
    */
   private byte[] estraiPrimaImmagine(Annuncio annuncio) {
     if (annuncio == null) {
-      return null;
+      return new byte[0];
     }
     try {
       return immaginiDAO.getPrimaImmagine(annuncio);
     } catch (DatabaseException e) {
       Logger.error("Errore caricamento prima immagine per annuncio " + annuncio.getIdAnnuncio(), e);
-      return null;
+      return new byte[0];
     }
   }
 

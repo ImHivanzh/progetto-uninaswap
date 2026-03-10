@@ -6,9 +6,6 @@ import utils.DataCheck;
 import utils.Logger;
 import exception.DatabaseException;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 /**
  * Controller per recupero password.
  */
