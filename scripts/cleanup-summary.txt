@@ -1,0 +1,24 @@
+=== Dead Code Cleanup Summary ===
+Date: mar 10 mar 2026 16:27:49 CET
+
+Methods Removed:
+- DettaglioAnnuncio.createUIComponents() - empty UI component initializer
+- Annuncio.addImmagine() - unused image addition method
+- dbConnection.closeConnection() - unused connection cleanup
+- AnnuncioDAO.findById() - unused query method
+- AnnuncioDAO.deleteAnnuncio() - unused delete method
+
+Total: 5 methods removed
+
+Compilation: SUCCESS
+Tests: N/A (no test suite configured)
+
+
+=== Final Analysis ===
+Remaining 'unused' method: paintIcon() in MainApp
+Status: FALSE POSITIVE - @Override method from Icon interface
+Reason: Called by Swing framework, not directly in code
+
+=== Cleanup Complete ===
+All genuine dead code removed.
+Codebase is cleaner and more maintainable.

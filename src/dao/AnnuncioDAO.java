@@ -229,56 +229,6 @@ public class AnnuncioDAO {
   }
 
   /**
-   * Restituisce un annuncio dato l'ID.
-   *
-   * @param idAnnuncio ID dell'annuncio
-   * @return annuncio trovato, o null se non esiste
-   * @throws DatabaseException se la query fallisce
-   */
-  public Annuncio findById(int idAnnuncio) throws DatabaseException {
-    Validator.requirePositive(idAnnuncio, "idAnnuncio");
-
-    String sql = "SELECT a.idannuncio, a.titolo, a.descrizione, a.categoria, a.tipoannuncio, a.prezzo, a.oggetto_richiesto, a.stato, a.spedizione, "
-            + "u.idutente, u.nomeutente, u.email, u.password, u.numerotelefono "
-            + "FROM annuncio a "
-            + "JOIN utente u ON a.idutente = u.idutente "
-            + "WHERE a.idannuncio = ?";
-
-    try (PreparedStatement ps = con.prepareStatement(sql)) {
-      ps.setInt(1, idAnnuncio);
-
-      try (ResultSet rs = ps.executeQuery()) {
-        if (rs.next()) {
-          return mapResultSetToAnnuncio(rs);
-        }
-      }
-    } catch (SQLException e) {
-      throw new DatabaseException("Errore nel recupero dell'annuncio", e);
-    }
-    return null;
-  }
-
-  /**
-   * Elimina un annuncio dato l'ID.
-   *
-   * @param idAnnuncio ID dell'annuncio
-   * @return true se la riga è stata eliminata
-   * @throws DatabaseException se l'eliminazione fallisce
-   */
-  public boolean deleteAnnuncio(int idAnnuncio) throws DatabaseException {
-    Validator.requirePositive(idAnnuncio, "idAnnuncio");
-
-    String sql = "DELETE FROM annuncio WHERE idannuncio = ?";
-
-    try (PreparedStatement ps = con.prepareStatement(sql)) {
-      ps.setInt(1, idAnnuncio);
-      return ps.executeUpdate() > 0;
-    } catch (SQLException e) {
-      throw new DatabaseException("Errore durante l'eliminazione dell'annuncio", e);
-    }
-  }
-
-  /**
    * Mappa una riga del ResultSet a un'istanza di Annuncio.
    *
    * @param rs ResultSet da cui leggere i dati

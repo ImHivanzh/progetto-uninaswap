@@ -236,8 +236,4 @@ public class DettaglioAnnuncio extends JFrame {
     if (imagePanel != null) imagePanel.setVisible(true);
   }
 
-  /**
-   * Inizializza personalizzati UI componenti.
-   */
-  private void createUIComponents() { }
 }

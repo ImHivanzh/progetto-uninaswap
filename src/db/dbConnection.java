@@ -68,18 +68,4 @@ public class dbConnection {
         }
     }
 
-    /**
-     * Chiude la connessione attiva se aperta.
-     *
-     * @throws DatabaseException se la chiusura della connessione fallisce
-     */
-    public void closeConnection() throws DatabaseException {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-            }
-        } catch (SQLException e) {
-            throw new DatabaseException("Errore durante la chiusura della connessione", e);
-        }
-    }
 }
