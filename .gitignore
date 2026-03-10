@@ -9,3 +9,14 @@ out
 gui/MainApp.form
 gui/MainApp.java
 docs/javadoc/
+test/
+test-bin/
+lib/junit-platform-console-standalone-*.jar
+lib/mockito-core-*.jar
+lib/byte-buddy-*.jar
+lib/objenesis-*.jar
+run-tests.sh
+
+# Dead code analysis output
+scripts/dead-code-report.txt
+scripts/*.tmp
