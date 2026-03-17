@@ -43,12 +43,12 @@ public class SpedizioneDAO {
    * @throws DatabaseException quando inserimento fallisce
    */
   public boolean inserisciSpedizione(
-          Date dataInvio, Date dataArrivo, String indirizzo, String numeroTelefono, int idAnnuncio, int idSpedito)
+          Date dataInvio, Date dataArrivo, String indirizzo, String numeroTelefono, int idAnnuncio)
           throws DatabaseException {
     if (con == null) throw new DatabaseException("Connessione al database non disponibile.");
 
-    String sql = "INSERT INTO spedizione (datainvio, dataarrivo, indirizzo, numerotelefono, idannuncio, spedito, idspedito) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO spedizione (datainvio, dataarrivo, indirizzo, numerotelefono, idannuncio, spedito) " +
+            "VALUES (?, ?, ?, ?, ?, ?)";
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
       ps.setDate(1, dataInvio);
@@ -57,7 +57,6 @@ public class SpedizioneDAO {
       ps.setString(4, numeroTelefono);
       ps.setInt(5, idAnnuncio);
       ps.setBoolean(6, false);
-      ps.setInt(7, idSpedito);
       return ps.executeUpdate() > 0;
     } catch (SQLException e) {
       throw new DatabaseException("Errore durante l'inserimento della spedizione", e);
@@ -74,7 +73,7 @@ public class SpedizioneDAO {
   public model.Spedizione getSpedizioneByAnnuncio(int idAnnuncio) throws DatabaseException {
     if (con == null) throw new DatabaseException("Connessione al database non disponibile.");
 
-    String sql = "SELECT idspedizione, datainvio, dataarrivo, indirizzo, numerotelefono, spedito, idannuncio, idspedito FROM spedizione WHERE idannuncio = ?";
+    String sql = "SELECT idspedizione, datainvio, dataarrivo, indirizzo, numerotelefono, spedito, idannuncio FROM spedizione WHERE idannuncio = ?";
     try (PreparedStatement ps = con.prepareStatement(sql)) {
       ps.setInt(1, idAnnuncio);
       try (ResultSet rs = ps.executeQuery()) {

@@ -221,8 +221,7 @@ public class ConsegnaHelper {
               new Date(data.dataArrivo.getTime()),
               data.indirizzo,
               data.telefono,
-              idAnnuncio,
-              idUtente);
+              idAnnuncio);
       gestisciRisultatoSalvataggio(ok, onSuccess, onError, "spedizione");
       return ok;
     } catch (DatabaseException e) {

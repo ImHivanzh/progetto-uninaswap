@@ -412,7 +412,7 @@ Data Access Object per la gestione dei dettagli di spedizione.
 
 **Metodi:**
 - `SpedizioneDAO()`: Costruttore che inizializza la connessione al database
-- `inserisciSpedizione(Date dataInvio, Date dataArrivo, String indirizzo, String numeroTelefono, int idAnnuncio, int idSpedito)`: Inserisce i dettagli di una spedizione programmata
+- `inserisciSpedizione(Date dataInvio, Date dataArrivo, String indirizzo, String numeroTelefono, int idAnnuncio)`: Inserisce i dettagli di una spedizione programmata
 - `getSpedizioneByAnnuncio(int idAnnuncio)`: Recupera i dettagli di spedizione per un annuncio
 - `aggiornaStatoSpedizione(int idAnnuncio, boolean isSpedito)`: Aggiorna lo stato della spedizione (spedito/non spedito)
 
