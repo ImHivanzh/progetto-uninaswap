@@ -90,7 +90,7 @@ public class FaiPropostaController {
         if (testoPrezzo == null || testoPrezzo.isEmpty()) throw new NumberFormatException();
         offertaPrezzo = Double.parseDouble(testoPrezzo.replace(",", "."));
         if (offertaPrezzo <= 0) throw new NumberFormatException();
-      } catch (NumberFormatException _) {
+      } catch (NumberFormatException e) {
         view.mostraErrore("Inserisci un prezzo valido maggiore di 0.");
         return;
       }
@@ -98,11 +98,11 @@ public class FaiPropostaController {
 
     if (tipoAnnuncio == TipoAnnuncio.SCAMBIO) {
       if (testoDescrizione.isEmpty()) {
-        view.mostraErrore("La descrizione dell'oggetto di scambio e obbligatoria.");
+        view.mostraErrore("La descrizione dell'oggetto di scambio è obbligatoria.");
         return;
       }
       if (immagineProposta == null) {
-        view.mostraErrore("E obbligatorio caricare una foto dell'oggetto per lo scambio.");
+        view.mostraErrore("È obbligatorio caricare una foto dell'oggetto per lo scambio.");
         return;
       }
     }

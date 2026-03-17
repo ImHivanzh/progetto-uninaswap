@@ -167,7 +167,7 @@ public class MainController implements ActionListener {
       return;
     }
     if (prezzoMax != null && prezzoMax < 0) {
-      view.mostraErrore("Il prezzo massimo non puo essere negativo.");
+      view.mostraErrore("Il prezzo massimo non può essere negativo.");
       return;
     }
 
@@ -205,7 +205,7 @@ public class MainController implements ActionListener {
     String normalized = trimmed.replace(',', '.');
     try {
       return Double.parseDouble(normalized);
-    } catch (NumberFormatException _) {
+    } catch (NumberFormatException e) {
       return null;
     }
   }

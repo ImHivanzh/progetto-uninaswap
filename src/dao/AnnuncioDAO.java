@@ -269,7 +269,7 @@ public class AnnuncioDAO {
   private Categoria parseCategoria(String categoriaStr) {
     try {
       return Categoria.valueOf(categoriaStr.toUpperCase());
-    } catch (Exception _) {
+    } catch (Exception e) {
       return Categoria.ALTRO;
     }
   }
@@ -283,7 +283,7 @@ public class AnnuncioDAO {
   private TipoAnnuncio parseTipoAnnuncio(String tipoStr) {
     try {
       return TipoAnnuncio.valueOf(tipoStr.toUpperCase());
-    } catch (Exception _) {
+    } catch (Exception e) {
       return TipoAnnuncio.VENDITA;
     }
   }

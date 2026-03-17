@@ -305,7 +305,7 @@ public class PropostaDAO {
         if (categoriaStr != null) {
             try {
                 annuncio.setCategoria(model.enums.Categoria.valueOf(categoriaStr.toUpperCase()));
-            } catch (IllegalArgumentException _) {
+            } catch (IllegalArgumentException e) {
                 Logger.error("Categoria non valida: " + categoriaStr);
             }
         }
@@ -319,7 +319,7 @@ public class PropostaDAO {
         if (tipoStr != null) {
             try {
                 annuncio.setTipoAnnuncio(model.enums.TipoAnnuncio.valueOf(tipoStr.toUpperCase()));
-            } catch (IllegalArgumentException _) {
+            } catch (IllegalArgumentException e) {
                 Logger.error("Tipo annuncio non valido: " + tipoStr);
             }
         }

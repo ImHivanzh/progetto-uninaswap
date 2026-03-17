@@ -224,7 +224,7 @@ public class Annuncio {
     }
 
     /**
-     * Restituisce se annuncio e attivo.
+     * Restituisce se annuncio è attivo.
      *
      * @return true quando attivo
      */

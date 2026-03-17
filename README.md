@@ -33,15 +33,6 @@ Il pattern MVC offre numerosi vantaggi per lo sviluppo e la manutenzione del pro
 - **Sviluppo Parallelo**: Team diversi possono lavorare simultaneamente su View, Controller e Model senza conflitti
 - **Scalabilità**: Facilita l'aggiunta di nuove funzionalità mantenendo la struttura esistente
 
-## Requisiti
-
-- **Java**: JDK 8 o superiore
-- **Database**: PostgreSQL
-- **Librerie**:
-  - PostgreSQL JDBC Driver (42.7.8)
-  - FlatLaf (3.6.2) - Look and Feel moderno per Swing
-  - JFreeChart (1.5.6) - Grafici e visualizzazioni statistiche
-
 ## Interfaccia Grafica
 
 Il progetto utilizza **FlatLaf** (Flat Look and Feel) per l'interfaccia grafica Swing.
@@ -345,17 +336,17 @@ Data Access Object per la gestione degli annunci. Gestisce pubblicazione, ricerc
 
 **Metodi pubblici:**
 - `AnnuncioDAO()`: Costruttore che inizializza la connessione al database
-- `pubblicaAnnuncio(Annuncio)`: Inserisce un nuovo annuncio nel database e restituisce l'ID generato
-- `findAll()`: Recupera tutti gli annunci attivi dal database
-- `search(String testoRicerca, String categoria, String tipo, Double prezzoMax)`: Ricerca annunci con filtri opzionali (testo, categoria, tipo, prezzo massimo)
-- `findAllByUtente(Utente)`: Recupera tutti gli annunci pubblicati da un utente specifico
+- `pubblicaAnnuncio(Annuncio annuncio)`: Inserisce un nuovo annuncio nel database e restituisce l'ID generato
+- `findAll()`: Recupera tutti gli annunci dal database
+- `search(String testo, String categoria, String tipo, Double prezzoMax)`: Ricerca annunci con filtri opzionali (testo, categoria, tipo, prezzo massimo) applicati direttamente nel database
+- `findAllByUtente(Utente utente)`: Recupera tutti gli annunci pubblicati da un utente specifico
 
 **Metodi privati:**
-- `mapResultSetToAnnuncio(ResultSet)`: Converte una riga del ResultSet in un oggetto Annuncio del tipo appropriato
-- `parseCategoria(String)`: Converte una stringa in enum Categoria
-- `parseTipoAnnuncio(String)`: Converte una stringa in enum TipoAnnuncio
-- `creaAnnuncioPerTipo(TipoAnnuncio, String, String, Categoria, Utente, ResultSet)`: Factory method che crea l'istanza corretta di Annuncio (Vendita, Scambio o Regalo) in base al tipo
-- `readSpedizione(ResultSet)`: Legge il flag spedizione dal ResultSet
+- `mapResultSetToAnnuncio(ResultSet rs)`: Converte una riga del ResultSet in un oggetto Annuncio del tipo appropriato
+- `parseCategoria(String categoriaStr)`: Converte una stringa in enum Categoria
+- `parseTipoAnnuncio(String tipoStr)`: Converte una stringa in enum TipoAnnuncio
+- `creaAnnuncioPerTipo(TipoAnnuncio tipo, String titolo, String descrizione, Categoria categoria, Utente utente, ResultSet rs)`: Factory method che crea l'istanza corretta di Annuncio (Vendita, Scambio o Regalo) in base al tipo
+- `readSpedizione(ResultSet rs)`: Legge il campo spedizione gestendo diversi formati dal database
 
 #### PropostaDAO
 
@@ -368,21 +359,23 @@ Data Access Object per la gestione delle proposte. Gestisce l'inserimento, modif
 
 **Metodi pubblici:**
 - `PropostaDAO()`: Costruttore che inizializza la connessione al database
-- `inserisciPropostaVendita(Utente, Annuncio, double prezzo)`: Inserisce una proposta di acquisto con un prezzo offerto
-- `inserisciPropostaScambio(Utente, Annuncio, String oggettoOfferto)`: Inserisce una proposta di scambio con descrizione dell'oggetto offerto
-- `inserisciPropostaScambio(Utente, Annuncio, String oggettoOfferto, byte[] immagine)`: Inserisce una proposta di scambio con immagine dell'oggetto offerto
-- `inserisciPropostaRegalo(Utente, Annuncio)`: Inserisce una richiesta per un regalo (senza dettagli aggiuntivi)
+- `inserisciPropostaVendita(Utente utente, Annuncio annuncio, double controOfferta)`: Inserisce una proposta di acquisto con un prezzo offerto
+- `inserisciPropostaScambio(Utente utente, Annuncio annuncio, String propScambio)`: Inserisce una proposta di scambio con descrizione dell'oggetto offerto
+- `inserisciPropostaScambio(Utente utente, Annuncio annuncio, String propScambio, byte[] immagine)`: Inserisce una proposta di scambio con immagine dell'oggetto offerto
+- `inserisciPropostaRegalo(Utente utente, Annuncio annuncio)`: Inserisce una richiesta per un regalo (senza dettagli aggiuntivi)
 - `getProposteRicevute(int idUtente)`: Recupera tutte le proposte ricevute da un utente per i suoi annunci
 - `getProposteInviate(int idUtente)`: Recupera tutte le proposte inviate da un utente ad altri annunci
-- `aggiornaEsitoProposta(int idAnnuncio, String tabella, String tipoAnnuncio, boolean accettata, boolean inattesa)`: Aggiorna lo stato di una proposta (accettata/rifiutata/in attesa)
-- `eliminaProposta(int idAnnuncio, String tabella, String tipoAnnuncio)`: Elimina una proposta dal database
-- `modificaPropostaVendita(int idUtente, int idAnnuncio, double nuovoPrezzo)`: Modifica il prezzo offerto in una proposta di vendita
-- `modificaPropostaScambio(int idUtente, int idAnnuncio, String nuovoOggetto, byte[] nuovaImmagine)`: Modifica l'oggetto offerto in una proposta di scambio
+- `aggiornaEsitoProposta(int idAnnuncio, String tipoAnnuncio, String usernameProponente, boolean accettata, boolean inattesa)`: Aggiorna lo stato di una proposta (accettata/rifiutata/in attesa)
+- `eliminaProposta(int idAnnuncio, String tipoAnnuncio, String usernameProponente)`: Elimina una proposta dal database
+- `modificaPropostaVendita(int idAnnuncio, int idUtente, double nuovaOfferta)`: Modifica il prezzo offerto in una proposta di vendita
+- `modificaPropostaScambio(int idAnnuncio, int idUtente, String nuovaDescrizione, byte[] nuovaImmagine)`: Modifica l'oggetto offerto in una proposta di scambio
 - `getReportProposte(int idUtente)`: Genera statistiche aggregate sulle proposte di un utente
 
 **Metodi privati:**
 - `getProposte(int idUtente, String sqlQuery)`: Metodo generico per recuperare proposte con una query specifica
 - `resolveTabellaProposta(String tipoAnnuncio)`: Determina il nome della tabella database in base al tipo di annuncio
+- `parseCategoria(ResultSet rs, Annuncio annuncio)`: Estrae e imposta la categoria dall'ResultSet
+- `parseTipoAnnuncio(ResultSet rs, Annuncio annuncio)`: Estrae e imposta il tipo annuncio dall'ResultSet
 
 #### RecensioneDAO
 
@@ -393,9 +386,9 @@ Data Access Object per la gestione delle recensioni tra utenti.
 
 **Metodi:**
 - `RecensioneDAO()`: Costruttore che inizializza la connessione al database
-- `inserisciRecensione(Recensione)`: Inserisce una nuova recensione nel database
-- `getRecensioniRicevute(Utente)`: Recupera tutte le recensioni ricevute da un utente
-- `hannoTransazioneCompletata(Utente recensore, Utente recensito)`: Verifica se due utenti hanno completato almeno una transazione insieme (necessario per poter lasciare recensioni)
+- `inserisciRecensione(Recensione recensione)`: Inserisce una nuova recensione nel database
+- `getRecensioniRicevute(Utente utenteRecensito)`: Recupera tutte le recensioni ricevute da un utente
+- `hannoTransazioneCompletata(Utente utenteA, Utente utenteB)`: Verifica se due utenti hanno completato almeno una transazione insieme (vendita o scambio accettato), necessario per poter lasciare recensioni
 
 #### ImmaginiDAO
 
@@ -406,9 +399,9 @@ Data Access Object per la gestione delle immagini associate agli annunci.
 
 **Metodi:**
 - `ImmaginiDAO()`: Costruttore che inizializza la connessione al database
-- `salvaImmagine(Immagini)`: Salva un'immagine nel database associandola ad un annuncio
-- `getImmaginiByAnnuncio(Annuncio)`: Recupera tutte le immagini associate ad un annuncio
-- `getPrimaImmagine(Annuncio)`: Recupera solo la prima immagine di un annuncio (usata per anteprime)
+- `salvaImmagine(Immagini immagine)`: Salva un'immagine (come byte array) nel database associandola ad un annuncio
+- `getImmaginiByAnnuncio(Annuncio annuncio)`: Recupera tutte le immagini associate a un annuncio
+- `getPrimaImmagine(Annuncio annuncio)`: Recupera solo la prima immagine di un annuncio (ottimizzato per performance, usato per anteprime)
 
 #### SpedizioneDAO
 
@@ -419,9 +412,9 @@ Data Access Object per la gestione dei dettagli di spedizione.
 
 **Metodi:**
 - `SpedizioneDAO()`: Costruttore che inizializza la connessione al database
-- `inserisciSpedizione(Date dataInvio, Date dataArrivo, String indirizzo, String telefono, int idAnnuncio, int idUtente)`: Inserisce i dettagli di una spedizione programmata
+- `inserisciSpedizione(Date dataInvio, Date dataArrivo, String indirizzo, String numeroTelefono, int idAnnuncio, int idSpedito)`: Inserisce i dettagli di una spedizione programmata
 - `getSpedizioneByAnnuncio(int idAnnuncio)`: Recupera i dettagli di spedizione per un annuncio
-- `aggiornaStatoSpedizione(int idSpedizione, boolean spedito)`: Aggiorna lo stato della spedizione (spedito/non spedito)
+- `aggiornaStatoSpedizione(int idAnnuncio, boolean isSpedito)`: Aggiorna lo stato della spedizione (spedito/non spedito)
 
 #### RitiroDAO
 
@@ -432,9 +425,9 @@ Data Access Object per la gestione dei dettagli di ritiro in sede.
 
 **Metodi:**
 - `RitiroDAO()`: Costruttore che inizializza la connessione al database
-- `inserisciRitiro(String sede, Time orario, Date data, String telefono, int idAnnuncio)`: Inserisce i dettagli di un ritiro programmato
+- `inserisciRitiro(String sede, Time orario, Date data, String numeroTelefono, int idAnnuncio)`: Inserisce i dettagli di un ritiro programmato
 - `getRitiroByAnnuncio(int idAnnuncio)`: Recupera i dettagli di ritiro per un annuncio
-- `aggiornaStatoRitiro(int idRitiro, boolean ritirato)`: Aggiorna lo stato del ritiro (ritirato/non ritirato)
+- `aggiornaStatoRitiro(int idAnnuncio, boolean isRitirato)`: Aggiorna lo stato del ritiro (ritirato/non ritirato)
 
 ### Controller
 
@@ -449,22 +442,22 @@ Controller principale della bacheca annunci. Gestisce la navigazione, la ricerca
 - `immaginiDAO`: DAO per accesso alle immagini
 
 **Metodi pubblici:**
-- `MainController(MainApp)`: Costruttore che inizializza il controller e registra i listener
+- `MainController(MainApp view)`: Costruttore che inizializza il controller e registra i listener
 - `avvia()`: Avvia il flusso principale, mostrando il login se necessario o la bacheca se l'utente è già autenticato
-- `actionPerformed(ActionEvent)`: Gestisce tutti gli eventi UI (click su pulsanti, ricerca, ecc.)
+- `actionPerformed(ActionEvent e)`: Gestisce tutti gli eventi UI (click su pulsanti, ricerca, dettaglio annuncio)
 
 **Metodi privati:**
-- `registraListener()`: Registra i listener per tutti i componenti UI
-- `mostraLogin()`: Apre la finestra di login
+- `registraListener()`: Registra i listener per tutti i componenti UI (profilo, logout, pubblica, ricerca, reset)
+- `mostraLogin()`: Apre la finestra di login con callback per aggiornare la vista dopo autenticazione
 - `apriProfilo()`: Apre il profilo dell'utente corrente
 - `apriPubblicaAnnuncio()`: Apre la finestra per pubblicare un nuovo annuncio
-- `eseguiRicerca()`: Esegue la ricerca annunci con i filtri selezionati
-- `parsePrezzoMax(String)`: Converte il testo del prezzo massimo in Double, gestendo errori
-- `resetRicerca()`: Ripristina tutti i filtri di ricerca ai valori predefiniti
-- `eseguiLogout()`: Effettua il logout e torna alla schermata di login
-- `caricaAnnunciInEvidenza()`: Carica e mostra gli annunci in evidenza (con foto)
-- `estraiPrimaImmagine(Annuncio)`: Recupera la prima immagine di un annuncio
-- `apriDettaglio(ActionEvent)`: Apre la finestra di dettaglio per un annuncio selezionato
+- `eseguiRicerca()`: Esegue la ricerca annunci con i filtri selezionati usando AnnuncioDAO.search()
+- `parsePrezzoMax(String prezzoRaw)`: Converte il testo del prezzo massimo in Double, gestendo virgola come separatore decimale
+- `resetRicerca()`: Ripristina tutti i filtri di ricerca ai valori predefiniti e ricarica annunci in evidenza
+- `eseguiLogout()`: Effettua il logout tramite SessionManager e torna alla schermata di login
+- `caricaAnnunciInEvidenza()`: Carica annunci casuali dal database e li mostra con la prima immagine
+- `estraiPrimaImmagine(Annuncio annuncio)`: Recupera la prima immagine di un annuncio tramite ImmaginiDAO.getPrimaImmagine()
+- `apriDettaglio(ActionEvent e)`: Apre la finestra di dettaglio per un annuncio selezionato
 - `aggiornaTitoloUtente()`: Aggiorna il titolo della finestra con l'username corrente
 
 #### LoginController
@@ -505,10 +498,12 @@ Controller per la pubblicazione di nuovi annunci.
 - `annuncioDAO`: DAO per inserimento annunci
 - `immaginiDAO`: DAO per salvataggio immagini
 
-**Metodi:**
-- `PubblicaAnnuncioController(PubblicaAnnuncio)`: Costruttore che inizializza il controller
-- `pubblica()`: Valida i dati del form e pubblica l'annuncio con le immagini
-- `salvaImmaginiPerAnnuncio(Annuncio, List<File>)`: Salva tutte le immagini selezionate associandole all'annuncio
+**Metodi pubblici:**
+- `PubblicaAnnuncioController(PubblicaAnnuncio view)`: Costruttore che inizializza il controller
+
+**Metodi privati:**
+- `pubblica()`: Valida i dati del form (titolo, descrizione, categoria, tipo, prezzo per vendite), crea l'annuncio appropriato (Vendita, Scambio o Regalo) e lo pubblica con le immagini associate
+- `salvaImmaginiPerAnnuncio(Annuncio annuncio, List<File> files)`: Converte i file immagine in byte array e li salva nel database associandoli all'annuncio
 
 #### ProfiloController
 
@@ -524,17 +519,20 @@ Controller principale per la gestione del profilo utente. Coordina la visualizza
 - `proposteRicevute`: Lista delle proposte ricevute
 - `proposteInviate`: Lista delle proposte inviate
 
-**Metodi:**
-- `ProfiloController(Profilo)`: Costruttore per visualizzare il profilo dell'utente corrente
-- `ProfiloController(Profilo, Utente)`: Costruttore per visualizzare il profilo di un altro utente
-- `creaDAO(DAOSupplier, String)`: Factory method generico per creare DAO con gestione errori
-- `setupInteraction()`: Configura i listener per l'interazione utente
-- `caricaDati()`: Carica tutti i dati del profilo (annunci, proposte, recensioni)
-- `handlePropostaRicevuta(int indice)`: Gestisce il click su una proposta ricevuta
-- `handlePropostaInviata(int indice)`: Gestisce il click su una proposta inviata
-- `validaSelezioneProposta(int indice, List<PropostaRiepilogo>)`: Valida la selezione di una proposta dalla lista
-- `handleRecensioneDaProposta(boolean ricevuta)`: Apre la finestra per scrivere una recensione da una proposta
-- `validaPropostaPerModifica()`: Valida che una proposta possa essere modificata
+**Metodi pubblici:**
+- `ProfiloController(Profilo view)`: Costruttore per visualizzare il profilo dell'utente corrente
+- `ProfiloController(Profilo view, Utente utenteTarget)`: Costruttore per visualizzare il profilo di un altro utente
+
+**Metodi privati:**
+- `creaDAO(DAOSupplier<T> supplier, String nomeDAO)`: Factory method generico per creare DAO con gestione centralizzata degli errori
+- `setupInteraction()`: Configura i listener per l'interazione utente (doppio click su tabelle, pulsanti)
+- `caricaDati()`: Carica tutti i dati del profilo tramite ProfiloDataLoader
+- `handlePropostaRicevuta(int selectedRow)`: Gestisce il doppio click su una proposta ricevuta
+- `handlePropostaInviata(int selectedRow)`: Gestisce il doppio click su una proposta inviata
+- `validaSelezioneProposta(int selectedRow, List<PropostaRiepilogo> lista)`: Valida la selezione di una proposta dalla lista
+- `handleRecensioneDaProposta(boolean ricevuta)`: Apre la finestra per scrivere una recensione da una proposta conclusa
+- `validaPropostaPerModifica()`: Valida che una proposta possa essere modificata (deve essere in attesa)
+- `apriReportProposte()`: Apre il dialog con statistiche e grafici delle proposte
 
 #### PropostaHandler
 
@@ -549,32 +547,39 @@ Classe helper che gestisce tutta la logica complessa delle proposte (ricevute e 
 - `utenteTarget`: Utente di cui si sta gestendo il profilo
 
 **Metodi pubblici:**
-- `PropostaHandler(Profilo, PropostaDAO, SpedizioneDAO, RitiroDAO, Utente)`: Costruttore con tutte le dipendenze
-- `handlePropostaRicevuta(PropostaRiepilogo)`: Gestisce il click su una proposta ricevuta, mostrando opzioni appropriate in base allo stato
-- `handlePropostaInviata(PropostaRiepilogo)`: Gestisce il click su una proposta inviata, mostrando opzioni appropriate
-- `aggiornaEsitoProposta(PropostaRiepilogo, Utente, boolean accettata, boolean inattesa, String tipoAnnuncio)`: Aggiorna lo stato di una proposta nel database
-- `eliminaProposta(PropostaRiepilogo, Utente, String tipoAnnuncio)`: Elimina una proposta dal database
-- `handleModificaProposta(PropostaRiepilogo)`: Apre il dialog per modificare una proposta inviata
-- `handleAnnullaProposta(PropostaRiepilogo)`: Annulla (elimina) una proposta inviata
-- `formatStato(PropostaRiepilogo)`: Determina lo stato di consegna di una proposta
+- `PropostaHandler(Profilo view, PropostaDAO propostaDAO, SpedizioneDAO spedizioneDAO, RitiroDAO ritiroDAO, Utente utenteTarget)`: Costruttore con tutte le dipendenze
+- `handlePropostaRicevuta(PropostaRiepilogo proposta)`: Gestisce il click su una proposta ricevuta, mostrando opzioni appropriate in base allo stato
+- `handlePropostaInviata(PropostaRiepilogo proposta)`: Gestisce il click su una proposta inviata, mostrando opzioni appropriate
+- `aggiornaEsitoProposta(PropostaRiepilogo proposta, Utente utenteProponente, boolean accettata, boolean inattesa, String messaggioOk)`: Aggiorna lo stato di una proposta nel database
+- `eliminaProposta(PropostaRiepilogo proposta, Utente utenteProponente, String messaggioOk)`: Elimina una proposta dal database
+- `handleModificaProposta(PropostaRiepilogo proposta)`: Apre il dialog per modificare una proposta inviata in attesa
+- `handleAnnullaProposta(PropostaRiepilogo proposta)`: Annulla (elimina) una proposta inviata in attesa
+- `formatStato(PropostaRiepilogo proposta)`: Determina lo stato di consegna di una proposta (IN_ATTESA, DA_SPEDIRE, DA_RITIRARE, CONCLUSO, RIFIUTATO)
 
 **Metodi privati:**
-- `mostraDialogProposta(PropostaRiepilogo, boolean ricevuta)`: Mostra il dialog con le opzioni appropriate per la proposta
-- `handlePropostaAccettata(PropostaRiepilogo, boolean ricevuta, String tipoAnnuncio, boolean spedizione)`: Gestisce azioni su proposte accettate
-- `handlePropostaRifiutata(PropostaRiepilogo, boolean ricevuta, String tipoAnnuncio)`: Gestisce azioni su proposte rifiutate
-- `handlePropostaInAttesa(PropostaRiepilogo, boolean ricevuta, String tipoAnnuncio, boolean spedizione)`: Gestisce azioni su proposte in attesa
-- `buildOpzioniAccettata(PropostaRiepilogo, StatoConsegna, boolean ricevuta, boolean spedizione, int scelta)`: Costruisce le opzioni del dialog per proposte accettate
-- `handleAzionePropostaAccettata(String azione, PropostaRiepilogo, int idAnnuncio, boolean ricevuta)`: Esegue l'azione selezionata su una proposta accettata
-- `buildOpzioniInAttesa(boolean ricevuta, boolean spedizione)`: Costruisce le opzioni del dialog per proposte in attesa
-- `validaDatiProposta(PropostaRiepilogo, Utente)`: Valida che i dati della proposta siano completi
-- `aggiornaStatoConsegna(int idAnnuncio, boolean spedizione, String tipoAnnuncio)`: Aggiorna lo stato di spedizione/ritiro
+- `mostraDialogProposta(PropostaRiepilogo proposta, boolean isRicevuta)`: Mostra il dialog con le opzioni appropriate per la proposta
+- `handlePropostaAccettata(PropostaRiepilogo proposta, boolean mostraImmagine, String dettaglio, boolean isRicevuta)`: Gestisce azioni su proposte accettate
+- `handlePropostaRifiutata(PropostaRiepilogo proposta, boolean mostraImmagine, String dettaglio)`: Gestisce azioni su proposte rifiutate
+- `handlePropostaInAttesa(PropostaRiepilogo proposta, boolean mostraImmagine, String dettaglio, boolean isRicevuta)`: Gestisce azioni su proposte in attesa
+- `buildOpzioniAccettata(StatoConsegna stato, boolean mostraImmagine, boolean isRicevuta, int idAnnuncio)`: Costruisce le opzioni del dialog per proposte accettate
+- `aggiungiOpzioneRecensione(List<String> opzioni, StatoConsegna stato)`: Aggiunge opzione recensione se proposta conclusa
+- `aggiungiOpzioniPerTipoProposta(List<String> opzioni, boolean isRicevuta, int idAnnuncio)`: Aggiunge opzioni specifiche per ricevute/inviate
+- `aggiungiOpzioneImmagine(List<String> opzioni, boolean mostraImmagine)`: Aggiunge opzione mostra immagine se presente
+- `aggiungiOpzioniRicevuta(List<String> opzioni, int idAnnuncio)`: Aggiunge opzioni per proposte ricevute (dettagli consegna, ho spedito, ritirato)
+- `aggiungiOpzioniInviata(List<String> opzioni, int idAnnuncio)`: Aggiunge opzioni per proposte inviate (scegli/visualizza consegna)
+- `handleAzionePropostaAccettata(String azione, PropostaRiepilogo proposta, int idAnnuncio, boolean isRicevuta)`: Esegue l'azione selezionata su una proposta accettata
+- `handleSceltaPropostaInAttesa(int scelta, PropostaRiepilogo proposta, boolean mostraImmagine, boolean isRicevuta)`: Gestisce la scelta dell'utente per una proposta in attesa
+- `buildOpzioniInAttesa(boolean mostraImmagine, boolean isRicevuta)`: Costruisce le opzioni del dialog per proposte in attesa
+- `validaDatiProposta(PropostaRiepilogo proposta, Utente utenteProponente)`: Valida che i dati della proposta siano completi
+- `aggiornaStatoConsegna(int idAnnuncio, boolean isSpedizione, String messaggioSuccesso)`: Aggiorna lo stato di spedizione/ritiro
 - `verificaDettagliConsegna(int idAnnuncio)`: Verifica se esistono dettagli di consegna per un annuncio
-- `inserisciDettagliConsegna(PropostaRiepilogo)`: Apre il dialog per inserire dettagli di spedizione/ritiro
-- `visualizzaDettagliConsegna(PropostaRiepilogo)`: Mostra i dettagli di spedizione/ritiro esistenti
-- `buildDettaglioProposta(PropostaRiepilogo, String tipoAnnuncio)`: Costruisce la stringa di dettaglio della proposta
-- `isPropostaScambio(PropostaRiepilogo)`: Verifica se una proposta è di tipo scambio
-- `mostraImmagineProposta(PropostaRiepilogo)`: Mostra l'immagine associata ad una proposta di scambio
-- `apriScriviRecensione(Utente)`: Apre la finestra per scrivere una recensione
+- `inserisciDettagliConsegna(PropostaRiepilogo proposta)`: Apre il dialog per inserire dettagli di spedizione/ritiro
+- `visualizzaDettagliConsegna(PropostaRiepilogo proposta)`: Mostra i dettagli di spedizione/ritiro esistenti
+- `mostraMessaggioDettagliNonForniti()`: Mostra messaggio quando dettagli non sono ancora disponibili
+- `buildDettaglioProposta(PropostaRiepilogo proposta, String labelUtente)`: Costruisce la stringa di dettaglio della proposta
+- `isPropostaScambio(PropostaRiepilogo proposta)`: Verifica se una proposta è di tipo scambio
+- `mostraImmagineProposta(PropostaRiepilogo proposta)`: Mostra l'immagine associata ad una proposta di scambio
+- `apriScriviRecensione(Utente utenteDestinatario)`: Apre la finestra per scrivere una recensione
 
 #### ProfiloDataLoader
 
@@ -588,87 +593,121 @@ Classe helper che gestisce il caricamento di tutti i dati del profilo dal databa
 - `propostaHandler`: Handler per formattazione proposte
 
 **Metodi pubblici:**
-- `ProfiloDataLoader(Profilo, RecensioneDAO, AnnuncioDAO, PropostaDAO, PropostaHandler)`: Costruttore con tutte le dipendenze
-- `caricaDatiCompleti(Utente, boolean mostraDatiSensibili)`: Carica tutti i dati del profilo e restituisce un record DatiProfilo
+- `ProfiloDataLoader(Profilo view, RecensioneDAO recensioneDAO, AnnuncioDAO annuncioDAO, PropostaDAO propostaDAO, PropostaHandler propostaHandler)`: Costruttore con tutte le dipendenze
+- `caricaDatiCompleti(Utente utenteTarget, boolean mostraDatiSensibili)`: Carica tutti i dati del profilo e restituisce un oggetto DatiProfilo contenente annunci e proposte
 
 **Metodi privati:**
-- `impostaDatiUtente(Utente, boolean mostraDatiSensibili)`: Imposta i dati anagrafici dell'utente nella vista
-- `caricaRecensioni(Utente)`: Carica e visualizza le recensioni ricevute dall'utente
-- `caricaAnnunci(Utente)`: Carica gli annunci pubblicati dall'utente
-- `caricaProposteRicevute(Utente)`: Carica le proposte ricevute dall'utente
-- `caricaProposteInviate(Utente)`: Carica le proposte inviate dall'utente
-- `aggiungiPropostaRicevutaAllaVista(PropostaRiepilogo)`: Aggiunge una proposta ricevuta alla lista UI
-- `aggiungiPropostaInviataAllaVista(PropostaRiepilogo)`: Aggiunge una proposta inviata alla lista UI
+- `impostaDatiUtente(Utente utenteTarget, boolean mostraDatiSensibili)`: Imposta i dati anagrafici dell'utente nella vista
+- `caricaRecensioni(Utente utenteTarget)`: Carica e visualizza le recensioni ricevute dall'utente, calcola la media dei voti
+- `caricaAnnunci(Utente utenteTarget)`: Carica gli annunci pubblicati dall'utente e li aggiunge alla vista
+- `caricaProposteRicevute(Utente utenteTarget)`: Carica le proposte ricevute dall'utente
+- `caricaProposteInviate(Utente utenteTarget)`: Carica le proposte inviate dall'utente
+- `aggiungiPropostaRicevutaAllaVista(PropostaRiepilogo proposta)`: Aggiunge una proposta ricevuta alla tabella UI
+- `aggiungiPropostaInviataAllaVista(PropostaRiepilogo proposta)`: Aggiunge una proposta inviata alla tabella UI
+
+**Classe interna:**
+- `DatiProfilo`: Classe contenitore per i dati caricati (liste di annunci, proposte ricevute e inviate)
 
 #### DettaglioAnnuncioController
 
-Controller per la visualizzazione dei dettagli di un annuncio. Gestisce il caricamento delle immagini e l'apertura del dialog per fare proposte.
+Controller per la visualizzazione dei dettagli di un annuncio. Gestisce il caricamento delle immagini, la navigazione tra le foto e l'apertura del dialog per fare proposte.
 
 **Campi:**
 - `view`: Riferimento alla vista DettaglioAnnuncio
 - `annuncio`: Annuncio di cui mostrare i dettagli
 - `immaginiDAO`: DAO per caricamento immagini
+- `propostaDAO`: DAO per inserimento proposte
+- `utenteDAO`: DAO per recupero informazioni utente
+- `listaImmagini`: Lista delle immagini associate all'annuncio
+- `currentImageIndex`: Indice dell'immagine correntemente visualizzata
+- `pubblicatore`: Utente proprietario dell'annuncio
 
-**Metodi:**
-- `DettaglioAnnuncioController(DettaglioAnnuncio, Annuncio)`: Costruttore che inizializza il controller e carica i dati
-- `caricaImmagini()`: Carica tutte le immagini dell'annuncio e le visualizza
-- `setupInteraction()`: Configura i listener per i pulsanti (profilo utente, fai proposta)
-- `apriProfilo()`: Apre il profilo del proprietario dell'annuncio
-- `apriPropostaDialog()`: Apre il dialog per fare una proposta sull'annuncio
+**Metodi pubblici:**
+- `DettaglioAnnuncioController(DettaglioAnnuncio view, Annuncio annuncio)`: Costruttore che inizializza il controller e carica i dati
+- `azioneSuccessiva()`: Passa alla prossima immagine nel carosello
+- `azionePrecedente()`: Torna all'immagine precedente nel carosello
+- `azioneContatta()`: Apre il dialog per fare una proposta sull'annuncio
+
+**Metodi privati:**
+- `caricaDati()`: Carica immagini e informazioni dell'annuncio
+- `salvaProposta(Double prezzo, String descrizione, byte[] immagine)`: Salva la proposta nel database dopo validazione
+- `aggiornaVistaImmagine()`: Aggiorna la vista con l'immagine corrente del carosello
+- `apriProfiloPubblicatore()`: Apre il profilo del proprietario dell'annuncio
 
 #### FaiPropostaController
 
-Controller per l'invio di proposte su annunci. Gestisce la validazione e l'inserimento di proposte di vendita, scambio o regalo.
+Controller per il dialog di creazione proposte. Gestisce la validazione dei dati e il caricamento di immagini per proposte di scambio.
 
 **Campi:**
-- `view`: Riferimento alla vista FaiProposta
-- `annuncio`: Annuncio per cui si sta facendo la proposta
-- `propostaDAO`: DAO per inserimento proposte
+- `view`: Riferimento alla vista FaiPropostaDialog
+- `tipoAnnuncio`: Tipo di annuncio per cui si sta facendo la proposta
+- `confermato`: Flag che indica se l'utente ha confermato la proposta
+- `offertaPrezzo`: Prezzo offerto per proposte di vendita
+- `descrizioneProposta`: Descrizione dell'oggetto offerto per scambi
+- `immagineProposta`: Byte array dell'immagine caricata per scambi
 
-**Metodi:**
-- `FaiPropostaController(FaiProposta, Annuncio)`: Costruttore che inizializza il controller
-- `setupInteraction()`: Configura i listener per i pulsanti
-- `inviaProposta()`: Valida i dati inseriti e invia la proposta appropriata (vendita con prezzo, scambio con oggetto/immagine, regalo senza dettagli)
+**Metodi pubblici:**
+- `FaiPropostaController(FaiPropostaDialog view, TipoAnnuncio tipoAnnuncio)`: Costruttore che inizializza il controller
+- `azioneCaricaImmagine()`: Apre il file chooser per selezionare un'immagine
+- `caricaImmagineDaFile(File file)`: Carica un'immagine da file e aggiorna l'anteprima
+- `azioneConferma()`: Valida i dati inseriti e conferma la proposta
+- `azioneAnnulla()`: Annulla la proposta e chiude il dialog
+- `isConfermato()`: Restituisce true se la proposta è stata confermata
+- `getOffertaPrezzo()`: Restituisce il prezzo offerto (per vendite)
+- `getDescrizioneProposta()`: Restituisce la descrizione dell'oggetto offerto (per scambi)
+- `getImmagineProposta()`: Restituisce i byte dell'immagine caricata (per scambi)
 
 #### ModificaPropostaController
 
 Controller per la modifica di proposte già inviate. Permette di cambiare il prezzo offerto o l'oggetto proposto per lo scambio.
 
 **Campi:**
-- `view`: Riferimento alla vista ModificaProposta
+- `view`: Riferimento alla vista ModificaPropostaDialog
 - `proposta`: Proposta da modificare
+- `immagineProposta`: Byte array dell'immagine (per scambi)
 - `propostaDAO`: DAO per aggiornamento proposte
 
-**Metodi:**
-- `ModificaPropostaController(ModificaProposta, PropostaRiepilogo)`: Costruttore che inizializza il controller con la proposta esistente
-- `setupInteraction()`: Configura i listener per i pulsanti
-- `modificaProposta()`: Valida i nuovi dati e aggiorna la proposta nel database
+**Metodi pubblici:**
+- `ModificaPropostaController(ModificaPropostaDialog view, PropostaRiepilogo proposta)`: Costruttore che inizializza il controller con la proposta esistente
+- `popolaDati()`: Popola i campi del form con i dati attuali della proposta
+- `azioneCaricaImmagine()`: Apre il file chooser per selezionare una nuova immagine
+- `caricaImmagineDaFile(File file)`: Carica una nuova immagine da file
+- `azioneSalva()`: Valida i nuovi dati e aggiorna la proposta nel database
+- `azioneAnnulla()`: Chiude il dialog senza salvare
+
+**Metodi privati:**
+- `salvaPropostaVendita(int idUtente)`: Salva le modifiche per una proposta di vendita
+- `salvaPropostaScambio(int idUtente)`: Salva le modifiche per una proposta di scambio
 
 #### PassDimenticataController
 
-Controller per il recupero password. Gestisce la verifica dell'username e l'aggiornamento della password.
+Controller per il recupero password. Gestisce la verifica dell'username e l'aggiornamento della password con validazione di sicurezza.
 
 **Campi:**
-- `view`: Riferimento alla vista PassDimenticata
+- `view`: Riferimento alla vista PassDimenticataForm
 - `utenteDAO`: DAO per aggiornamento password
 
-**Metodi:**
-- `PassDimenticataController(PassDimenticata)`: Costruttore che inizializza il controller
-- `setupInteraction()`: Configura i listener per i pulsanti
-- `recuperaPassword()`: Verifica che l'username esista e aggiorna la password dopo validazione
+**Metodi pubblici:**
+- `PassDimenticataController(PassDimenticataForm view)`: Costruttore che inizializza il controller
+
+**Metodi privati:**
+- `initListeners()`: Registra i listener per i componenti UI
+- `gestisciCambioPassword()`: Valida i dati inseriti (username esistente, password forte, conferma password) e aggiorna la password nel database
 
 #### ReportProposteController
 
 Controller per la visualizzazione di statistiche e grafici sulle proposte di un utente. Utilizza JFreeChart per generare grafici a barre.
 
 **Campi:**
-- `view`: Riferimento alla vista ReportProposte
+- `view`: Riferimento alla vista ReportProposteDialog
 - `propostaDAO`: DAO per recupero statistiche
 
-**Metodi:**
-- `ReportProposteController(ReportProposte, int idUtente)`: Costruttore che carica e visualizza il report per l'utente specificato
-- `caricaReport()`: Recupera le statistiche dal database e genera il grafico
-- `creaGrafico(ReportProposte)`: Crea un grafico a barre con le statistiche delle proposte (totali vs accettate per ogni tipo)
+**Metodi pubblici:**
+- `ReportProposteController(ReportProposteDialog view)`: Costruttore che carica e visualizza il report per l'utente corrente
+
+**Metodi privati:**
+- `loadReportData()`: Recupera le statistiche dal database tramite PropostaDAO e popola la vista
+- `createChart(ReportProposte report)`: Crea un grafico a barre con JFreeChart mostrando totali vs accettate per vendite, scambi e regali
 
 #### ScriviRecensioneController
 
@@ -676,13 +715,16 @@ Controller per la scrittura di recensioni. Verifica che gli utenti abbiano compl
 
 **Campi:**
 - `view`: Riferimento alla vista ScriviRecensione
-- `utenteRecensito`: Utente che riceverà la recensione
 - `recensioneDAO`: DAO per inserimento recensioni
+- `utenteDAO`: DAO per recupero informazioni utente
+- `utenteDestinatario`: Utente che riceverà la recensione
 
-**Metodi:**
-- `ScriviRecensioneController(ScriviRecensione, Utente)`: Costruttore che inizializza il controller
-- `setupInteraction()`: Configura i listener per i pulsanti
-- `inviaRecensione()`: Valida i dati (voto e descrizione) e inserisce la recensione dopo aver verificato che esista una transazione completata tra i due utenti
+**Metodi pubblici:**
+- `ScriviRecensioneController(ScriviRecensione view, int idUtenteDestinatario)`: Costruttore che inizializza il controller e carica l'utente destinatario
+
+**Metodi privati:**
+- `initListeners()`: Registra i listener per i componenti UI
+- `inviaRecensione()`: Valida i dati (voto e descrizione), verifica che esista una transazione completata tra i due utenti tramite RecensioneDAO.hannoTransazioneCompletata(), e inserisce la recensione nel database
 
 ### Utils
 

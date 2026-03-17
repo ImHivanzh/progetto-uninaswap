@@ -22,7 +22,7 @@ public class SpedizioneDAO {
   /**
    * Crea DAO e inizializza database connessione.
    *
-   * @throws DatabaseException quando database e non disponibile
+   * @throws DatabaseException quando database è non disponibile
    */
   public SpedizioneDAO() throws DatabaseException {
     this.con = DbConnection.getInstance().getConnection();

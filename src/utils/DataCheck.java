@@ -35,7 +35,7 @@ public class DataCheck {
      * Valida numero telefono come 10-cifra numerico stringa.
      *
      * @param phoneNumber numero telefono a valida
-     * @return true quando valore e numero 10 cifre
+     * @return true quando valore è numero 10 cifre
      */
     public static boolean isValidPhoneNumber(String phoneNumber) {
         if (phoneNumber == null) {
@@ -46,7 +46,7 @@ public class DataCheck {
     }
 
     /**
-     * Verifica che password e forte sufficiente per registrazione.
+     * Verifica che password è forte sufficiente per registrazione.
      *
      * @param password password a valida
      * @return true quando ha lunghezza >= 8, maiuscola, minuscola, cifra, e speciale carattere

@@ -606,7 +606,7 @@ public class MainApp extends BaseFrame {
   }
 
   /**
-   * Applica piu forte visivo stile a pubblica pulsante.
+   * Applica più forte visivo stile a pubblica pulsante.
    */
   private void stilePubblicaAnnuncio() {
     if (btnPubblica == null) {

@@ -23,7 +23,7 @@ public class RitiroDAO {
   /**
    * Crea DAO e inizializza database connessione.
    *
-   * @throws DatabaseException quando database e non disponibile
+   * @throws DatabaseException quando database è non disponibile
    */
   public RitiroDAO() throws DatabaseException {
     this.con = DbConnection.getInstance().getConnection();

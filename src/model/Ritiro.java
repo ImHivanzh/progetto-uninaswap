@@ -133,7 +133,7 @@ public class Ritiro {
     public void setNumeroTelefono(String numeroTelefono) { this.numeroTelefono = numeroTelefono; }
 
     /**
-     * Restituisce se ritiro e completato.
+     * Restituisce se ritiro è completato.
      *
      * @return true quando completato
      */

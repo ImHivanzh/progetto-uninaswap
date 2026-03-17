@@ -34,7 +34,7 @@ public class Recensione {
      * @param descrizione testo recensione
      * @param utenteRecensore recensore
      * @param utenteRecensito utente recensito
-     * @throws IllegalArgumentException se voto non e tra 1 e 5
+     * @throws IllegalArgumentException se voto non è tra 1 e 5
      */
     public Recensione(int voto, String descrizione, Utente utenteRecensore, Utente utenteRecensito) {
         setVoto(voto);
@@ -56,7 +56,7 @@ public class Recensione {
      * Imposta valutazione valore.
      *
      * @param voto valutazione valore (deve essere tra 1 e 5)
-     * @throws IllegalArgumentException se voto non e tra 1 e 5
+     * @throws IllegalArgumentException se voto non è tra 1 e 5
      */
     public void setVoto(int voto) {
         if (voto < 1 || voto > 5) {

@@ -207,7 +207,7 @@ public class ConsegnaHelper {
       return "Inserisci date valide.";
     }
     if (dataArrivo.before(dataInvio)) {
-      return "La data di arrivo non puo essere precedente alla data di invio.";
+      return "La data di arrivo non può essere precedente alla data di invio.";
     }
     return null;
   }

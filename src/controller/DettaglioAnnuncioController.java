@@ -88,7 +88,7 @@ public class DettaglioAnnuncioController {
   private void caricaDati() {
     try {
       this.listaImmagini = immaginiDAO.getImmaginiByAnnuncio(annuncio);
-    } catch (Exception _) {
+    } catch (Exception e) {
       Logger.error("Errore caricamento immagini");
     }
 
@@ -145,7 +145,7 @@ public class DettaglioAnnuncioController {
       } else {
         view.setUtenteNome("Utente sconosciuto", false);
       }
-    } catch (Exception _) {
+    } catch (Exception e) {
       Logger.error("Errore caricamento info utente");
       view.setUtenteNome("Utente sconosciuto", false);
     }

@@ -33,7 +33,7 @@ public class BaseFrame extends JFrame {
      */
     private void setFrameIcon() {
         try {
-            java.net.URL imageUrl = getClass().getResource("../img/logo.png");
+            java.net.URL imageUrl = getClass().getResource("/img/logo.png");
 
             if (imageUrl != null) {
                 Image icon = new ImageIcon(imageUrl).getImage();
@@ -48,7 +48,7 @@ public class BaseFrame extends JFrame {
                 }
 
             } else {
-                Logger.error("AVVISO: Risorsa icona non trovata. Controlla il percorso: ../img/logo.png");
+                Logger.error("AVVISO: Risorsa icona non trovata. Controlla il percorso: /img/logo.png");
             }
         } catch (Exception e) {
             Logger.error("Errore durante il caricamento dell'icona", e);

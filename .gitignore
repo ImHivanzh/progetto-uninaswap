@@ -1,9 +1,12 @@
 .idea/
 bin
+build/
 out/
 *.iml
 *.class
 *.log
 *.tmp
+*.jar
 scripts/
 .DS_Store
+MANIFEST.MF

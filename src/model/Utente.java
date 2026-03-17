@@ -107,7 +107,7 @@ public class Utente {
      * Imposta password dopo forza validazione.
      *
      * @param password password valore
-     * @throws IllegalArgumentException quando password e non forte sufficiente
+     * @throws IllegalArgumentException quando password è non forte sufficiente
      */
     public void setPassword(String password) {
         if (DataCheck.isStrongPassword(password)) {

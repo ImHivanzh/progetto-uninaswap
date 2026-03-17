@@ -146,7 +146,7 @@ public class ModificaPropostaController {
       if (nuovaOfferta <= 0) {
         throw new NumberFormatException();
       }
-    } catch (NumberFormatException _) {
+    } catch (NumberFormatException e) {
       view.mostraErrore("Inserisci un prezzo valido maggiore di 0.");
       return false;
     }
@@ -163,7 +163,7 @@ public class ModificaPropostaController {
   private boolean salvaPropostaScambio(int idUtente) throws DatabaseException {
     String nuovaDescrizione = view.getDescrizioneInput().trim();
     if (nuovaDescrizione.isEmpty()) {
-      view.mostraErrore("La descrizione dell'oggetto di scambio e obbligatoria.");
+      view.mostraErrore("La descrizione dell'oggetto di scambio è obbligatoria.");
       return false;
     }
     return propostaDAO.modificaPropostaScambio(
