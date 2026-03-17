@@ -95,7 +95,6 @@ public class LoginController {
 
       if (utente != null) {
         SessionManager.getInstance().login(utente);
-        view.mostraMessaggio("Login effettuato con successo!");
         view.dispose();
         avviaMainApp();
       } else {

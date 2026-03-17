@@ -105,7 +105,12 @@ public class DettaglioAnnuncioController {
       prezzoTesto = String.format("€ %.2f", vendita.getPrezzo());
       prezzoColore = new Color(34, 139, 34);
     } else if (annuncio instanceof Scambio scambio) {
-      prezzoTesto = "Scambia con: " + scambio.getOggettoRichiesto();
+      String oggetto = scambio.getOggettoRichiesto();
+      if (oggetto == null || oggetto.trim().isEmpty()) {
+        prezzoTesto = "Scambio - Proponi un oggetto";
+      } else {
+        prezzoTesto = "Scambia con: " + oggetto;
+      }
       prezzoColore = new Color(255, 140, 0);
     } else if (annuncio instanceof Regalo) {
       prezzoTesto = "IN REGALO";

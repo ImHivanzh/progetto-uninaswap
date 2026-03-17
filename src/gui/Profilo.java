@@ -11,6 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -109,6 +111,8 @@ public class Profilo extends BaseFrame {
     setMinimumSize(new Dimension(600, 550));
 
     setupTables();
+    setupSelectionListeners();
+    disabilitaPulsantiProposte();
 
     pack();
     centraFinestra();
@@ -178,6 +182,85 @@ public class Profilo extends BaseFrame {
     tableProposteInviate.getTableHeader().setResizingAllowed(false);
     tableProposteInviate.getTableHeader().setReorderingAllowed(false);
     applyStatoRenderer(tableProposteInviate, 4);
+  }
+
+  /**
+   * Configura listener per selezione righe tabelle.
+   */
+  private void setupSelectionListeners() {
+    if (tableProposteRicevute != null) {
+      tableProposteRicevute.getSelectionModel().addListSelectionListener(e -> {
+        if (!e.getValueIsAdjusting()) {
+          aggiornaPulsantiProposteRicevute();
+        }
+      });
+    }
+
+    if (tableProposteInviate != null) {
+      tableProposteInviate.getSelectionModel().addListSelectionListener(e -> {
+        if (!e.getValueIsAdjusting()) {
+          aggiornaPulsantiProposteInviate();
+        }
+      });
+    }
+  }
+
+  /**
+   * Disabilita tutti i pulsanti delle proposte all'avvio.
+   */
+  private void disabilitaPulsantiProposte() {
+    if (btnRecensioneRicevuta != null) btnRecensioneRicevuta.setEnabled(false);
+    if (btnRecensioneInviata != null) btnRecensioneInviata.setEnabled(false);
+    if (btnModificaProposta != null) btnModificaProposta.setEnabled(false);
+    if (btnAnnullaProposta != null) btnAnnullaProposta.setEnabled(false);
+  }
+
+  /**
+   * Aggiorna stato pulsanti proposte ricevute in base a selezione.
+   */
+  private void aggiornaPulsantiProposteRicevute() {
+    int selectedRow = getSelectedPropostaRicevutaRow();
+    boolean hasSelection = selectedRow >= 0;
+    boolean isConcluso = false;
+
+    if (hasSelection && selectedRow < modelProposteRicevute.getRowCount()) {
+      Object statoObj = modelProposteRicevute.getValueAt(selectedRow, 4);
+      if (statoObj != null) {
+        String stato = statoObj.toString().trim().toLowerCase();
+        isConcluso = stato.startsWith("concluso");
+      }
+    }
+
+    if (btnRecensioneRicevuta != null) {
+      btnRecensioneRicevuta.setEnabled(hasSelection && isConcluso);
+    }
+  }
+
+  /**
+   * Aggiorna stato pulsanti proposte inviate in base a selezione.
+   */
+  private void aggiornaPulsantiProposteInviate() {
+    int selectedRow = getSelectedPropostaInviataRow();
+    boolean hasSelection = selectedRow >= 0;
+    boolean isConcluso = false;
+
+    if (hasSelection && selectedRow < modelProposteInviate.getRowCount()) {
+      Object statoObj = modelProposteInviate.getValueAt(selectedRow, 4);
+      if (statoObj != null) {
+        String stato = statoObj.toString().trim().toLowerCase();
+        isConcluso = stato.startsWith("concluso");
+      }
+    }
+
+    if (btnRecensioneInviata != null) {
+      btnRecensioneInviata.setEnabled(hasSelection && isConcluso);
+    }
+    if (btnModificaProposta != null) {
+      btnModificaProposta.setEnabled(hasSelection);
+    }
+    if (btnAnnullaProposta != null) {
+      btnAnnullaProposta.setEnabled(hasSelection);
+    }
   }
 
   /**
@@ -338,6 +421,7 @@ public class Profilo extends BaseFrame {
     modelAnnunci.setRowCount(0);
     modelProposteRicevute.setRowCount(0);
     modelProposteInviate.setRowCount(0);
+    disabilitaPulsantiProposte();
   }
 
   /**

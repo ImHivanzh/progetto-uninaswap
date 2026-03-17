@@ -411,11 +411,17 @@ public class PropostaHandler {
       return;
     }
 
-    int confirm = JOptionPane.showConfirmDialog(view,
+    Object[] opzioni = {"No", "Sì"};
+    int confirm = JOptionPane.showOptionDialog(view,
         "Sei sicuro di voler annullare questa proposta?",
-        "Conferma annullamento", JOptionPane.YES_NO_OPTION);
+        "Conferma annullamento",
+        JOptionPane.YES_NO_OPTION,
+        JOptionPane.QUESTION_MESSAGE,
+        null,
+        opzioni,
+        opzioni[0]);
 
-    if (confirm == JOptionPane.YES_OPTION) {
+    if (confirm == 1) {
       eliminaProposta(proposta, utenteTarget, "Proposta annullata con successo.");
     }
   }

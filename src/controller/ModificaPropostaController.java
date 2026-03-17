@@ -86,7 +86,7 @@ public class ModificaPropostaController {
 
     if (fileChooser.showOpenDialog(view) == JFileChooser.APPROVE_OPTION) {
       File file = fileChooser.getSelectedFile();
-      caricaImmagine(file);
+      caricaImmagineDaFile(file);
     }
   }
 
@@ -95,7 +95,7 @@ public class ModificaPropostaController {
    *
    * @param file file immagine
    */
-  private void caricaImmagine(File file) {
+  public void caricaImmagineDaFile(File file) {
     try (FileInputStream fis = new FileInputStream(file)) {
       this.immagineProposta = fis.readAllBytes();
       view.aggiornaAnteprimaImmagine(this.immagineProposta);

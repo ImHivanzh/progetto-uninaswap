@@ -60,12 +60,21 @@ public class FaiPropostaController {
 
     if (fileChooser.showOpenDialog(view) == JFileChooser.APPROVE_OPTION) {
       File file = fileChooser.getSelectedFile();
-      try (FileInputStream fis = new FileInputStream(file)) {
-        this.immagineProposta = fis.readAllBytes();
-        view.aggiornaAnteprimaImmagine(this.immagineProposta);
-      } catch (IOException ex) {
-        view.mostraErrore("Errore durante il caricamento dell'immagine: " + ex.getMessage());
-      }
+      caricaImmagineDaFile(file);
+    }
+  }
+
+  /**
+   * Carica immagine da file.
+   *
+   * @param file file immagine
+   */
+  public void caricaImmagineDaFile(File file) {
+    try (FileInputStream fis = new FileInputStream(file)) {
+      this.immagineProposta = fis.readAllBytes();
+      view.aggiornaAnteprimaImmagine(this.immagineProposta);
+    } catch (IOException ex) {
+      view.mostraErrore("Errore durante il caricamento dell'immagine: " + ex.getMessage());
     }
   }
 

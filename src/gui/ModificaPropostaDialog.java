@@ -6,8 +6,19 @@ import model.PropostaRiepilogo;
 import model.enums.TipoAnnuncio;
 import utils.Logger;
 
+import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Image;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.io.File;
+import java.util.List;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -16,6 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
 
 /**
  * Dialogo per modifica proposta.
@@ -49,6 +61,15 @@ public class ModificaPropostaDialog extends JDialog {
    * Anteprima immagine.
    */
   private JLabel lblImagePreview;
+
+  /**
+   * Bordo normale area drag and drop.
+   */
+  private Border normalBorder;
+  /**
+   * Bordo hover area drag and drop.
+   */
+  private Border hoverBorder;
   /**
    * Pulsante salva.
    */
@@ -98,12 +119,87 @@ public class ModificaPropostaDialog extends JDialog {
   private void configuraInterfaccia(TipoAnnuncio tipo) {
     pnlPrezzo.setVisible(tipo == TipoAnnuncio.VENDITA);
     pnlImmagine.setVisible(tipo == TipoAnnuncio.SCAMBIO);
+
+    if (tipo == TipoAnnuncio.SCAMBIO) {
+      btnCaricaImmagine.setVisible(false);
+      setupDragAndDrop();
+    }
   }
 
   private void setupListeners() {
     btnSalva.addActionListener(e -> controller.azioneSalva());
     btnAnnulla.addActionListener(e -> controller.azioneAnnulla());
     btnCaricaImmagine.addActionListener(e -> controller.azioneCaricaImmagine());
+  }
+
+  /**
+   * Configura drag and drop per area immagine.
+   */
+  private void setupDragAndDrop() {
+    normalBorder = BorderFactory.createDashedBorder(Color.GRAY, 2, 5, 5, true);
+    hoverBorder = BorderFactory.createDashedBorder(new Color(33, 150, 243), 3, 5, 5, true);
+
+    pnlImmagine.setBorder(normalBorder);
+    if (lblImagePreview.getIcon() == null) {
+      lblImagePreview.setText("<html><center>Clicca per selezionare<br>o trascina qui l'immagine</center></html>");
+      lblImagePreview.setHorizontalAlignment(JLabel.CENTER);
+      lblImagePreview.setVerticalAlignment(JLabel.CENTER);
+    }
+
+    // Aggiungi listener per click che apre file chooser
+    pnlImmagine.addMouseListener(new java.awt.event.MouseAdapter() {
+      @Override
+      public void mouseClicked(java.awt.event.MouseEvent e) {
+        controller.azioneCaricaImmagine();
+      }
+    });
+
+    new DropTarget(pnlImmagine, new DropTargetAdapter() {
+      @Override
+      public void dragEnter(DropTargetDragEvent dtde) {
+        pnlImmagine.setBorder(hoverBorder);
+        pnlImmagine.setBackground(new Color(227, 242, 253));
+      }
+
+      @Override
+      public void dragExit(DropTargetEvent dte) {
+        pnlImmagine.setBorder(normalBorder);
+        pnlImmagine.setBackground(null);
+      }
+
+      @Override
+      public void drop(DropTargetDropEvent dtde) {
+        try {
+          dtde.acceptDrop(DnDConstants.ACTION_COPY);
+          @SuppressWarnings("unchecked")
+          List<File> files = (List<File>) dtde.getTransferable()
+              .getTransferData(DataFlavor.javaFileListFlavor);
+
+          if (!files.isEmpty()) {
+            File file = files.get(0);
+            String fileName = file.getName().toLowerCase();
+            if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png")) {
+              controller.caricaImmagineDaFile(file);
+            } else {
+              JOptionPane.showMessageDialog(ModificaPropostaDialog.this,
+                  "Formato non supportato. Usa JPG o PNG.",
+                  "Errore",
+                  JOptionPane.ERROR_MESSAGE);
+            }
+          }
+          dtde.dropComplete(true);
+        } catch (Exception ex) {
+          dtde.dropComplete(false);
+          JOptionPane.showMessageDialog(ModificaPropostaDialog.this,
+              "Errore durante il caricamento: " + ex.getMessage(),
+              "Errore",
+              JOptionPane.ERROR_MESSAGE);
+        } finally {
+          pnlImmagine.setBorder(normalBorder);
+          pnlImmagine.setBackground(null);
+        }
+      }
+    });
   }
 
   private void popolaDati() {

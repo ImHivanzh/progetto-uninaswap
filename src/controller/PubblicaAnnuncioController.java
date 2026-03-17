@@ -96,7 +96,7 @@ public class PubblicaAnnuncioController {
           break;
 
         case SCAMBIO:
-          String oggettoRichiesto = "";
+          String oggettoRichiesto = "Da concordare";
           nuovoAnnuncio = new Scambio(titolo, descrizione, categoria, utente, oggettoRichiesto);
           break;
 

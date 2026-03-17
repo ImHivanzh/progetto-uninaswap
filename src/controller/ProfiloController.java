@@ -137,8 +137,14 @@ public class ProfiloController {
 
     view.addRecensioneRicevutaListener(e -> handleRecensioneDaProposta(true));
     view.addRecensioneInviataListener(e -> handleRecensioneDaProposta(false));
-    view.addModificaPropostaListener(e -> propostaHandler.handleModificaProposta(validaPropostaPerModifica()));
-    view.addAnnullaPropostaListener(e -> propostaHandler.handleAnnullaProposta(validaPropostaPerModifica()));
+    view.addModificaPropostaListener(e -> {
+      propostaHandler.handleModificaProposta(validaPropostaPerModifica());
+      caricaDati();
+    });
+    view.addAnnullaPropostaListener(e -> {
+      propostaHandler.handleAnnullaProposta(validaPropostaPerModifica());
+      caricaDati();
+    });
     view.addGeneraReportListener(e -> apriReportProposte());
   }
 
