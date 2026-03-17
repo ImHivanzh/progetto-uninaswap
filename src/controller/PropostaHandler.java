@@ -292,8 +292,7 @@ public class PropostaHandler {
       return true;
     }
     if (isRicevuta && scelta == 1) {
-      aggiornaEsitoProposta(proposta, proposta.utenteCoinvolto(),
-                           false, false, "Proposta rifiutata.");
+      eliminaProposta(proposta, proposta.utenteCoinvolto(), "Proposta rifiutata.");
       return true;
     }
 
