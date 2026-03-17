@@ -243,12 +243,14 @@ public class Profilo extends BaseFrame {
     int selectedRow = getSelectedPropostaInviataRow();
     boolean hasSelection = selectedRow >= 0;
     boolean isConcluso = false;
+    boolean isInAttesa = false;
 
     if (hasSelection && selectedRow < modelProposteInviate.getRowCount()) {
       Object statoObj = modelProposteInviate.getValueAt(selectedRow, 4);
       if (statoObj != null) {
         String stato = statoObj.toString().trim().toLowerCase();
         isConcluso = stato.startsWith("concluso");
+        isInAttesa = stato.startsWith("in attesa");
       }
     }
 
@@ -256,10 +258,10 @@ public class Profilo extends BaseFrame {
       btnRecensioneInviata.setEnabled(hasSelection && isConcluso);
     }
     if (btnModificaProposta != null) {
-      btnModificaProposta.setEnabled(hasSelection);
+      btnModificaProposta.setEnabled(hasSelection && isInAttesa);
     }
     if (btnAnnullaProposta != null) {
-      btnAnnullaProposta.setEnabled(hasSelection);
+      btnAnnullaProposta.setEnabled(hasSelection && isInAttesa);
     }
   }
 
