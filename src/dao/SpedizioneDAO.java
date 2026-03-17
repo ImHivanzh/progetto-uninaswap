@@ -73,13 +73,13 @@ public class SpedizioneDAO {
   public model.Spedizione getSpedizioneByAnnuncio(int idAnnuncio) throws DatabaseException {
     if (con == null) throw new DatabaseException("Connessione al database non disponibile.");
 
-    String sql = "SELECT idspedizione, datainvio, dataarrivo, indirizzo, numerotelefono, spedito, idannuncio FROM spedizione WHERE idannuncio = ?";
+    String sql = "SELECT idspedito, datainvio, dataarrivo, indirizzo, numerotelefono, spedito, idannuncio FROM spedizione WHERE idannuncio = ?";
     try (PreparedStatement ps = con.prepareStatement(sql)) {
       ps.setInt(1, idAnnuncio);
       try (ResultSet rs = ps.executeQuery()) {
         if (rs.next()) {
           model.Spedizione spedizione = new model.Spedizione();
-          spedizione.setIdSpedizione(rs.getInt("idspedizione"));
+          spedizione.setIdSpedizione(rs.getInt("idspedito"));
           spedizione.setIndirizzo(rs.getString("indirizzo"));
           spedizione.setNumeroTelefono(rs.getString("numerotelefono"));
           spedizione.setDataInvio(rs.getDate("datainvio"));
