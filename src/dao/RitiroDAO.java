@@ -116,4 +116,23 @@ public class RitiroDAO {
       throw new DatabaseException("Errore durante l'aggiornamento dello stato del ritiro", e);
     }
   }
+
+  /**
+   * Elimina un ritiro per annuncio.
+   *
+   * @param idAnnuncio id annuncio
+   * @return true quando eliminazione riesce
+   * @throws DatabaseException quando eliminazione fallisce
+   */
+  public boolean eliminaRitiro(int idAnnuncio) throws DatabaseException {
+    if (con == null) throw new DatabaseException("Connessione al database non disponibile.");
+
+    String sql = "DELETE FROM ritiro WHERE idannuncio = ?";
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
+      ps.setInt(1, idAnnuncio);
+      return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+      throw new DatabaseException("Errore durante l'eliminazione del ritiro", e);
+    }
+  }
 }

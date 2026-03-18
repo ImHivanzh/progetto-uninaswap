@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -28,6 +29,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -70,6 +72,18 @@ public class PubblicaAnnuncio extends BaseFrame {
    * Pulsante carica immagine.
    */
   private JButton btnCaricaImg;
+  /**
+   * Pannello modalità consegna.
+   */
+  private JPanel pnlConsegna;
+  /**
+   * Radio button ritiro.
+   */
+  private JRadioButton rbRitiro;
+  /**
+   * Radio button spedizione.
+   */
+  private JRadioButton rbSpedizione;
 
   /**
    * Pannello preview immagini.
@@ -114,6 +128,11 @@ public class PubblicaAnnuncio extends BaseFrame {
   private void initUI() {
     cmbCategoria.setModel(new DefaultComboBoxModel<>(Categoria.values()));
     cmbTipo.setModel(new DefaultComboBoxModel<>(TipoAnnuncio.values()));
+
+    // Raggruppa radio button per modalità consegna
+    ButtonGroup groupConsegna = new ButtonGroup();
+    groupConsegna.add(rbRitiro);
+    groupConsegna.add(rbSpedizione);
 
     btnPubblica.addActionListener(e -> {
       PubblicaAnnuncioController controller = new PubblicaAnnuncioController(PubblicaAnnuncio.this);
@@ -289,6 +308,15 @@ public class PubblicaAnnuncio extends BaseFrame {
   }
 
   /**
+   * Restituisce se è selezionata la spedizione.
+   *
+   * @return true se spedizione, false se ritiro
+   */
+  public boolean isSpedizioneSelezionata() {
+    return rbSpedizione.isSelected();
+  }
+
+  /**
    * Aggiorna pannello preview con miniature immagini selezionate.
    */
   private void updateImagePreviews() {
@@ -297,8 +325,20 @@ public class PubblicaAnnuncio extends BaseFrame {
     for (File imgFile : immaginiSelezionate) {
       try {
         ImageIcon icon = new ImageIcon(imgFile.getAbsolutePath());
-        Image img = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        JLabel lblThumb = new JLabel(new ImageIcon(img));
+        int origW = icon.getIconWidth();
+        int origH = icon.getIconHeight();
+
+        ImageIcon thumbIcon;
+        if (origW > 0 && origH > 0) {
+          double scale = Math.min(100.0 / origW, 100.0 / origH);
+          int targetW = (int) Math.round(origW * scale);
+          int targetH = (int) Math.round(origH * scale);
+          Image img = icon.getImage().getScaledInstance(targetW, targetH, Image.SCALE_SMOOTH);
+          thumbIcon = new ImageIcon(img);
+        } else {
+          thumbIcon = icon;
+        }
+        JLabel lblThumb = new JLabel(thumbIcon);
         lblThumb.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
         pnlPreview.add(lblThumb);
       } catch (Exception ex) {

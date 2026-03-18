@@ -141,22 +141,18 @@ public class ConsegnaHelper {
                                java.util.function.Consumer<String> onError) {
     JTextField indirizzoField = new JTextField(24);
     JTextField telefonoField = new JTextField(12);
-    JSpinner dataInvioSpinner = FormHelper.createDateSpinner();
-    JSpinner dataArrivoSpinner = FormHelper.createDateSpinner();
 
     JPanel panel = new JPanel(new GridBagLayout());
     GridBagConstraints gbc = FormHelper.createFormConstraints();
-    FormHelper.addFormRow(panel, gbc, 0, "Indirizzo:", indirizzoField);
+    FormHelper.addFormRow(panel, gbc, 0, "Indirizzo di consegna:", indirizzoField);
     FormHelper.addFormRow(panel, gbc, 1, "Numero telefono:", telefonoField);
-    FormHelper.addFormRow(panel, gbc, 2, "Data invio:", dataInvioSpinner);
-    FormHelper.addFormRow(panel, gbc, 3, "Data arrivo:", dataArrivoSpinner);
 
     boolean inputValido = false;
     while (!inputValido) {
       int result = JOptionPane.showConfirmDialog(
               parent,
               panel,
-              "Dettagli spedizione",
+              "Inserisci i tuoi dati per la spedizione",
               JOptionPane.OK_CANCEL_OPTION,
               JOptionPane.PLAIN_MESSAGE);
       if (result != JOptionPane.OK_OPTION) {
@@ -165,14 +161,18 @@ public class ConsegnaHelper {
 
       String indirizzo = indirizzoField.getText().trim();
       String telefono = telefonoField.getText().trim();
-      java.util.Date dataInvio = (java.util.Date) dataInvioSpinner.getValue();
-      java.util.Date dataArrivo = (java.util.Date) dataArrivoSpinner.getValue();
 
-      String errore = validaInputSpedizione(indirizzo, telefono, dataInvio, dataArrivo);
+      String errore = validaInputSpedizione(indirizzo, telefono);
       if (errore != null) {
         onError.accept(errore);
         continue;
       }
+
+      // Imposta date predefinite: oggi per invio, oggi+7 giorni per arrivo stimato
+      java.util.Calendar cal = java.util.Calendar.getInstance();
+      java.util.Date dataInvio = cal.getTime();
+      cal.add(java.util.Calendar.DAY_OF_MONTH, 7);
+      java.util.Date dataArrivo = cal.getTime();
 
       SpedizioneData data = new SpedizioneData(indirizzo, telefono, dataInvio, dataArrivo);
       inputValido = salvaSpedizioneDB(idAnnuncio, idUtente, data, onSuccess, onError);
@@ -196,18 +196,12 @@ public class ConsegnaHelper {
     }
   }
 
-  private String validaInputSpedizione(String indirizzo, String telefono, java.util.Date dataInvio, java.util.Date dataArrivo) {
+  private String validaInputSpedizione(String indirizzo, String telefono) {
     if (indirizzo.isEmpty()) {
       return "Indirizzo obbligatorio.";
     }
     if (!DataCheck.isValidPhoneNumber(telefono)) {
       return "Numero di telefono non valido (richieste 10 cifre).";
-    }
-    if (dataInvio == null || dataArrivo == null) {
-      return "Inserisci date valide.";
-    }
-    if (dataArrivo.before(dataInvio)) {
-      return "La data di arrivo non può essere precedente alla data di invio.";
     }
     return null;
   }

@@ -66,6 +66,7 @@ public class PubblicaAnnuncioController {
     String descrizione = view.getDescrizione().trim();
     Categoria categoria = view.getCategoriaSelezionata();
     TipoAnnuncio tipo = view.getTipoSelezionato();
+    boolean spedizione = view.isSpedizioneSelezionata();
 
     List<File> immaginiFiles = view.getImmagini();
 
@@ -85,6 +86,7 @@ public class PubblicaAnnuncioController {
           vendita.setCategoria(categoria);
           vendita.setTipoAnnuncio(TipoAnnuncio.VENDITA);
           vendita.setUtente(utente);
+          vendita.setSpedizione(spedizione);
 
           String prezzoStr = view.getPrezzo().trim();
           if (prezzoStr.isEmpty()) {
@@ -98,14 +100,17 @@ public class PubblicaAnnuncioController {
         case SCAMBIO:
           String oggettoRichiesto = "Da concordare";
           nuovoAnnuncio = new Scambio(titolo, descrizione, categoria, utente, oggettoRichiesto);
+          nuovoAnnuncio.setSpedizione(spedizione);
           break;
 
         case REGALO:
           nuovoAnnuncio = new Regalo(titolo, descrizione, categoria, utente);
+          nuovoAnnuncio.setSpedizione(spedizione);
           break;
 
         default:
           nuovoAnnuncio = new Annuncio(utente, titolo, descrizione, categoria, tipo);
+          nuovoAnnuncio.setSpedizione(spedizione);
       }
 
       int idAnnuncioCreato = annuncioDAO.pubblicaAnnuncio(nuovoAnnuncio);

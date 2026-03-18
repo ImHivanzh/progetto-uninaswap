@@ -115,4 +115,23 @@ public class SpedizioneDAO {
       throw new DatabaseException("Errore durante l'aggiornamento dello stato della spedizione", e);
     }
   }
+
+  /**
+   * Elimina una spedizione per annuncio.
+   *
+   * @param idAnnuncio id annuncio
+   * @return true quando eliminazione riesce
+   * @throws DatabaseException quando eliminazione fallisce
+   */
+  public boolean eliminaSpedizione(int idAnnuncio) throws DatabaseException {
+    if (con == null) throw new DatabaseException("Connessione al database non disponibile.");
+
+    String sql = "DELETE FROM spedizione WHERE idannuncio = ?";
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
+      ps.setInt(1, idAnnuncio);
+      return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+      throw new DatabaseException("Errore durante l'eliminazione della spedizione", e);
+    }
+  }
 }

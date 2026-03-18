@@ -10,6 +10,11 @@ public enum StatoConsegna {
     IN_ATTESA("In attesa"),
 
     /**
+     * Proposta accettata, in attesa dei dati di spedizione.
+     */
+    ACCETTATA("Accettata, in attesa dei dati di spedizione"),
+
+    /**
      * Da spedire.
      */
     DA_SPEDIRE("Da spedire"),

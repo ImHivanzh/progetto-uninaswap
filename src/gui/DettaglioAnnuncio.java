@@ -204,15 +204,29 @@ public class DettaglioAnnuncio extends JFrame {
    * @param icon icona immagine
    */
   public void setImmagine(ImageIcon icon) {
-    int w = lblImmagine.getWidth();
-    int h = lblImmagine.getHeight();
+    int maxW = lblImmagine.getWidth();
+    int maxH = lblImmagine.getHeight();
 
-    if (w <= 0 || h <= 0) {
-      w = 400;
-      h = 300;
+    if (maxW <= 0 || maxH <= 0) {
+      maxW = 400;
+      maxH = 300;
     }
 
-    Image img = icon.getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH);
+    int origW = icon.getIconWidth();
+    int origH = icon.getIconHeight();
+
+    if (origW <= 0 || origH <= 0) {
+      lblImmagine.setIcon(icon);
+      lblImmagine.setText("");
+      return;
+    }
+
+    // Calcola scala per preservare aspect ratio
+    double scale = Math.min((double) maxW / origW, (double) maxH / origH);
+    int targetW = (int) Math.round(origW * scale);
+    int targetH = (int) Math.round(origH * scale);
+
+    Image img = icon.getImage().getScaledInstance(targetW, targetH, Image.SCALE_SMOOTH);
     lblImmagine.setIcon(new ImageIcon(img));
     lblImmagine.setText("");
   }

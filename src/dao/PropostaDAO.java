@@ -41,7 +41,11 @@ public class PropostaDAO {
     private static final String SQL_PROPOSTE_RICEVUTE =
             "SELECT a.idannuncio, a.titolo, a.tipoannuncio, a.descrizione, a.categoria, a.stato, a.spedizione, " +
             "       u.idutente, u.nomeutente AS utente, u.numerotelefono, " +
-            "       ('Offerta: ' || COALESCE(CAST(v.controofferta AS VARCHAR), 'N/A')) AS dettaglio, " +
+            "       (CASE " +
+            "         WHEN v.messaggio IS NOT NULL AND v.messaggio != '' " +
+            "         THEN 'Offerta: €' || CAST(v.controofferta AS VARCHAR) || ' | Messaggio: ' || v.messaggio " +
+            "         ELSE 'Offerta: €' || CAST(v.controofferta AS VARCHAR) " +
+            "        END) AS dettaglio, " +
             "       v.accettato, v.inattesa, CAST(NULL AS bytea) AS immagine " +
             "  FROM vendita v " +
             "  JOIN annuncio a ON v.idannuncio = a.idannuncio " +
@@ -50,7 +54,7 @@ public class PropostaDAO {
             "UNION ALL " +
             "SELECT a.idannuncio, a.titolo, a.tipoannuncio, a.descrizione, a.categoria, a.stato, a.spedizione, " +
             "       u.idutente, u.nomeutente AS utente, u.numerotelefono, " +
-            "       ('Scambio proposto: ' || COALESCE(s.propscambio, 'N/A')) AS dettaglio, " +
+            "       ('Proposta scambio: ' || COALESCE(s.propscambio, 'N/A')) AS dettaglio, " +
             "       s.accettato, s.inattesa, s.immagine AS immagine " +
             "  FROM scambio s " +
             "  JOIN annuncio a ON s.idannuncio = a.idannuncio " +
@@ -59,7 +63,11 @@ public class PropostaDAO {
             "UNION ALL " +
             "SELECT a.idannuncio, a.titolo, a.tipoannuncio, a.descrizione, a.categoria, a.stato, a.spedizione, " +
             "       u.idutente, u.nomeutente AS utente, u.numerotelefono, " +
-            "       ('Richiesta regalo' || COALESCE(' del ' || r.dataprenotazione, '')) AS dettaglio, " +
+            "       (CASE " +
+            "         WHEN r.messaggio IS NOT NULL AND r.messaggio != '' " +
+            "         THEN 'Richiesta regalo | Messaggio: ' || r.messaggio " +
+            "         ELSE 'Richiesta regalo' " +
+            "        END) AS dettaglio, " +
             "       r.accettato, r.inattesa, CAST(NULL AS bytea) AS immagine " +
             "  FROM regalo r " +
             "  JOIN annuncio a ON r.idannuncio = a.idannuncio " +
@@ -73,7 +81,11 @@ public class PropostaDAO {
     private static final String SQL_PROPOSTE_INVIATE =
             "SELECT a.idannuncio, a.titolo, a.tipoannuncio, a.descrizione, a.categoria, a.stato, a.spedizione, " +
             "       u.idutente, u.nomeutente AS utente, u.numerotelefono, " +
-            "       ('Offerta: ' || COALESCE(CAST(v.controofferta AS VARCHAR), 'N/A')) AS dettaglio, " +
+            "       (CASE " +
+            "         WHEN v.messaggio IS NOT NULL AND v.messaggio != '' " +
+            "         THEN 'Offerta: €' || CAST(v.controofferta AS VARCHAR) || ' | Messaggio: ' || v.messaggio " +
+            "         ELSE 'Offerta: €' || CAST(v.controofferta AS VARCHAR) " +
+            "        END) AS dettaglio, " +
             "       v.accettato, v.inattesa, CAST(NULL AS bytea) AS immagine " +
             "  FROM vendita v " +
             "  JOIN annuncio a ON v.idannuncio = a.idannuncio " +
@@ -82,7 +94,7 @@ public class PropostaDAO {
             "UNION ALL " +
             "SELECT a.idannuncio, a.titolo, a.tipoannuncio, a.descrizione, a.categoria, a.stato, a.spedizione, " +
             "       u.idutente, u.nomeutente AS utente, u.numerotelefono, " +
-            "       ('Scambio proposto: ' || COALESCE(s.propscambio, 'N/A')) AS dettaglio, " +
+            "       ('Proposta scambio: ' || COALESCE(s.propscambio, 'N/A')) AS dettaglio, " +
             "       s.accettato, s.inattesa, s.immagine AS immagine " +
             "  FROM scambio s " +
             "  JOIN annuncio a ON s.idannuncio = a.idannuncio " +
@@ -91,7 +103,11 @@ public class PropostaDAO {
             "UNION ALL " +
             "SELECT a.idannuncio, a.titolo, a.tipoannuncio, a.descrizione, a.categoria, a.stato, a.spedizione, " +
             "       u.idutente, u.nomeutente AS utente, u.numerotelefono, " +
-            "       ('Richiesta regalo' || COALESCE(' del ' || r.dataprenotazione, '')) AS dettaglio, " +
+            "       (CASE " +
+            "         WHEN r.messaggio IS NOT NULL AND r.messaggio != '' " +
+            "         THEN 'Richiesta regalo | Messaggio: ' || r.messaggio " +
+            "         ELSE 'Richiesta regalo' " +
+            "        END) AS dettaglio, " +
             "       r.accettato, r.inattesa, CAST(NULL AS bytea) AS immagine " +
             "  FROM regalo r " +
             "  JOIN annuncio a ON r.idannuncio = a.idannuncio " +
@@ -122,18 +138,38 @@ public class PropostaDAO {
      */
     public boolean inserisciPropostaVendita(Utente utente, Annuncio annuncio, double controOfferta)
             throws DatabaseException {
+        return inserisciPropostaVendita(utente, annuncio, controOfferta, null);
+    }
+
+    /**
+     * Inserisce una proposta di vendita per un annuncio con messaggio opzionale.
+     *
+     * @param utente utente proponente
+     * @param annuncio annuncio target
+     * @param controOfferta controofferta proposta
+     * @param messaggio messaggio opzionale per il venditore
+     * @return true se l'inserimento ha successo
+     * @throws DatabaseException se l'inserimento fallisce
+     */
+    public boolean inserisciPropostaVendita(Utente utente, Annuncio annuncio, double controOfferta, String messaggio)
+            throws DatabaseException {
         Validator.requireNonNull(utente, COL_UTENTE);
         Validator.requireNonNull(annuncio, COL_ANNUNCIO);
         Validator.requirePositive(utente.getIdUtente(), COL_ID_UTENTE);
         Validator.requirePositive(annuncio.getIdAnnuncio(), COL_ID_ANNUNCIO);
 
-        String sql = "INSERT INTO vendita(idutente, idannuncio, controofferta, accettato) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO vendita(idutente, idannuncio, controofferta, messaggio, accettato) VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, utente.getIdUtente());
             ps.setInt(2, annuncio.getIdAnnuncio());
             ps.setDouble(3, controOfferta);
-            ps.setBoolean(4, false);
+            if (messaggio != null && !messaggio.trim().isEmpty()) {
+                ps.setString(4, messaggio.trim());
+            } else {
+                ps.setNull(4, Types.VARCHAR);
+            }
+            ps.setBoolean(5, false);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DatabaseException("Errore durante l'inserimento della proposta di vendita", e);
@@ -201,18 +237,36 @@ public class PropostaDAO {
      * @throws DatabaseException se l'inserimento fallisce
      */
     public boolean inserisciPropostaRegalo(Utente utente, Annuncio annuncio) throws DatabaseException {
+        return inserisciPropostaRegalo(utente, annuncio, null);
+    }
+
+    /**
+     * Inserisce una richiesta di regalo per un annuncio con messaggio opzionale.
+     *
+     * @param utente utente richiedente
+     * @param annuncio annuncio target
+     * @param messaggio messaggio opzionale per il donatore
+     * @return true se l'inserimento ha successo
+     * @throws DatabaseException se l'inserimento fallisce
+     */
+    public boolean inserisciPropostaRegalo(Utente utente, Annuncio annuncio, String messaggio) throws DatabaseException {
         Validator.requireNonNull(utente, COL_UTENTE);
         Validator.requireNonNull(annuncio, COL_ANNUNCIO);
         Validator.requirePositive(utente.getIdUtente(), COL_ID_UTENTE);
         Validator.requirePositive(annuncio.getIdAnnuncio(), COL_ID_ANNUNCIO);
 
-        String sql = "INSERT INTO regalo(dataprenotazione, accettato, idutente, idannuncio) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO regalo(dataprenotazione, accettato, messaggio, idutente, idannuncio) VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
             ps.setBoolean(2, false);
-            ps.setInt(3, utente.getIdUtente());
-            ps.setInt(4, annuncio.getIdAnnuncio());
+            if (messaggio != null && !messaggio.trim().isEmpty()) {
+                ps.setString(3, messaggio.trim());
+            } else {
+                ps.setNull(3, Types.VARCHAR);
+            }
+            ps.setInt(4, utente.getIdUtente());
+            ps.setInt(5, annuncio.getIdAnnuncio());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DatabaseException("Errore durante l'inserimento della proposta di regalo", e);

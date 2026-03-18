@@ -59,7 +59,7 @@ public class AnnuncioDAO {
       throw new DatabaseException("Connessione al database non disponibile.");
     }
 
-    String sql = "INSERT INTO annuncio (titolo, descrizione, categoria, idutente, tipoannuncio, prezzo, oggetto_richiesto, stato) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO annuncio (titolo, descrizione, categoria, idutente, tipoannuncio, prezzo, oggetto_richiesto, stato, spedizione) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
       ps.setString(1, annuncio.getTitolo());
@@ -81,6 +81,13 @@ public class AnnuncioDAO {
       }
 
       ps.setBoolean(8, true);
+
+      // Imposta modalità consegna (spedizione = true, ritiro = false)
+      if (annuncio.getSpedizione() != null) {
+        ps.setBoolean(9, annuncio.getSpedizione());
+      } else {
+        ps.setBoolean(9, false); // Default: ritiro
+      }
 
       int rows = ps.executeUpdate();
 

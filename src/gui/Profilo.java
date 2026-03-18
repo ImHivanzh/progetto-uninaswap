@@ -286,12 +286,14 @@ public class Profilo extends BaseFrame {
                 table, value, isSelected, hasFocus, row, column);
         if (!isSelected) {
           String testo = value != null ? value.toString().trim().toLowerCase() : "";
-          if (testo.startsWith("accettata")) {
+          if (testo.startsWith("accettata") || testo.startsWith("da spedire") || testo.startsWith("da ritirare")) {
             comp.setForeground(new Color(0, 140, 0));
           } else if (testo.startsWith("rifiutato")) {
             comp.setForeground(new Color(180, 0, 0));
           } else if (testo.startsWith("in attesa")) {
             comp.setForeground(new Color(200, 140, 0));
+          } else if (testo.startsWith("concluso")) {
+            comp.setForeground(new Color(0, 100, 200));
           } else {
             comp.setForeground(table.getForeground());
           }

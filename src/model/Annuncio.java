@@ -212,6 +212,15 @@ public class Annuncio {
     }
 
     /**
+     * Restituisce modalità consegna.
+     *
+     * @return true per spedizione, false per ritiro, null se non definito
+     */
+    public Boolean getSpedizione() {
+        return spedizione;
+    }
+
+    /**
      * Restituisce etichetta consegna.
      *
      * @return etichetta consegna

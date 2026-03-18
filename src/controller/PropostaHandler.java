@@ -437,7 +437,7 @@ public class PropostaHandler {
     }
 
     if (spedizioneDAO == null || ritiroDAO == null || proposta.annuncio() == null) {
-      return StatoConsegna.IN_ATTESA;
+      return StatoConsegna.ACCETTATA;
     }
 
     try {
@@ -451,11 +451,11 @@ public class PropostaHandler {
       if (ritiro != null) {
         return ritiro.isRitirato() ? StatoConsegna.CONCLUSO : StatoConsegna.DA_RITIRARE;
       }
-      return StatoConsegna.IN_ATTESA;
+      return StatoConsegna.ACCETTATA;
     } catch (DatabaseException e) {
       view.mostraErrore("Errore nel controllo stato proposta: " + e.getMessage());
       Logger.error("Errore controllo stato proposta", e);
-      return StatoConsegna.IN_ATTESA;
+      return StatoConsegna.ACCETTATA;
     }
   }
 
@@ -542,17 +542,42 @@ public class PropostaHandler {
     }
 
     int idAnnuncio = proposta.annuncio().getIdAnnuncio();
+    Boolean spedizioneAnnuncio = proposta.annuncio().getSpedizione();
+
+    // Log per debug
+    Logger.info("inserisciDettagliConsegna - idAnnuncio: " + idAnnuncio +
+                ", spedizione: " + spedizioneAnnuncio);
 
     try {
-      model.Spedizione spedizione = spedizioneDAO.getSpedizioneByAnnuncio(idAnnuncio);
-      if (spedizione != null) {
-        consegnaHelper.mostraDettagliSpedizione(spedizione);
+      model.Spedizione spedizioneEsistente = spedizioneDAO.getSpedizioneByAnnuncio(idAnnuncio);
+      model.Ritiro ritiroEsistente = ritiroDAO.getRitiroByAnnuncio(idAnnuncio);
+
+      // Log per debug
+      Logger.info("Record esistenti - Spedizione: " + (spedizioneEsistente != null) +
+                  ", Ritiro: " + (ritiroEsistente != null));
+
+      // CORREZIONE BUG: Pulisci record inconsistenti
+      // Se l'annuncio prevede spedizione ma esiste un ritiro, elimina il ritiro
+      if (Boolean.TRUE.equals(spedizioneAnnuncio) && ritiroEsistente != null) {
+        Logger.info("PULIZIA: Eliminazione ritiro inconsistente per annuncio " + idAnnuncio);
+        ritiroDAO.eliminaRitiro(idAnnuncio);
+        ritiroEsistente = null;
+      }
+      // Se l'annuncio prevede ritiro ma esiste una spedizione, elimina la spedizione
+      if (Boolean.FALSE.equals(spedizioneAnnuncio) && spedizioneEsistente != null) {
+        Logger.info("PULIZIA: Eliminazione spedizione inconsistente per annuncio " + idAnnuncio);
+        spedizioneDAO.eliminaSpedizione(idAnnuncio);
+        spedizioneEsistente = null;
+      }
+
+      // Se esistono già dettagli di consegna corretti, mostrali
+      if (spedizioneEsistente != null) {
+        consegnaHelper.mostraDettagliSpedizione(spedizioneEsistente);
         return;
       }
 
-      model.Ritiro ritiro = ritiroDAO.getRitiroByAnnuncio(idAnnuncio);
-      if (ritiro != null) {
-        consegnaHelper.mostraDettagliRitiro(ritiro);
+      if (ritiroEsistente != null) {
+        consegnaHelper.mostraDettagliRitiro(ritiroEsistente);
         return;
       }
     } catch (DatabaseException e) {
@@ -561,16 +586,15 @@ public class PropostaHandler {
       return;
     }
 
-    Object[] opzioni = {"Spedizione", "Ritiro", "Annulla"};
-    int scelta = JOptionPane.showOptionDialog(view,
-        "Seleziona il metodo di consegna per la proposta accettata.",
-        TESTO_DETTAGLI_CONSEGNA, JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
-        null, opzioni, opzioni[0]);
-
-    if (scelta == 0) {
+    // Rispetta la preferenza di consegna dell'annuncio
+    if (Boolean.TRUE.equals(spedizioneAnnuncio)) {
+      // L'annuncio prevede solo spedizione
+      Logger.info("Creazione dettagli SPEDIZIONE per annuncio " + idAnnuncio);
       consegnaHelper.salvaSpedizione(idAnnuncio, utenteTarget.getIdUtente(),
           view::mostraMessaggio, view::mostraErrore);
-    } else if (scelta == 1) {
+    } else {
+      // L'annuncio prevede solo ritiro (spedizione = false o null)
+      Logger.info("Creazione dettagli RITIRO per annuncio " + idAnnuncio);
       consegnaHelper.salvaRitiro(idAnnuncio,
           view::mostraMessaggio, view::mostraErrore);
     }

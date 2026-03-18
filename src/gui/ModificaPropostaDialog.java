@@ -225,8 +225,18 @@ public class ModificaPropostaDialog extends JDialog {
   public void aggiornaAnteprimaImmagine(byte[] imgData) {
     if (imgData != null) {
       ImageIcon icon = new ImageIcon(imgData);
-      Image img = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-      lblImagePreview.setIcon(new ImageIcon(img));
+      int origW = icon.getIconWidth();
+      int origH = icon.getIconHeight();
+
+      if (origW > 0 && origH > 0) {
+        double scale = Math.min(100.0 / origW, 100.0 / origH);
+        int targetW = (int) Math.round(origW * scale);
+        int targetH = (int) Math.round(origH * scale);
+        Image img = icon.getImage().getScaledInstance(targetW, targetH, Image.SCALE_SMOOTH);
+        lblImagePreview.setIcon(new ImageIcon(img));
+      } else {
+        lblImagePreview.setIcon(icon);
+      }
       lblImagePreview.setText("");
     }
   }

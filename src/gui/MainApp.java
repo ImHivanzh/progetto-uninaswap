@@ -596,12 +596,24 @@ public class MainApp extends BaseFrame {
    * @param height target altezza
    * @return ridimensionata icona o null
    */
-  private ImageIcon creaIcona(byte[] bytes, int width, int height) {
+  private ImageIcon creaIcona(byte[] bytes, int maxWidth, int maxHeight) {
     if (bytes == null || bytes.length == 0) {
       return null;
     }
     ImageIcon icon = new ImageIcon(bytes);
-    Image img = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+    int origW = icon.getIconWidth();
+    int origH = icon.getIconHeight();
+
+    if (origW <= 0 || origH <= 0) {
+      return icon;
+    }
+
+    // Preserva aspect ratio
+    double scale = Math.min((double) maxWidth / origW, (double) maxHeight / origH);
+    int targetW = (int) Math.round(origW * scale);
+    int targetH = (int) Math.round(origH * scale);
+
+    Image img = icon.getImage().getScaledInstance(targetW, targetH, Image.SCALE_SMOOTH);
     return new ImageIcon(img);
   }
 

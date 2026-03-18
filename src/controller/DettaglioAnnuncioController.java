@@ -229,14 +229,16 @@ public class DettaglioAnnuncioController {
                     JOptionPane.WARNING_MESSAGE);
             return;
           }
-          successo = propostaDAO.inserisciPropostaVendita(utenteCorrente, annuncio, prezzo);
+          String messaggioVendita = descrizione != null ? descrizione.trim() : null;
+          successo = propostaDAO.inserisciPropostaVendita(utenteCorrente, annuncio, prezzo, messaggioVendita);
           break;
         case SCAMBIO:
           String propostaScambio = descrizione != null ? descrizione.trim() : "";
           successo = propostaDAO.inserisciPropostaScambio(utenteCorrente, annuncio, propostaScambio, immagine);
           break;
         case REGALO:
-          successo = propostaDAO.inserisciPropostaRegalo(utenteCorrente, annuncio);
+          String messaggioRegalo = descrizione != null ? descrizione.trim() : null;
+          successo = propostaDAO.inserisciPropostaRegalo(utenteCorrente, annuncio, messaggioRegalo);
           break;
       }
 
