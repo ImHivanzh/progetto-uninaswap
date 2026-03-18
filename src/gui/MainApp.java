@@ -2,6 +2,7 @@ package gui;
 
 import model.Annuncio;
 import model.Vendita;
+import model.enums.Categoria;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -20,6 +21,7 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -307,6 +309,14 @@ public class MainApp extends BaseFrame {
    */
   private void initFiltri() {
     if (categoryList != null) {
+      // Popola lista categorie dinamicamente dall'enum
+      DefaultListModel<String> model = new DefaultListModel<>();
+      model.addElement(utils.Constanti.CATEGORIA_TUTTE);
+      for (Categoria cat : Categoria.values()) {
+        model.addElement(cat.toString());
+      }
+      categoryList.setModel(model);
+
       categoryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       if (categoryList.getSelectedIndex() < 0 && categoryList.getModel().getSize() > 0) {
         categoryList.setSelectedIndex(0);
