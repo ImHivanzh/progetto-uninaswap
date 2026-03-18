@@ -20,6 +20,10 @@ public class Recensione {
      * Utente recensito.
      */
     private Utente utenteRecensito;
+    /**
+     * ID annuncio associato alla recensione.
+     */
+    private Integer idAnnuncio;
 
     /**
      * Crea vuoto recensione.
@@ -41,6 +45,24 @@ public class Recensione {
         this.descrizione = descrizione;
         this.utenteRecensore = utenteRecensore;
         this.utenteRecensito = utenteRecensito;
+    }
+
+    /**
+     * Crea recensione con annuncio associato.
+     *
+     * @param voto valutazione valore (deve essere tra 1 e 5)
+     * @param descrizione testo recensione
+     * @param utenteRecensore recensore
+     * @param utenteRecensito utente recensito
+     * @param idAnnuncio ID annuncio per cui si lascia la recensione
+     * @throws IllegalArgumentException se voto non è tra 1 e 5
+     */
+    public Recensione(int voto, String descrizione, Utente utenteRecensore, Utente utenteRecensito, int idAnnuncio) {
+        setVoto(voto);
+        this.descrizione = descrizione;
+        this.utenteRecensore = utenteRecensore;
+        this.utenteRecensito = utenteRecensito;
+        this.idAnnuncio = idAnnuncio;
     }
 
     /**
@@ -117,5 +139,23 @@ public class Recensione {
      */
     public void setUtenteRecensito(Utente utenteRecensito) {
         this.utenteRecensito = utenteRecensito;
+    }
+
+    /**
+     * Restituisce ID annuncio associato.
+     *
+     * @return ID annuncio
+     */
+    public Integer getIdAnnuncio() {
+        return idAnnuncio;
+    }
+
+    /**
+     * Imposta ID annuncio associato.
+     *
+     * @param idAnnuncio ID annuncio
+     */
+    public void setIdAnnuncio(Integer idAnnuncio) {
+        this.idAnnuncio = idAnnuncio;
     }
 }

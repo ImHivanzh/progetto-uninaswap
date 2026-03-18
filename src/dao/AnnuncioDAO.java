@@ -106,7 +106,7 @@ public class AnnuncioDAO {
   }
 
   /**
-   * Restituisce tutti gli annunci.
+   * Restituisce tutti gli annunci attivi (esclusi quelli conclusi).
    *
    * @return lista degli annunci
    */
@@ -116,7 +116,15 @@ public class AnnuncioDAO {
     String sql = "SELECT a.idannuncio, a.titolo, a.descrizione, a.categoria, a.tipoannuncio, a.prezzo, a.oggetto_richiesto, a.stato, a.spedizione, "
             + "u.idutente, u.nomeutente, u.mail, u.numerotelefono "
             + "FROM annuncio a "
-            + "JOIN utente u ON a.idutente = u.idutente";
+            + "JOIN utente u ON a.idutente = u.idutente "
+            + "WHERE a.stato = true "
+            + "AND NOT EXISTS ("
+            + "  SELECT 1 FROM vendita v WHERE v.idannuncio = a.idannuncio AND v.accettato = TRUE "
+            + "  UNION ALL "
+            + "  SELECT 1 FROM scambio s WHERE s.idannuncio = a.idannuncio AND s.accettato = TRUE "
+            + "  UNION ALL "
+            + "  SELECT 1 FROM regalo r WHERE r.idannuncio = a.idannuncio AND r.accettato = TRUE"
+            + ")";
 
     try (PreparedStatement pstmt = con.prepareStatement(sql);
          ResultSet rs = pstmt.executeQuery()) {
@@ -134,6 +142,7 @@ public class AnnuncioDAO {
   /**
    * Ricerca annunci con filtri applicati direttamente nel database (ottimizzato).
    * Evita di caricare tutti gli annunci e filtrarli in memoria.
+   * ESCLUDE annunci con proposte accettate (conclusi).
    *
    * @param testo testo da cercare in titolo o descrizione (null per ignorare)
    * @param categoria categoria da filtrare (null per ignorare)
@@ -150,7 +159,15 @@ public class AnnuncioDAO {
             "u.idutente, u.nomeutente, u.mail, u.numerotelefono " +
             "FROM annuncio a " +
             "JOIN utente u ON a.idutente = u.idutente " +
-            "WHERE a.stato = true");
+            "WHERE a.stato = true " +
+            // CORREZIONE BUG: Escludi annunci con proposte accettate
+            "AND NOT EXISTS (" +
+            "  SELECT 1 FROM vendita v WHERE v.idannuncio = a.idannuncio AND v.accettato = TRUE " +
+            "  UNION ALL " +
+            "  SELECT 1 FROM scambio s WHERE s.idannuncio = a.idannuncio AND s.accettato = TRUE " +
+            "  UNION ALL " +
+            "  SELECT 1 FROM regalo r WHERE r.idannuncio = a.idannuncio AND r.accettato = TRUE" +
+            ")");
     List<Object> parametri = new ArrayList<>();
 
     // Filtro testo (cerca in titolo e descrizione)

@@ -132,11 +132,10 @@ public class ConsegnaHelper {
    * Richiede e salva dati spedizione.
    *
    * @param idAnnuncio id annuncio
-   * @param idUtente id utente
    * @param onSuccess callback successo
    * @param onError callback errore
    */
-  public void salvaSpedizione(int idAnnuncio, int idUtente,
+  public void salvaSpedizione(int idAnnuncio,
                                java.util.function.Consumer<String> onSuccess,
                                java.util.function.Consumer<String> onError) {
     JTextField indirizzoField = new JTextField(24);
@@ -175,7 +174,7 @@ public class ConsegnaHelper {
       java.util.Date dataArrivo = cal.getTime();
 
       SpedizioneData data = new SpedizioneData(indirizzo, telefono, dataInvio, dataArrivo);
-      inputValido = salvaSpedizioneDB(idAnnuncio, idUtente, data, onSuccess, onError);
+      inputValido = salvaSpedizioneDB(idAnnuncio, data, onSuccess, onError);
     }
   }
 
@@ -206,7 +205,7 @@ public class ConsegnaHelper {
     return null;
   }
 
-  private boolean salvaSpedizioneDB(int idAnnuncio, int idUtente, SpedizioneData data,
+  private boolean salvaSpedizioneDB(int idAnnuncio, SpedizioneData data,
                                      java.util.function.Consumer<String> onSuccess,
                                      java.util.function.Consumer<String> onError) {
     try {

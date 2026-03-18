@@ -30,17 +30,23 @@ public class ScriviRecensioneController {
    * Utente destinatario recensione.
    */
   private final Utente utenteDestinatario;
+  /**
+   * ID annuncio per cui si lascia la recensione.
+   */
+  private final int idAnnuncio;
 
   /**
    * Crea controller e registra listener.
    *
    * @param view recensione vista
    * @param idUtenteDestinatario id utente recensito
+   * @param idAnnuncio id annuncio per cui si lascia la recensione
    */
-  public ScriviRecensioneController(ScriviRecensione view, int idUtenteDestinatario) {
+  public ScriviRecensioneController(ScriviRecensione view, int idUtenteDestinatario, int idAnnuncio) {
     this.view = view;
     this.recensioneDAO = new RecensioneDAO();
     this.utenteDAO = new UtenteDAO();
+    this.idAnnuncio = idAnnuncio;
 
     // Carica l'utente destinatario
     Utente utenteDest = null;
@@ -91,17 +97,25 @@ public class ScriviRecensioneController {
     }
 
     try {
-      boolean transazioneOk = recensioneDAO.hannoTransazioneCompletata(utenteLoggato, utenteDestinatario);
-      if (!transazioneOk) {
-        view.mostraErrore("Puoi lasciare una recensione solo dopo una transazione completata.");
+      // Verifica se l'annuncio è stato completato dall'utente loggato
+      boolean annuncioOk = recensioneDAO.annuncioCompletato(idAnnuncio, utenteLoggato.getIdUtente());
+      if (!annuncioOk) {
+        view.mostraErrore("Puoi lasciare una recensione solo per annunci con transazione completata.");
+        return;
+      }
+
+      // Verifica se esiste già una recensione per questo annuncio
+      boolean recensioneEsistente = recensioneDAO.esisteRecensionePerAnnuncio(utenteLoggato, idAnnuncio);
+      if (recensioneEsistente) {
+        view.mostraErrore("Hai già lasciato una recensione per questo annuncio.");
         return;
       }
     } catch (DatabaseException ex) {
-      view.mostraErrore("Errore durante la verifica della transazione: " + ex.getMessage());
+      view.mostraErrore("Errore durante la verifica: " + ex.getMessage());
       return;
     }
 
-    Recensione recensione = new Recensione(voto, descrizione, utenteLoggato, utenteDestinatario);
+    Recensione recensione = new Recensione(voto, descrizione, utenteLoggato, utenteDestinatario, idAnnuncio);
 
     try {
       boolean successo = recensioneDAO.inserisciRecensione(recensione);

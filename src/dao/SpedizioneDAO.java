@@ -59,7 +59,7 @@ public class SpedizioneDAO {
       ps.setBoolean(6, false);
       return ps.executeUpdate() > 0;
     } catch (SQLException e) {
-      throw new DatabaseException("Errore durante l'inserimento della spedizione", e);
+      throw new DatabaseException("Errore durante l'inserimento della spedizione: " + e.getMessage(), e);
     }
   }
 

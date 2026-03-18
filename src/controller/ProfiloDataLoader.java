@@ -185,7 +185,7 @@ public class ProfiloDataLoader {
         ? proposta.annuncio().getTipoAnnuncio().toString() : "N/A";
 
     view.aggiungiPropostaRicevuta(nomeUtente, titoloAnnuncio, tipoAnnuncio,
-                                   proposta.dettaglio(), propostaHandler.formatStato(proposta).getDescrizione());
+                                   proposta.dettaglio(), propostaHandler.getStatoDescrizione(proposta));
   }
 
   /**
@@ -202,7 +202,7 @@ public class ProfiloDataLoader {
         ? proposta.annuncio().getTipoAnnuncio().toString() : "N/A";
 
     view.aggiungiPropostaInviata(nomeUtente, titoloAnnuncio, tipoAnnuncio,
-                                  proposta.dettaglio(), propostaHandler.formatStato(proposta).getDescrizione());
+                                  proposta.dettaglio(), propostaHandler.getStatoDescrizione(proposta));
   }
 
   /**

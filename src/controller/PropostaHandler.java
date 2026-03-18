@@ -104,11 +104,15 @@ public class PropostaHandler {
     }
 
     int idAnnuncio = proposta.annuncio().getIdAnnuncio();
-    StatoConsegna statoConsegna = formatStato(proposta);
+    String labelUtente = isRicevuta ? "Da" : "A";
 
     while (true) {
+      // Ricalcola stato e dettaglio ad ogni iterazione per riflettere i cambiamenti
+      StatoConsegna statoConsegna = formatStato(proposta);
+      String dettaglioAggiornato = buildDettaglioProposta(proposta, labelUtente);
+
       List<String> opzioni = buildOpzioniAccettata(statoConsegna, mostraImmagine, isRicevuta, idAnnuncio);
-      String messaggio = dettaglio + "\n\n" + (isRicevuta ? "Questa proposta è stata accettata." : "La proposta è stata accettata.");
+      String messaggio = dettaglioAggiornato + "\n\n" + (isRicevuta ? "Questa proposta è stata accettata." : "La proposta è stata accettata.");
       String titolo = isRicevuta ? "Proposta ricevuta" : "Proposta inviata";
 
       int scelta = JOptionPane.showOptionDialog(view, messaggio, titolo,
@@ -199,18 +203,19 @@ public class PropostaHandler {
                                                  int idAnnuncio, boolean isRicevuta) {
     switch (azione) {
       case "Lascia recensione":
-        apriScriviRecensione(proposta.utenteCoinvolto());
+        apriScriviRecensione(proposta.utenteCoinvolto(), idAnnuncio);
         return false;
       case TESTO_DETTAGLI_CONSEGNA:
         if (isRicevuta) {
           visualizzaDettagliConsegna(proposta);
+          return true;
         } else {
           inserisciDettagliConsegna(proposta);
+          return false; // Chiude il dialog per permettere l'aggiornamento della tabella
         }
-        return true;
       case "Scegli consegna":
         inserisciDettagliConsegna(proposta);
-        return true;
+        return false; // Chiude il dialog per permettere l'aggiornamento della tabella
       case "Ho spedito":
         aggiornaStatoConsegna(idAnnuncio, true, "Spedizione aggiornata a 'spedito'.");
         return false;
@@ -460,6 +465,29 @@ public class PropostaHandler {
   }
 
   /**
+   * Restituisce la descrizione dello stato personalizzata in base al tipo di consegna.
+   * CORREZIONE BUG: Distingue tra "dati di spedizione" e "dati di ritiro" quando lo stato è ACCETTATA.
+   *
+   * @param proposta la proposta di cui ottenere la descrizione dello stato
+   * @return descrizione personalizzata dello stato
+   */
+  public String getStatoDescrizione(PropostaRiepilogo proposta) {
+    StatoConsegna stato = formatStato(proposta);
+
+    // Se lo stato è ACCETTATA, personalizza il messaggio in base al tipo di consegna
+    if (stato == StatoConsegna.ACCETTATA && proposta.annuncio() != null) {
+      Boolean spedizione = proposta.annuncio().getSpedizione();
+      if (Boolean.TRUE.equals(spedizione)) {
+        return "Accettata, in attesa dei dati di spedizione";
+      } else if (Boolean.FALSE.equals(spedizione)) {
+        return "Accettata, in attesa dei dati di ritiro";
+      }
+    }
+
+    return stato.getDescrizione();
+  }
+
+  /**
    * Valida i dati della proposta e dell'utente proponente prima di operazioni sul database.
    *
    * @param proposta la proposta da validare
@@ -590,7 +618,7 @@ public class PropostaHandler {
     if (Boolean.TRUE.equals(spedizioneAnnuncio)) {
       // L'annuncio prevede solo spedizione
       Logger.info("Creazione dettagli SPEDIZIONE per annuncio " + idAnnuncio);
-      consegnaHelper.salvaSpedizione(idAnnuncio, utenteTarget.getIdUtente(),
+      consegnaHelper.salvaSpedizione(idAnnuncio,
           view::mostraMessaggio, view::mostraErrore);
     } else {
       // L'annuncio prevede solo ritiro (spedizione = false o null)
@@ -606,12 +634,27 @@ public class PropostaHandler {
    * @param proposta la proposta di cui visualizzare i dettagli
    */
   private void visualizzaDettagliConsegna(PropostaRiepilogo proposta) {
-    consegnaHelper.visualizzaDettagli(proposta, view::mostraErrore,
-        this::mostraMessaggioDettagliNonForniti);
-  }
+    if (proposta == null || proposta.annuncio() == null) {
+      view.mostraErrore("Proposta o annuncio non disponibile.");
+      return;
+    }
 
-  private void mostraMessaggioDettagliNonForniti() {
-    view.mostraMessaggio("Dettagli di consegna non ancora forniti dall'acquirente.");
+    Boolean spedizioneAnnuncio = proposta.annuncio().getSpedizione();
+    String messaggioAttesa;
+
+    if (Boolean.FALSE.equals(spedizioneAnnuncio)) {
+      // È un ritiro
+      messaggioAttesa = "Dettagli di ritiro non ancora forniti dall'acquirente.";
+    } else if (Boolean.TRUE.equals(spedizioneAnnuncio)) {
+      // È una spedizione
+      messaggioAttesa = "Dettagli di spedizione non ancora forniti dall'acquirente.";
+    } else {
+      // Tipo non definito
+      messaggioAttesa = "Dettagli di consegna non ancora forniti dall'acquirente.";
+    }
+
+    consegnaHelper.visualizzaDettagli(proposta, view::mostraErrore,
+        () -> view.mostraMessaggio(messaggioAttesa));
   }
 
   /**
@@ -633,7 +676,7 @@ public class PropostaHandler {
 
     return String.format("%s: %s%nAnnuncio: %s%nTipo: %s%nDettaglio: %s%nStato: %s",
         labelUtente, nomeUtente, titoloAnnuncio, tipoAnnuncio,
-        proposta.dettaglio(), formatStato(proposta).getDescrizione());
+        proposta.dettaglio(), getStatoDescrizione(proposta));
   }
 
   /**
@@ -662,15 +705,16 @@ public class PropostaHandler {
    * Apre la finestra per scrivere una recensione per un utente.
    *
    * @param utenteDestinatario l'utente per cui scrivere la recensione
+   * @param idAnnuncio l'ID dell'annuncio per cui si lascia la recensione
    */
-  private void apriScriviRecensione(Utente utenteDestinatario) {
+  private void apriScriviRecensione(Utente utenteDestinatario, int idAnnuncio) {
     if (utenteDestinatario == null) {
       view.mostraErrore("Utente destinatario non valido.");
       return;
     }
 
     ScriviRecensione recensioneView = new ScriviRecensione();
-    new ScriviRecensioneController(recensioneView, utenteDestinatario.getIdUtente());
+    new ScriviRecensioneController(recensioneView, utenteDestinatario.getIdUtente(), idAnnuncio);
     WindowManager.open(view, recensioneView);
   }
 }

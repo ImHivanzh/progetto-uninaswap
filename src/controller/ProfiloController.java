@@ -234,8 +234,14 @@ public class ProfiloController {
       return;
     }
 
+    if (proposta.annuncio() == null) {
+      view.mostraErrore("Annuncio non disponibile.");
+      return;
+    }
+
     gui.ScriviRecensione recensioneView = new gui.ScriviRecensione();
-    new ScriviRecensioneController(recensioneView, proposta.utenteCoinvolto().getIdUtente());
+    new ScriviRecensioneController(recensioneView, proposta.utenteCoinvolto().getIdUtente(),
+                                    proposta.annuncio().getIdAnnuncio());
     WindowManager.open(view, recensioneView);
   }
 
