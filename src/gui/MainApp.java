@@ -68,6 +68,10 @@ public class MainApp extends BaseFrame {
    */
   public static final String ACTION_RESET = "main.reset";
   /**
+   * Action command per aggiorna annunci.
+   */
+  public static final String ACTION_AGGIORNA = "main.aggiorna";
+  /**
    * Action command per dettaglio annuncio.
    */
   public static final String ACTION_DETTAGLIO = "main.dettaglio";
@@ -132,6 +136,10 @@ public class MainApp extends BaseFrame {
    * Pulsante reset filtri.
    */
   private JButton resetButton;
+  /**
+   * Pulsante aggiorna annunci.
+   */
+  private JButton btnAggiorna;
 
   /**
    * Pulsante profilo.
@@ -233,6 +241,11 @@ public class MainApp extends BaseFrame {
     JPanel root = new JPanel(new BorderLayout());
     root.add(mainPanel, BorderLayout.CENTER);
 
+    // Configura accessibilità per pulsanti generati dal form
+    if (btnAggiorna != null) {
+      btnAggiorna.getAccessibleContext().setAccessibleName("Aggiorna annunci");
+    }
+
     JPanel topBar = new JPanel(new BorderLayout());
     topBar.setBorder(new EmptyBorder(4, 8, 4, 8));
 
@@ -301,6 +314,7 @@ public class MainApp extends BaseFrame {
     if (btnPubblica != null) btnPubblica.setActionCommand(ACTION_PUBBLICA);
     if (searchButton != null) searchButton.setActionCommand(ACTION_RICERCA);
     if (resetButton != null) resetButton.setActionCommand(ACTION_RESET);
+    if (btnAggiorna != null) btnAggiorna.setActionCommand(ACTION_AGGIORNA);
     if (searchField != null) searchField.setActionCommand(ACTION_RICERCA);
   }
 
@@ -336,6 +350,7 @@ public class MainApp extends BaseFrame {
     if (searchField != null) searchField.setEnabled(abilitata);
     if (searchButton != null) searchButton.setEnabled(abilitata);
     if (resetButton != null) resetButton.setEnabled(abilitata);
+    if (btnAggiorna != null) btnAggiorna.setEnabled(abilitata);
     if (categoryList != null) categoryList.setEnabled(abilitata);
     if (radioTutti != null) radioTutti.setEnabled(abilitata);
     if (radioScambio != null) radioScambio.setEnabled(abilitata);
@@ -469,6 +484,15 @@ public class MainApp extends BaseFrame {
    */
   public void addResetListener(ActionListener listener) {
     if (resetButton != null) resetButton.addActionListener(listener);
+  }
+
+  /**
+   * Aggiunge listener per aggiorna annunci.
+   *
+   * @param listener azione listener
+   */
+  public void addAggiornaListener(ActionListener listener) {
+    if (btnAggiorna != null) btnAggiorna.addActionListener(listener);
   }
 
   /**

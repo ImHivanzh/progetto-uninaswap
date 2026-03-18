@@ -82,6 +82,7 @@ public class MainController implements ActionListener {
     view.addPubblicaListener(this);
     view.addSearchListener(this);
     view.addResetListener(this);
+    view.addAggiornaListener(this);
   }
 
   /**
@@ -100,6 +101,8 @@ public class MainController implements ActionListener {
       eseguiRicerca();
     } else if (MainApp.ACTION_RESET.equals(action)) {
       resetRicerca();
+    } else if (MainApp.ACTION_AGGIORNA.equals(action)) {
+      aggiornaAnnunci();
     } else if (MainApp.ACTION_DETTAGLIO.equals(action)) {
       apriDettaglio(e);
     }
@@ -216,6 +219,32 @@ public class MainController implements ActionListener {
   private void resetRicerca() {
     view.resetFiltri();
     caricaAnnunciInEvidenza();
+  }
+
+  /**
+   * Aggiorna annunci in base ai filtri correnti.
+   * Se almeno un filtro è attivo, esegue una ricerca.
+   * Altrimenti, ricarica gli annunci in evidenza.
+   */
+  private void aggiornaAnnunci() {
+    String testo = view.getTestoRicerca().trim();
+    String categoria = view.getCategoriaSelezionata();
+    String tipo = view.getTipoSelezionato();
+    String prezzoMax = view.getPrezzoMax().trim();
+
+    // Verifica se almeno un filtro è attivo
+    boolean filtriAttivi = !testo.isEmpty()
+        || !"Tutte".equals(categoria)
+        || !"Tutti".equals(tipo)
+        || !prezzoMax.isEmpty();
+
+    if (filtriAttivi) {
+      // Ricarica con filtri correnti
+      eseguiRicerca();
+    } else {
+      // Ricarica annunci in evidenza
+      caricaAnnunciInEvidenza();
+    }
   }
 
   /**
