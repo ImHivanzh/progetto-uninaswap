@@ -46,7 +46,7 @@ public class RegistrazioneForm extends BaseFrame {
     }
 
     /**
-     * Restituisce username input.
+     * Restituisce l'username inserito.
      *
      * @return username
      */
@@ -55,7 +55,7 @@ public class RegistrazioneForm extends BaseFrame {
     }
 
     /**
-     * Restituisce input email.
+     * Restituisce l'email inserita.
      *
      * @return email
      */
@@ -64,7 +64,7 @@ public class RegistrazioneForm extends BaseFrame {
     }
 
     /**
-     * Restituisce input password.
+     * Restituisce la password inserita.
      *
      * @return password
      */
@@ -73,7 +73,7 @@ public class RegistrazioneForm extends BaseFrame {
     }
 
     /**
-     * Restituisce numero telefono input.
+     * Restituisce il numero di telefono inserito.
      *
      * @return numero telefono
      */
@@ -82,9 +82,9 @@ public class RegistrazioneForm extends BaseFrame {
     }
 
     /**
-     * Aggiunge registrazione azione listener.
+     * Aggiunge un listener per l'azione di registrazione.
      *
-     * @param listener azione listener
+     * @param listener listener dell'azione
      */
     public void addRegistraListener(ActionListener listener) {
         btnRegistra.addActionListener(listener);

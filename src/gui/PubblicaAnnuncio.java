@@ -127,7 +127,7 @@ public class PubblicaAnnuncio extends BaseFrame {
   }
 
   /**
-   * Inizializza UI stato e listener.
+   * Inizializza lo stato dell'interfaccia e i listener.
    */
   private void initUI() {
     cmbCategoria.setModel(new DefaultComboBoxModel<>(Categoria.values()));
@@ -272,7 +272,7 @@ public class PubblicaAnnuncio extends BaseFrame {
   }
 
   /**
-   * Restituisce input titolo.
+   * Restituisce l'input del titolo.
    *
    * @return titolo
    */
@@ -281,7 +281,7 @@ public class PubblicaAnnuncio extends BaseFrame {
   }
 
   /**
-   * Restituisce input descrizione.
+   * Restituisce l'input della descrizione.
    *
    * @return descrizione
    */
@@ -308,27 +308,27 @@ public class PubblicaAnnuncio extends BaseFrame {
   }
 
   /**
-   * Restituisce input prezzo.
+   * Restituisce l'input del prezzo.
    *
-   * @return prezzo testo
+   * @return testo del prezzo
    */
   public String getPrezzo() {
     return txtPrezzo.getText();
   }
 
   /**
-   * Restituisce input oggetto richiesto per scambio.
+   * Restituisce l'input dell'oggetto richiesto per lo scambio.
    *
-   * @return oggetto richiesto testo
+   * @return testo dell'oggetto richiesto
    */
   public String getOggettoRichiesto() {
     return txtOggettoRichiesto != null ? txtOggettoRichiesto.getText() : "";
   }
 
   /**
-   * Restituisce file immagini selezionati.
+   * Restituisce la lista dei file delle immagini selezionate.
    *
-   * @return immagine file lista
+   * @return lista dei file delle immagini
    */
   public List<File> getImmagini() {
     return immaginiSelezionate;
@@ -344,7 +344,7 @@ public class PubblicaAnnuncio extends BaseFrame {
   }
 
   /**
-   * Aggiorna pannello preview con miniature immagini selezionate.
+   * Aggiorna il pannello di anteprima con le miniature delle immagini selezionate.
    */
   private void updateImagePreviews() {
     pnlPreview.removeAll();

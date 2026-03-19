@@ -10,16 +10,16 @@ public class Vendita extends Annuncio {
     private double prezzo;
 
     /**
-     * Crea vuoto vendita annuncio.
+     * Crea un annuncio di vendita vuoto.
      */
     public Vendita() {
         super();
     }
 
     /**
-     * Crea vendita annuncio con fornito prezzo.
+     * Crea un annuncio di vendita con il prezzo fornito.
      *
-     * @param prezzo prezzo valore
+     * @param prezzo valore del prezzo
      */
     public Vendita(double prezzo) {
         this.prezzo = prezzo;

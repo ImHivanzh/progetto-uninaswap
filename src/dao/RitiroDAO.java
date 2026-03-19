@@ -21,9 +21,9 @@ public class RitiroDAO {
   private final Connection con;
 
   /**
-   * Crea DAO e inizializza database connessione.
+   * Crea DAO e inizializza la connessione al database.
    *
-   * @throws DatabaseException quando database è non disponibile
+   * @throws DatabaseException quando il database non è disponibile
    */
   public RitiroDAO() throws DatabaseException {
     this.con = DbConnection.getInstance().getConnection();
@@ -38,7 +38,7 @@ public class RitiroDAO {
    * @param sede sede ritiro
    * @param orario orario ritiro
    * @param data data ritiro
-   * @param numeroTelefono telefono contatto
+   * @param numeroTelefono telefono di contatto
    * @param idAnnuncio id annuncio
    * @return true quando inserimento riesce
    * @throws DatabaseException quando inserimento fallisce

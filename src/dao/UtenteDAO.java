@@ -40,7 +40,7 @@ public class UtenteDAO {
      * Registra un nuovo utente dopo aver validato l'input.
      *
      * @param username username
-     * @param email indirizzo email
+     * @param indirizzo email email
      * @param password password
      * @param numeroTelefono numero di telefono
      * @return true se l'inserimento ha successo

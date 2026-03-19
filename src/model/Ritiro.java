@@ -22,7 +22,7 @@ public class Ritiro {
      */
     private Date data;
     /**
-     * Numero telefono contatto.
+     * Numero telefono di contatto.
      */
     private String numeroTelefono;
     /**
@@ -35,21 +35,21 @@ public class Ritiro {
     private Annuncio annuncio;
 
     /**
-     * Crea vuoto record ritiro.
+     * Crea un record ritiro vuoto.
      */
     public Ritiro() {
     }
 
     /**
-     * Crea record ritiro con fornito campi.
+     * Crea un record ritiro con i campi forniti.
      *
      * @param idRitiro id ritiro
      * @param sede luogo ritiro
      * @param orario orario ritiro
      * @param data data ritiro
-     * @param numeroTelefono numero telefono contatto
+     * @param numeroTelefono numero telefono di contatto
      * @param ritirato flag completamento ritiro
-     * @param annuncio collegato annuncio
+     * @param annuncio annuncio collegato
      */
     public Ritiro(int idRitiro, String sede, String orario, Date data, String numeroTelefono,
                   boolean ritirato, Annuncio annuncio) {
@@ -119,16 +119,16 @@ public class Ritiro {
     public void setData(Date data) { this.data = data; }
 
     /**
-     * Restituisce numero telefono contatto.
+     * Restituisce numero telefono di contatto.
      *
-     * @return numero telefono contatto
+     * @return numero telefono di contatto
      */
     public String getNumeroTelefono() { return numeroTelefono; }
 
     /**
-     * Imposta numero telefono contatto.
+     * Imposta numero telefono di contatto.
      *
-     * @param numeroTelefono numero telefono contatto
+     * @param numeroTelefono numero telefono di contatto
      */
     public void setNumeroTelefono(String numeroTelefono) { this.numeroTelefono = numeroTelefono; }
 
@@ -147,16 +147,16 @@ public class Ritiro {
     public void setRitirato(boolean ritirato) { this.ritirato = ritirato; }
 
     /**
-     * Restituisce collegato annuncio.
+     * Restituisce annuncio collegato.
      *
-     * @return collegato annuncio
+     * @return annuncio collegato
      */
     public Annuncio getAnnuncio() { return annuncio; }
 
     /**
-     * Imposta collegato annuncio.
+     * Imposta annuncio collegato.
      *
-     * @param annuncio collegato annuncio
+     * @param annuncio annuncio collegato
      */
     public void setAnnuncio(Annuncio annuncio) { this.annuncio = annuncio; }
 }

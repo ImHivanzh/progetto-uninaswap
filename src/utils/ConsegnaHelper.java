@@ -25,11 +25,11 @@ public class ConsegnaHelper {
   private final JFrame parent;
 
   /**
-   * Crea helper per gestione consegne.
+   * Crea un helper per la gestione delle consegne.
    *
-   * @param spedizioneDAO DAO spedizione
-   * @param ritiroDAO DAO ritiro
-   * @param parent frame parent per dialogs
+   * @param spedizioneDAO DAO per le spedizioni
+   * @param ritiroDAO DAO per i ritiri
+   * @param parent frame parent per i dialoghi
    */
   public ConsegnaHelper(SpedizioneDAO spedizioneDAO, RitiroDAO ritiroDAO, JFrame parent) {
     this.spedizioneDAO = spedizioneDAO;
@@ -41,7 +41,7 @@ public class ConsegnaHelper {
    * Visualizza i dettagli della consegna per una proposta.
    *
    * @param proposta proposta da visualizzare
-   * @param onError callback per errori
+   * @param onError callback per gli errori
    * @param onNoDetails callback quando non ci sono dettagli
    */
   public void visualizzaDettagli(PropostaRiepilogo proposta,
@@ -80,7 +80,7 @@ public class ConsegnaHelper {
   }
 
   /**
-   * Mostra dettagli di una spedizione in dialog.
+   * Mostra i dettagli di una spedizione in un dialogo.
    *
    * @param spedizione spedizione da visualizzare
    */
@@ -105,11 +105,16 @@ public class ConsegnaHelper {
   }
 
   /**
-   * Mostra dettagli di un ritiro in dialog.
+   * Mostra i dettagli di un ritiro in un dialogo.
    *
    * @param ritiro ritiro da visualizzare
    */
   public void mostraDettagliRitiro(model.Ritiro ritiro) {
+    String orarioFormattato = ritiro.getOrario();
+    if (orarioFormattato != null && orarioFormattato.contains(".")) {
+      orarioFormattato = orarioFormattato.substring(0, orarioFormattato.indexOf('.'));
+    }
+
     String message = """
             Dettagli Ritiro:
             ID Ritiro: %d
@@ -120,7 +125,7 @@ public class ConsegnaHelper {
             Ritirato: %s""".formatted(
             ritiro.getIdRitiro(),
             ritiro.getSede(),
-            ritiro.getOrario(),
+            orarioFormattato,
             ritiro.getData().toString(),
             ritiro.getNumeroTelefono(),
             ritiro.isRitirato() ? "Si" : "No"
@@ -129,11 +134,11 @@ public class ConsegnaHelper {
   }
 
   /**
-   * Richiede e salva dati spedizione.
+   * Richiede e salva i dati della spedizione.
    *
-   * @param idAnnuncio id annuncio
-   * @param onSuccess callback successo
-   * @param onError callback errore
+   * @param idAnnuncio id dell'annuncio
+   * @param onSuccess callback per il successo
+   * @param onError callback per gli errori
    */
   public void salvaSpedizione(int idAnnuncio,
                                java.util.function.Consumer<String> onSuccess,
@@ -179,7 +184,7 @@ public class ConsegnaHelper {
   }
 
   /**
-   * Dati per spedizione.
+   * Dati per la spedizione.
    */
   private static class SpedizioneData {
     final String indirizzo;
@@ -234,11 +239,11 @@ public class ConsegnaHelper {
   }
 
   /**
-   * Richiede e salva dati ritiro.
+   * Richiede e salva i dati del ritiro.
    *
-   * @param idAnnuncio id annuncio
-   * @param onSuccess callback successo
-   * @param onError callback errore
+   * @param idAnnuncio id dell'annuncio
+   * @param onSuccess callback per il successo
+   * @param onError callback per gli errori
    */
   public void salvaRitiro(int idAnnuncio,
                            java.util.function.Consumer<String> onSuccess,

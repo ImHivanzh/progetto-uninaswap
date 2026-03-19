@@ -74,7 +74,7 @@ public class MainController implements ActionListener {
   }
 
   /**
-   * Registra i listener UI nella vista principale.
+   * Registra i listener dell'interfaccia nella vista principale.
    */
   private void registraListener() {
     view.addProfiloListener(this);
@@ -109,7 +109,7 @@ public class MainController implements ActionListener {
   }
 
   /**
-   * Mostra form login e attende per autenticazione.
+   * Mostra il form di login e attende l'autenticazione.
    */
   private void mostraLogin() {
     LoginForm loginForm = new LoginForm();
@@ -138,7 +138,7 @@ public class MainController implements ActionListener {
   }
 
   /**
-   * Apre vista profilo.
+   * Apre la vista del profilo.
    */
   private void apriProfilo() {
     Profilo profilo = new Profilo();
@@ -147,7 +147,7 @@ public class MainController implements ActionListener {
   }
 
   /**
-   * Apre form pubblica annuncio.
+   * Apre il form per pubblicare un annuncio.
    */
   private void apriPubblicaAnnuncio() {
     PubblicaAnnuncio pubblicaAnnuncio = new PubblicaAnnuncio();
@@ -155,7 +155,7 @@ public class MainController implements ActionListener {
   }
 
   /**
-   * Esegue ricerca usando filtri correnti.
+   * Esegue la ricerca usando i filtri correnti.
    * Ottimizzato per filtrare direttamente nel database invece che in memoria.
    */
   private void eseguiRicerca() {
@@ -192,9 +192,9 @@ public class MainController implements ActionListener {
   }
 
   /**
-   * Converte testo prezzo in valore numerico, supportando virgola come separatore.
+   * Converte il testo del prezzo in valore numerico, supportando la virgola come separatore.
    *
-   * @param prezzoRaw testo prezzo
+   * @param prezzoRaw testo del prezzo
    * @return valore numerico o null se non valido
    */
   private Double parsePrezzoMax(String prezzoRaw) {
@@ -214,7 +214,7 @@ public class MainController implements ActionListener {
   }
 
   /**
-   * Ripristina filtri ricerca e ricarica annunci in evidenza.
+   * Ripristina i filtri di ricerca e ricarica gli annunci in evidenza.
    */
   private void resetRicerca() {
     view.resetFiltri();
@@ -222,7 +222,7 @@ public class MainController implements ActionListener {
   }
 
   /**
-   * Aggiorna annunci in base ai filtri correnti.
+   * Aggiorna gli annunci in base ai filtri correnti.
    * Se almeno un filtro è attivo, esegue una ricerca.
    * Altrimenti, ricarica gli annunci in evidenza.
    */
@@ -248,7 +248,7 @@ public class MainController implements ActionListener {
   }
 
   /**
-   * Esegue logout e mostra login.
+   * Esegue il logout e mostra il login.
    */
   private void eseguiLogout() {
     SessionManager.getInstance().logout();
@@ -258,7 +258,7 @@ public class MainController implements ActionListener {
   }
 
   /**
-   * Carica annunci in evidenza dal database.
+   * Carica gli annunci in evidenza dal database.
    */
   private void caricaAnnunciInEvidenza() {
     List<Annuncio> annunci = annuncioDAO.findAll();
@@ -283,11 +283,11 @@ public class MainController implements ActionListener {
   }
 
   /**
-   * Restituisce primo byte immagine per annuncio, se presente.
+   * Restituisce il primo array di byte dell'immagine per l'annuncio, se presente.
    * Ottimizzato per caricare solo la prima immagine invece di tutte.
    *
    * @param annuncio annuncio
-   * @return byte immagine o null
+   * @return array di byte dell'immagine o null
    */
   private byte[] estraiPrimaImmagine(Annuncio annuncio) {
     if (annuncio == null) {
@@ -302,9 +302,9 @@ public class MainController implements ActionListener {
   }
 
   /**
-   * Apre dettaglio vista per selezionato annuncio in evidenza.
+   * Apre la vista di dettaglio per l'annuncio selezionato in evidenza.
    *
-   * @param e azione evento
+   * @param e evento dell'azione
    */
   private void apriDettaglio(ActionEvent e) {
     if (!(e.getSource() instanceof javax.swing.JButton button)) {
@@ -319,7 +319,7 @@ public class MainController implements ActionListener {
   }
 
   /**
-   * Aggiorna finestra titolo con utente corrente.
+   * Aggiorna il titolo della finestra con l'utente corrente.
    */
   private void aggiornaTitoloUtente() {
     String username = SessionManager.getInstance().getUtente() != null

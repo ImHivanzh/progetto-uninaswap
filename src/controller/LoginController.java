@@ -32,19 +32,19 @@ public class LoginController {
   private final Runnable onLoginSuccess;
 
   /**
-   * Crea controller e registra listener.
+   * Crea il controller e registra i listener.
    *
-   * @param view vista login
+   * @param view vista del login
    */
   public LoginController(LoginForm view) {
     this(view, null);
   }
 
   /**
-   * Crea controller e registra listener.
+   * Crea il controller e registra i listener.
    *
-   * @param view vista login
-   * @param onLoginSuccess callback eseguita dopo riuscito login
+   * @param view vista del login
+   * @param onLoginSuccess callback eseguita dopo un login riuscito
    */
   public LoginController(LoginForm view, Runnable onLoginSuccess) {
     this.view = view;
@@ -54,7 +54,7 @@ public class LoginController {
   }
 
   /**
-   * Registra UI listener per vista login.
+   * Registra i listener dell'interfaccia per la vista di login.
    */
   private void initListeners() {
     this.view.addLoginListener(e -> controllaLogin());
@@ -79,7 +79,7 @@ public class LoginController {
   }
 
   /**
-   * Valida input utente e esegue autenticazione.
+   * Valida l'input dell'utente ed esegue l'autenticazione.
    */
   private void controllaLogin() {
     String user = view.getUsername().trim();
@@ -106,7 +106,7 @@ public class LoginController {
   }
 
   /**
-   * Apre app principale dopo login successo.
+   * Apre l'applicazione principale dopo un login riuscito.
    */
   private void avviaMainApp() {
     if (onLoginSuccess != null) {

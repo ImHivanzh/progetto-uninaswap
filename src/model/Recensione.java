@@ -26,13 +26,13 @@ public class Recensione {
     private Integer idAnnuncio;
 
     /**
-     * Crea vuoto recensione.
+     * Crea una recensione vuota.
      */
     public Recensione() {
     }
 
     /**
-     * Crea recensione con principali campi.
+     * Crea una recensione con i campi principali.
      *
      * @param voto valutazione valore (deve essere tra 1 e 5)
      * @param descrizione testo recensione

@@ -37,11 +37,11 @@ public class ModificaPropostaController {
   private final PropostaDAO propostaDAO;
 
   /**
-   * Crea controller per modifica proposta.
+   * Crea il controller per la modifica della proposta.
    *
-   * @param view dialogo vista
+   * @param view vista del dialogo
    * @param proposta proposta da modificare
-   * @throws DatabaseException se inizializzazione DAO fallisce
+   * @throws DatabaseException se l'inizializzazione del DAO fallisce
    */
   public ModificaPropostaController(ModificaPropostaDialog view, PropostaRiepilogo proposta) throws DatabaseException {
     this.view = view;
@@ -51,7 +51,7 @@ public class ModificaPropostaController {
   }
 
   /**
-   * Popola campi iniziali dialogo.
+   * Popola i campi iniziali del dialogo.
    */
   public void popolaDati() {
     if (proposta.annuncio() == null || proposta.annuncio().getTipoAnnuncio() == null) {
@@ -78,7 +78,7 @@ public class ModificaPropostaController {
   }
 
   /**
-   * Gestisce selezione immagine.
+   * Gestisce la selezione dell'immagine.
    */
   public void azioneCaricaImmagine() {
     JFileChooser fileChooser = new JFileChooser();
@@ -91,9 +91,9 @@ public class ModificaPropostaController {
   }
 
   /**
-   * Carica immagine da file.
+   * Carica un'immagine da file.
    *
-   * @param file file immagine
+   * @param file file dell'immagine
    */
   public void caricaImmagineDaFile(File file) {
     try (FileInputStream fis = new FileInputStream(file)) {
@@ -105,7 +105,7 @@ public class ModificaPropostaController {
   }
 
   /**
-   * Salva modifica proposta.
+   * Salva le modifiche alla proposta.
    */
   public void azioneSalva() {
     TipoAnnuncio tipo = proposta.annuncio().getTipoAnnuncio();
@@ -132,11 +132,11 @@ public class ModificaPropostaController {
   }
 
   /**
-   * Salva proposta vendita.
+   * Salva la proposta di vendita.
    *
-   * @param idUtente ID utente
-   * @return true se successo
-   * @throws DatabaseException se errore database
+   * @param idUtente ID dell'utente
+   * @return true se il salvataggio ha successo
+   * @throws DatabaseException se si verifica un errore nel database
    */
   private boolean salvaPropostaVendita(int idUtente) throws DatabaseException {
     String testoPrezzo = view.getPrezzoInput();
@@ -154,11 +154,11 @@ public class ModificaPropostaController {
   }
 
   /**
-   * Salva proposta scambio.
+   * Salva la proposta di scambio.
    *
-   * @param idUtente ID utente
-   * @return true se successo
-   * @throws DatabaseException se errore database
+   * @param idUtente ID dell'utente
+   * @return true se il salvataggio ha successo
+   * @throws DatabaseException se si verifica un errore nel database
    */
   private boolean salvaPropostaScambio(int idUtente) throws DatabaseException {
     String nuovaDescrizione = view.getDescrizioneInput().trim();
@@ -171,7 +171,7 @@ public class ModificaPropostaController {
   }
 
   /**
-   * Annulla modifica proposta.
+   * Annulla la modifica della proposta.
    */
   public void azioneAnnulla() {
     view.dispose();

@@ -31,9 +31,9 @@ public class ReportProposteController {
   private final PropostaDAO propostaDAO;
 
   /**
-   * Crea controller per report proposte.
+   * Crea il controller per il report delle proposte.
    *
-   * @param view dialogo report
+   * @param view dialogo del report
    */
   public ReportProposteController(ReportProposteDialog view) {
     this.view = view;

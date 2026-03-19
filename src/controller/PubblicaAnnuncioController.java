@@ -143,11 +143,11 @@ public class PubblicaAnnuncioController {
   }
 
   /**
-   * Converte file a byte array e memorizza loro per annuncio.
+   * Converte i file in array di byte e li memorizza per l'annuncio.
    *
-   * @param annuncio annuncio a allega immagini a
-   * @param files file immagini
-   * @throws DatabaseException quando persistenza fallisce
+   * @param annuncio annuncio a cui allegare le immagini
+   * @param files file delle immagini
+   * @throws DatabaseException quando la persistenza fallisce
    */
   private void salvaImmaginiPerAnnuncio(Annuncio annuncio, List<File> files) throws DatabaseException {
     try {

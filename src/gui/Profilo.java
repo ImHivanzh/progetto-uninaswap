@@ -119,7 +119,7 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Inizializza tabella modelli e tabella impostazioni.
+   * Inizializza i modelli delle tabelle e le impostazioni.
    */
   private void setupTables() {
     modelRecensioni = new DefaultTableModel(new Object[]{"Nome utente", "Voto", "Descrizione"}, 0) {
@@ -266,10 +266,10 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Applica renderer per stato alle celle della colonna indicata.
+   * Applica il renderer per lo stato alle celle della colonna indicata.
    *
    * @param table tabella target
-   * @param colIndex indice colonna
+   * @param colIndex indice della colonna
    */
   private void applyStatoRenderer(JTable table, int colIndex) {
     if (table == null) {
@@ -306,7 +306,7 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Aggiunge mouse listener per tabella annunci.
+   * Aggiunge un mouse listener alla tabella degli annunci.
    *
    * @param listener mouse listener
    */
@@ -315,7 +315,7 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Aggiunge mouse listener per ricevute proposte tabella.
+   * Aggiunge un mouse listener alla tabella delle proposte ricevute.
    *
    * @param listener mouse listener
    */
@@ -324,7 +324,7 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Aggiunge mouse listener per inviate proposte tabella.
+   * Aggiunge un mouse listener alla tabella delle proposte inviate.
    *
    * @param listener mouse listener
    */
@@ -333,9 +333,9 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Aggiunge listener a pulsante recensione proposte ricevute.
+   * Aggiunge un listener al pulsante di recensione per le proposte ricevute.
    *
-   * @param listener azione listener
+   * @param listener listener dell'azione
    */
   public void addRecensioneRicevutaListener(ActionListener listener) {
     if (btnRecensioneRicevuta != null) {
@@ -344,9 +344,9 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Aggiunge listener a pulsante recensione proposte inviate.
+   * Aggiunge un listener al pulsante di recensione per le proposte inviate.
    *
-   * @param listener azione listener
+   * @param listener listener dell'azione
    */
   public void addRecensioneInviataListener(ActionListener listener) {
     if (btnRecensioneInviata != null) {
@@ -355,9 +355,9 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Aggiunge listener a pulsante modifica proposte inviate.
+   * Aggiunge un listener al pulsante di modifica per le proposte inviate.
    *
-   * @param listener azione listener
+   * @param listener listener dell'azione
    */
   public void addModificaPropostaListener(ActionListener listener) {
     if (btnModificaProposta != null) {
@@ -366,9 +366,9 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Aggiunge listener a pulsante annulla proposte inviate.
+   * Aggiunge un listener al pulsante di annullamento per le proposte inviate.
    *
-   * @param listener azione listener
+   * @param listener listener dell'azione
    */
   public void addAnnullaPropostaListener(ActionListener listener) {
     if (btnAnnullaProposta != null) {
@@ -377,9 +377,9 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Aggiunge listener a pulsante genera report.
+   * Aggiunge un listener al pulsante di generazione del report.
    *
-   * @param listener azione listener
+   * @param listener listener dell'azione
    */
   public void addGeneraReportListener(ActionListener listener) {
     if (btnGeneraReport != null) {
@@ -388,29 +388,29 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Restituisce riga selezionata proposte ricevute.
+   * Restituisce l'indice della riga selezionata nelle proposte ricevute.
    *
-   * @return indice riga o -1
+   * @return indice della riga o -1
    */
   public int getSelectedPropostaRicevutaRow() {
     return tableProposteRicevute != null ? tableProposteRicevute.getSelectedRow() : -1;
   }
 
   /**
-   * Restituisce riga selezionata proposte inviate.
+   * Restituisce l'indice della riga selezionata nelle proposte inviate.
    *
-   * @return indice riga o -1
+   * @return indice della riga o -1
    */
   public int getSelectedPropostaInviataRow() {
     return tableProposteInviate != null ? tableProposteInviate.getSelectedRow() : -1;
   }
 
   /**
-   * Aggiunge recensione riga a recensioni tabella.
+   * Aggiunge una riga di recensione alla tabella recensioni.
    *
-   * @param nomeUtente recensore nome
-   * @param voto valutazione valore
-   * @param descrizione testo recensione
+   * @param nomeUtente nome del recensore
+   * @param voto valore della valutazione
+   * @param descrizione testo della recensione
    */
   public void aggiungiRecensione(String nomeUtente, int voto, String descrizione) {
     String stelle = "★".repeat(voto);
@@ -418,7 +418,7 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Cancella tutti tabella righe.
+   * Cancella tutte le righe delle tabelle.
    */
   public void pulisciTabelle() {
     modelRecensioni.setRowCount(0);
@@ -429,46 +429,46 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Aggiunge annuncio riga a tabella annunci.
+   * Aggiunge una riga di annuncio alla tabella annunci.
    *
-   * @param titolo annuncio titolo
-   * @param categoria annuncio categoria
-   * @param tipo tipo annuncio
+   * @param titolo titolo dell'annuncio
+   * @param categoria categoria dell'annuncio
+   * @param tipo tipo di annuncio
    */
   public void aggiungiAnnuncio(String titolo, String categoria, String tipo) {
     modelAnnunci.addRow(new Object[]{titolo, categoria, tipo});
   }
 
   /**
-   * Aggiunge ricevute proposta riga a tabella.
+   * Aggiunge una riga di proposta ricevuta alla tabella.
    *
-   * @param utente proponente utente
-   * @param annuncio annuncio titolo
-   * @param tipo tipo annuncio
-   * @param dettaglio dettaglio testo
-   * @param stato testo stato
+   * @param utente utente proponente
+   * @param annuncio titolo dell'annuncio
+   * @param tipo tipo di annuncio
+   * @param dettaglio testo del dettaglio
+   * @param stato testo dello stato
    */
   public void aggiungiPropostaRicevuta(String utente, String annuncio, String tipo, String dettaglio, String stato) {
     modelProposteRicevute.addRow(new Object[]{utente, annuncio, tipo, dettaglio, stato});
   }
 
   /**
-   * Aggiunge inviate proposta riga a tabella.
+   * Aggiunge una riga di proposta inviata alla tabella.
    *
-   * @param utente destinatario utente
-   * @param annuncio annuncio titolo
-   * @param tipo tipo annuncio
-   * @param dettaglio dettaglio testo
-   * @param stato testo stato
+   * @param utente utente destinatario
+   * @param annuncio titolo dell'annuncio
+   * @param tipo tipo di annuncio
+   * @param dettaglio testo del dettaglio
+   * @param stato testo dello stato
    */
   public void aggiungiPropostaInviata(String utente, String annuncio, String tipo, String dettaglio, String stato) {
     modelProposteInviate.addRow(new Object[]{utente, annuncio, tipo, dettaglio, stato});
   }
 
   /**
-   * Imposta profilo titolo in vista e finestra.
+   * Imposta il titolo del profilo nella vista e nella finestra.
    *
-   * @param titolo profilo titolo
+   * @param titolo titolo del profilo
    */
   public void setTitoloProfilo(String titolo) {
     lblTitolo.setText(titolo);
@@ -487,28 +487,28 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Imposta username etichetta.
+   * Imposta l'etichetta dell'username.
    *
    * @param username username
    */
   public void setUsername(String username) { lblUsername.setText(username); }
 
   /**
-   * Imposta email etichetta.
+   * Imposta l'etichetta dell'email.
    *
-   * @param email email indirizzo
+   * @param email indirizzo email
    */
   public void setEmail(String email) { lblEmail.setText(email); }
 
   /**
-   * Imposta telefono etichetta.
+   * Imposta l'etichetta del telefono.
    *
-   * @param telefono numero telefono
+   * @param telefono numero di telefono
    */
   public void setTelefono(String telefono) { lblTelefono.setText(telefono); }
 
   /**
-   * Imposta valutazione media etichetta e colore.
+   * Imposta l'etichetta della valutazione media e il colore.
    *
    * @param media valutazione media
    */
@@ -531,9 +531,9 @@ public class Profilo extends BaseFrame {
   }
 
   /**
-   * Rimuove tab se presente con titolo indicato.
+   * Rimuove il tab se presente con il titolo indicato.
    *
-   * @param titolo titolo tab
+   * @param titolo titolo del tab
    */
   private void rimuoviTabSePresente(String titolo) {
     for (int i = tabbedPane.getTabCount() - 1; i >= 0; i--) {

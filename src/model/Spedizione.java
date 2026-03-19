@@ -15,7 +15,7 @@ public class Spedizione {
      */
     private String indirizzo;
     /**
-     * Numero telefono contatto.
+     * Numero telefono di contatto.
      */
     private String numeroTelefono;
     /**
@@ -36,19 +36,19 @@ public class Spedizione {
     private Annuncio annuncio;
 
     /**
-     * Crea vuoto spedizione record.
+     * Crea un record spedizione vuoto.
      */
     public Spedizione() {}
 
     /**
-     * Crea spedizione record con fornito campi.
+     * Crea un record spedizione con i campi forniti.
      *
      * @param idSpedizione id spedizione
      * @param indirizzo indirizzo spedizione
-     * @param numeroTelefono numero telefono contatto
+     * @param numeroTelefono numero telefono di contatto
      * @param dataInvio data spedizione
      * @param dataArrivo data arrivo
-     * @param spedito spedito flag
+     * @param spedito flag spedito
      * @param annuncio annuncio riferimento
      */
     public Spedizione(int idSpedizione, String indirizzo, String numeroTelefono, Date dataInvio,
@@ -91,16 +91,16 @@ public class Spedizione {
     public void setIndirizzo(String indirizzo) { this.indirizzo = indirizzo; }
 
     /**
-     * Restituisce numero telefono contatto.
+     * Restituisce numero telefono di contatto.
      *
-     * @return numero telefono contatto
+     * @return numero telefono di contatto
      */
     public String getNumeroTelefono() { return numeroTelefono; }
 
     /**
-     * Imposta numero telefono contatto.
+     * Imposta numero telefono di contatto.
      *
-     * @param numeroTelefono numero telefono contatto
+     * @param numeroTelefono numero telefono di contatto
      */
     public void setNumeroTelefono(String numeroTelefono) { this.numeroTelefono = numeroTelefono; }
 
@@ -140,21 +140,21 @@ public class Spedizione {
     public boolean isSpedito() { return spedito; }
 
     /**
-     * Imposta spedito flag.
+     * Imposta flag spedito.
      *
-     * @param spedito spedito flag
+     * @param spedito flag spedito
      */
     public void setSpedito(boolean spedito) { this.spedito = spedito; }
 
     /**
-     * Restituisce collegato annuncio.
+     * Restituisce annuncio collegato.
      *
-     * @return collegato annuncio
+     * @return annuncio collegato
      */
     public Annuncio getAnnuncio() { return annuncio; }
 
     /**
-     * Imposta collegato annuncio.
+     * Imposta annuncio collegato.
      *
      * @param annuncio annuncio riferimento
      */

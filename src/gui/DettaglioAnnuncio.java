@@ -85,9 +85,9 @@ public class DettaglioAnnuncio extends JFrame {
   private transient DettaglioAnnuncioController controller;
 
   /**
-   * Crea finestra dettaglio annuncio.
+   * Crea la finestra di dettaglio dell'annuncio.
    *
-   * @param annuncio annuncio a visualizza
+   * @param annuncio annuncio da visualizzare
    */
   public DettaglioAnnuncio(Annuncio annuncio) {
     setContentPane(mainPanel);
@@ -112,7 +112,7 @@ public class DettaglioAnnuncio extends JFrame {
   }
 
   /**
-   * Registra pulsante listener per vista.
+   * Registra i listener dei pulsanti per la vista.
    */
   private void setupListeners() {
     btnIndietro.addActionListener(e -> dispose());
@@ -122,38 +122,38 @@ public class DettaglioAnnuncio extends JFrame {
   }
 
   /**
-   * Imposta titolo etichetta testo.
+   * Imposta il testo dell'etichetta del titolo.
    *
-   * @param titolo titolo testo
+   * @param titolo testo del titolo
    */
   public void setTitolo(String titolo) { lblTitolo.setText(titolo); }
 
   /**
-   * Imposta descrizione testo.
+   * Imposta il testo della descrizione.
    *
-   * @param descrizione descrizione testo
+   * @param descrizione testo della descrizione
    */
   public void setDescrizione(String descrizione) { txtDescrizione.setText(descrizione); }
 
   /**
-   * Imposta categoria etichetta testo.
+   * Imposta il testo dell'etichetta della categoria.
    *
-   * @param testo categoria testo
+   * @param testo testo della categoria
    */
   public void setCategoria(String testo) { lblCategoria.setText(testo); }
 
   /**
-   * Imposta tipo etichetta testo.
+   * Imposta il testo dell'etichetta del tipo.
    *
-   * @param testo tipo testo
+   * @param testo testo del tipo
    */
   public void setTipo(String testo) { lblTipo.setText(testo); }
 
   /**
-   * Imposta prezzo etichetta testo e colore.
+   * Imposta il testo e il colore dell'etichetta del prezzo.
    *
-   * @param testo prezzo testo
-   * @param colore etichetta colore
+   * @param testo testo del prezzo
+   * @param colore colore dell'etichetta
    */
   public void setPrezzoInfo(String testo, Color colore) {
     lblPrezzo.setText(testo);
@@ -161,10 +161,10 @@ public class DettaglioAnnuncio extends JFrame {
   }
 
   /**
-   * Imposta pubblicatore username testo.
+   * Imposta il testo dell'username del pubblicatore.
    *
    * @param nome username
-   * @param cliccabile true quando etichetta dovrebbe aspetto cliccabile
+   * @param cliccabile true quando l'etichetta dovrebbe apparire cliccabile
    */
   public void setUtenteNome(String nome, boolean cliccabile) {
     String valore = nome != null ? nome : "";
@@ -183,7 +183,7 @@ public class DettaglioAnnuncio extends JFrame {
   }
 
   /**
-   * Aggiunge mouse listener a pubblicatore etichetta.
+   * Aggiunge un mouse listener all'etichetta del pubblicatore.
    *
    * @param listener mouse listener
    */
@@ -192,16 +192,16 @@ public class DettaglioAnnuncio extends JFrame {
   }
 
   /**
-   * Imposta etichetta contatore immagini testo.
+   * Imposta il testo dell'etichetta del contatore delle immagini.
    *
-   * @param testo contatore testo
+   * @param testo testo del contatore
    */
   public void setContatoreImmagini(String testo) { lblContatoreImmagini.setText(testo); }
 
   /**
-   * Imposta icona immagine, ridimensionandola a etichetta dimensione.
+   * Imposta l'icona dell'immagine, ridimensionandola alle dimensioni dell'etichetta.
    *
-   * @param icon icona immagine
+   * @param icon icona dell'immagine
    */
   public void setImmagine(ImageIcon icon) {
     int maxW = lblImmagine.getWidth();
@@ -232,9 +232,9 @@ public class DettaglioAnnuncio extends JFrame {
   }
 
   /**
-   * Cancella icona immagine e imposta segnaposto testo.
+   * Cancella l'icona dell'immagine e imposta un testo segnaposto.
    *
-   * @param testo segnaposto testo
+   * @param testo testo segnaposto
    */
   public void setImmagineTesto(String testo) {
     lblImmagine.setIcon(null);

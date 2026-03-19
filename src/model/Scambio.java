@@ -13,7 +13,7 @@ public class Scambio extends Annuncio {
     private String oggettoRichiesto;
 
     /**
-     * Crea scambio annuncio con esplicito id.
+     * Crea un annuncio scambio con id esplicito.
      *
      * @param id id annuncio
      * @param titolo titolo
@@ -29,7 +29,7 @@ public class Scambio extends Annuncio {
     }
 
     /**
-     * Crea scambio annuncio per nuovo inserimento.
+     * Crea un annuncio scambio per nuovo inserimento.
      *
      * @param titolo titolo
      * @param descrizione descrizione

@@ -43,7 +43,7 @@ public class FaiPropostaController {
   /**
    * Crea controller per dialogo proposta.
    *
-   * @param view dialogo vista
+   * @param view vista del dialogo
    * @param tipoAnnuncio tipo annuncio
    */
   public FaiPropostaController(FaiPropostaDialog view, TipoAnnuncio tipoAnnuncio) {
@@ -52,7 +52,7 @@ public class FaiPropostaController {
   }
 
   /**
-   * Gestisce immagine selezione e anteprima aggiorna.
+   * Gestisce la selezione dell'immagine e aggiorna l'anteprima.
    */
   public void azioneCaricaImmagine() {
     JFileChooser fileChooser = new JFileChooser();
@@ -65,9 +65,9 @@ public class FaiPropostaController {
   }
 
   /**
-   * Carica immagine da file.
+   * Carica un'immagine da file.
    *
-   * @param file file immagine
+   * @param file file dell'immagine
    */
   public void caricaImmagineDaFile(File file) {
     try (FileInputStream fis = new FileInputStream(file)) {
@@ -79,7 +79,7 @@ public class FaiPropostaController {
   }
 
   /**
-   * Valida input e conferma proposta.
+   * Valida l'input e conferma la proposta.
    */
   public void azioneConferma() {
     String testoDescrizione = view.getDescrizioneInput();
@@ -114,7 +114,7 @@ public class FaiPropostaController {
   }
 
   /**
-   * Annulla proposta e chiude dialogo.
+   * Annulla la proposta e chiude il dialogo.
    */
   public void azioneAnnulla() {
     this.confermato = false;
@@ -122,30 +122,30 @@ public class FaiPropostaController {
   }
 
   /**
-   * Restituisce se proposta era confermata.
+   * Restituisce se la proposta è stata confermata.
    *
    * @return true quando confermata
    */
   public boolean isConfermato() { return confermato; }
 
   /**
-   * Restituisce proposto prezzo.
+   * Restituisce il prezzo proposto.
    *
-   * @return proposto prezzo o null
+   * @return prezzo proposto o null
    */
   public Double getOffertaPrezzo() { return offertaPrezzo; }
 
   /**
-   * Restituisce descrizione proposta.
+   * Restituisce la descrizione della proposta.
    *
-   * @return descrizione proposta
+   * @return descrizione della proposta
    */
   public String getDescrizioneProposta() { return descrizioneProposta; }
 
   /**
-   * Restituisce byte immagine proposta.
+   * Restituisce l'array di byte dell'immagine della proposta.
    *
-   * @return byte immagine o null
+   * @return array di byte dell'immagine o null
    */
   public byte[] getImmagineProposta() { return immagineProposta; }
 }

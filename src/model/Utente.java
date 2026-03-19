@@ -27,17 +27,17 @@ public class Utente {
     private String numeroTelefono;
 
     /**
-     * Crea vuoto utente.
+     * Crea un utente vuoto.
      */
     public Utente() {}
 
     /**
-     * Crea utente con fornito campi.
+     * Crea un utente con i campi forniti.
      *
-     * @param idUtente utente id
+     * @param idUtente id utente
      * @param username username
      * @param password password
-     * @param email email indirizzo
+     * @param email indirizzo email
      * @param numeroTelefono numero telefono
      */
     public Utente(int idUtente, String username, String password, String email, String numeroTelefono) {
@@ -49,16 +49,16 @@ public class Utente {
     }
 
     /**
-     * Restituisce utente id.
+     * Restituisce id utente.
      *
-     * @return utente id
+     * @return id utente
      */
     public int getIdUtente() { return idUtente; }
 
     /**
-     * Imposta utente id.
+     * Imposta id utente.
      *
-     * @param idUtente utente id
+     * @param idUtente id utente
      */
     public void setIdUtente(int idUtente) { this.idUtente = idUtente; }
 
@@ -81,18 +81,18 @@ public class Utente {
     }
 
     /**
-     * Restituisce email indirizzo.
+     * Restituisce indirizzo email.
      *
-     * @return email indirizzo
+     * @return indirizzo email
      */
     public String getEmail() {
         return email;
     }
 
     /**
-     * Imposta email indirizzo.
+     * Imposta indirizzo email.
      *
-     * @param email email indirizzo
+     * @param email indirizzo email
      */
     public void setEmail(String email) { this.email = email; }
 
@@ -107,7 +107,7 @@ public class Utente {
      * Imposta password dopo forza validazione.
      *
      * @param password password valore
-     * @throws IllegalArgumentException quando password è non forte sufficiente
+     * @throws IllegalArgumentException quando la password non è sufficientemente forte
      */
     public void setPassword(String password) {
         if (DataCheck.isStrongPassword(password)) {

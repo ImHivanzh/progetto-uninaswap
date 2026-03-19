@@ -184,7 +184,7 @@ public class MainApp extends BaseFrame {
     }
   }
   /**
-   * Crea app principale UI contenitore.
+   * Crea il contenitore dell'interfaccia dell'applicazione principale.
    */
   public MainApp() {
     super("UninaSwap - Bacheca");
@@ -235,7 +235,7 @@ public class MainApp extends BaseFrame {
   }
 
   /**
-   * Inizializza navigazione barra e avvolge principale pannello.
+   * Inizializza la barra di navigazione e avvolge il pannello principale.
    */
   private void initLayout() {
     JPanel root = new JPanel(new BorderLayout());
@@ -306,7 +306,7 @@ public class MainApp extends BaseFrame {
   }
 
   /**
-   * Imposta azione comandi per controller instradamento.
+   * Imposta i comandi delle azioni per l'instradamento del controller.
    */
   private void initActionCommands() {
     if (btnProfilo != null) btnProfilo.setActionCommand(ACTION_PROFILO);
@@ -319,7 +319,7 @@ public class MainApp extends BaseFrame {
   }
 
   /**
-   * Inizializza filtro widget stato.
+   * Inizializza lo stato dei widget di filtro.
    */
   private void initFiltri() {
     if (categoryList != null) {
@@ -339,9 +339,9 @@ public class MainApp extends BaseFrame {
   }
 
   /**
-   * Abilita o disabilita navigazione controlli.
+   * Abilita o disabilita i controlli di navigazione.
    *
-   * @param abilitata navigazione abilitato flag
+   * @param abilitata flag per abilitare la navigazione
    */
   public void setNavigazioneAbilitata(boolean abilitata) {
     if (btnPubblica != null) btnPubblica.setEnabled(abilitata);
@@ -360,9 +360,9 @@ public class MainApp extends BaseFrame {
   }
 
   /**
-   * Aggiorna finestra titolo con utente corrente.
+   * Aggiorna il titolo della finestra con l'utente corrente.
    *
-   * @param username corrente username
+   * @param username username corrente
    */
   public void setTitoloUtente(String username) {
     if (username == null || username.trim().isEmpty()) {
@@ -380,18 +380,18 @@ public class MainApp extends BaseFrame {
   }
 
   /**
-   * Restituisce corrente testo ricerca.
+   * Restituisce il testo di ricerca corrente.
    *
-   * @return testo ricerca
+   * @return testo di ricerca
    */
   public String getTestoRicerca() {
     return searchField != null ? searchField.getText() : "";
   }
 
   /**
-   * Restituisce categoria selezionata.
+   * Restituisce la categoria selezionata.
    *
-   * @return categoria nome
+   * @return nome della categoria
    */
   public String getCategoriaSelezionata() {
     if (categoryList == null) {
@@ -402,9 +402,9 @@ public class MainApp extends BaseFrame {
   }
 
   /**
-   * Restituisce etichetta tipo annuncio selezionato.
+   * Restituisce l'etichetta del tipo di annuncio selezionato.
    *
-   * @return testo tipo selezionato
+   * @return testo del tipo selezionato
    */
   public String getTipoSelezionato() {
     if (radioScambio != null && radioScambio.isSelected()) return "Scambio";
@@ -414,9 +414,9 @@ public class MainApp extends BaseFrame {
   }
 
   /**
-   * Restituisce massimo prezzo filtro.
+   * Restituisce il filtro del prezzo massimo.
    *
-   * @return massimo prezzo
+   * @return prezzo massimo
    */
   public String getPrezzoMax() {
     return txtPrezzoMax != null ? txtPrezzoMax.getText() : "";
@@ -441,9 +441,9 @@ public class MainApp extends BaseFrame {
   }
 
   /**
-   * Aggiunge profilo navigazione listener.
+   * Aggiunge un listener per la navigazione al profilo.
    *
-   * @param listener azione listener
+   * @param listener listener dell'azione
    */
   public void addProfiloListener(ActionListener listener) {
     if (btnProfilo != null) btnProfilo.addActionListener(listener);
@@ -452,25 +452,25 @@ public class MainApp extends BaseFrame {
   /**
    * Aggiunge logout listener.
    *
-   * @param listener azione listener
+   * @param listener listener dell'azione
    */
   public void addLogoutListener(ActionListener listener) {
     if (btnLogout != null) btnLogout.addActionListener(listener);
   }
 
   /**
-   * Aggiunge pubblica annuncio listener.
+   * Aggiunge un listener per la pubblicazione di annunci.
    *
-   * @param listener azione listener
+   * @param listener listener dell'azione
    */
   public void addPubblicaListener(ActionListener listener) {
     if (btnPubblica != null) btnPubblica.addActionListener(listener);
   }
 
   /**
-   * Aggiunge ricerca azione listener.
+   * Aggiunge un listener per l'azione di ricerca.
    *
-   * @param listener azione listener
+   * @param listener listener dell'azione
    */
   public void addSearchListener(ActionListener listener) {
     if (searchButton != null) searchButton.addActionListener(listener);
@@ -480,47 +480,47 @@ public class MainApp extends BaseFrame {
   /**
    * Aggiunge listener per reset filtri.
    *
-   * @param listener azione listener
+   * @param listener listener dell'azione
    */
   public void addResetListener(ActionListener listener) {
     if (resetButton != null) resetButton.addActionListener(listener);
   }
 
   /**
-   * Aggiunge listener per aggiorna annunci.
+   * Aggiunge un listener per l'aggiornamento degli annunci.
    *
-   * @param listener azione listener
+   * @param listener listener dell'azione
    */
   public void addAggiornaListener(ActionListener listener) {
     if (btnAggiorna != null) btnAggiorna.addActionListener(listener);
   }
 
   /**
-   * Renderizza annunci in evidenza sezione.
+   * Renderizza la sezione degli annunci in evidenza.
    *
    * @param annunci annunci in evidenza con immagini
-   * @param listener azione listener per dettaglio pulsanti
+   * @param listener listener dell'azione per i pulsanti di dettaglio
    */
   public void mostraAnnunciInEvidenza(List<AnnuncioEvidenza> annunci, ActionListener listener) {
     mostraAnnunci(annunci, listener, "Nessun annuncio in evidenza con foto disponibile.");
   }
 
   /**
-   * Renderizza risultati ricerca.
+   * Renderizza i risultati della ricerca.
    *
-   * @param annunci annunci risultati con immagini
-   * @param listener azione listener per dettaglio pulsanti
+   * @param annunci annunci risultanti con immagini
+   * @param listener listener dell'azione per i pulsanti di dettaglio
    */
   public void mostraRisultatiRicerca(List<AnnuncioEvidenza> annunci, ActionListener listener) {
     mostraAnnunci(annunci, listener, "Nessun annuncio trovato con i filtri selezionati.");
   }
 
   /**
-   * Renderizza lista di annunci in pannello cards.
+   * Renderizza la lista di annunci nel pannello delle card.
    *
    * @param annunci annunci da mostrare
-   * @param listener listener per bottone dettaglio
-   * @param emptyMessage messaggio quando vuoto
+   * @param listener listener per il bottone di dettaglio
+   * @param emptyMessage messaggio da mostrare quando vuoto
    */
   private void mostraAnnunci(List<AnnuncioEvidenza> annunci, ActionListener listener, String emptyMessage) {
     if (cardsPanel == null) {
@@ -554,11 +554,11 @@ public class MainApp extends BaseFrame {
   }
 
   /**
-   * Costruisce singolo annuncio in evidenza scheda.
+   * Costruisce una singola card per l'annuncio in evidenza.
    *
-   * @param annuncioEvidenza annuncio in evidenza data
-   * @param listener azione listener per dettagli
-   * @return scheda pannello
+   * @param annuncioEvidenza dati dell'annuncio in evidenza
+   * @param listener listener dell'azione per i dettagli
+   * @return pannello della card
    */
   private JPanel creaCardEvidenza(AnnuncioEvidenza annuncioEvidenza, ActionListener listener) {
     Annuncio annuncio = annuncioEvidenza.annuncio();
@@ -606,10 +606,10 @@ public class MainApp extends BaseFrame {
   }
 
   /**
-   * Formatta metadati linea per annuncio scheda.
+   * Formatta la riga dei metadati per la card dell'annuncio.
    *
    * @param annuncio annuncio
-   * @return metadati linea
+   * @return riga dei metadati
    */
   private String formatMeta(Annuncio annuncio) {
     String categoria = annuncio.getCategoria() != null ? annuncio.getCategoria().toString() : "N/A";
@@ -623,12 +623,12 @@ public class MainApp extends BaseFrame {
   }
 
   /**
-   * Crea icona da byte immagine.
+   * Crea un'icona dall'array di byte dell'immagine.
    *
-   * @param bytes byte immagine
-   * @param width target larghezza
-   * @param height target altezza
-   * @return ridimensionata icona o null
+   * @param bytes array di byte dell'immagine
+   * @param width larghezza target
+   * @param height altezza target
+   * @return icona ridimensionata o null
    */
   private ImageIcon creaIcona(byte[] bytes, int maxWidth, int maxHeight) {
     if (bytes == null || bytes.length == 0) {
@@ -652,7 +652,7 @@ public class MainApp extends BaseFrame {
   }
 
   /**
-   * Applica più forte visivo stile a pubblica pulsante.
+   * Applica uno stile visivo più forte al pulsante di pubblicazione.
    */
   private void stilePubblicaAnnuncio() {
     if (btnPubblica == null) {

@@ -181,7 +181,7 @@ public class ProfiloController {
   }
 
   /**
-   * Valida la proposta selezionata verificando permessi e dati.
+   * Valida la proposta selezionata verificando i permessi e i dati.
    */
   private PropostaRiepilogo validaSelezioneProposta(int selectedRow, List<PropostaRiepilogo> lista) {
     if (!mostraDatiSensibili) {
@@ -266,7 +266,7 @@ public class ProfiloController {
   }
 
   /**
-   * Apre dialogo report proposte inviate.
+   * Apre il dialogo del report delle proposte inviate.
    */
   private void apriReportProposte() {
     if (!mostraDatiSensibili) {

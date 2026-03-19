@@ -44,7 +44,7 @@ public class ScriviRecensione extends BaseFrame {
     private static final Color COLORE_VUOTA = Color.LIGHT_GRAY;
 
     /**
-     * Crea form recensione.
+     * Crea il form per la recensione.
      */
     public ScriviRecensione() {
         super("Scrivi Recensione");
@@ -58,7 +58,7 @@ public class ScriviRecensione extends BaseFrame {
     }
 
     /**
-     * Inizializza stella pulsanti e listener.
+     * Inizializza i pulsanti delle stelle e i listener.
      */
     private void inizializzaStelle() {
         pnlStelle.removeAll();
@@ -85,9 +85,9 @@ public class ScriviRecensione extends BaseFrame {
     }
 
     /**
-     * Imposta valutazione e aggiorna UI.
+     * Imposta la valutazione e aggiorna l'interfaccia.
      *
-     * @param voto valutazione valore
+     * @param voto valore della valutazione
      */
     private void setVoto(int voto) {
         this.votoCorrente = voto;
@@ -95,7 +95,7 @@ public class ScriviRecensione extends BaseFrame {
     }
 
     /**
-     * Aggiorna stella colori basato in valutazione corrente.
+     * Aggiorna i colori delle stelle in base alla valutazione corrente.
      */
     private void aggiornaGraficaStelle() {
         for (int i = 0; i < 5; i++) {
@@ -111,27 +111,27 @@ public class ScriviRecensione extends BaseFrame {
     }
 
     /**
-     * Restituisce valutazione corrente.
+     * Restituisce la valutazione corrente.
      *
-     * @return valutazione valore
+     * @return valore della valutazione
      */
     public int getVoto() {
         return votoCorrente;
     }
 
     /**
-     * Restituisce testo recensione.
+     * Restituisce il testo della recensione.
      *
-     * @return testo recensione
+     * @return testo della recensione
      */
     public String getDescrizione() {
         return txtDescrizione.getText();
     }
 
     /**
-     * Aggiunge invia azione listener.
+     * Aggiunge un listener per l'azione di invio.
      *
-     * @param listener azione listener
+     * @param listener listener dell'azione
      */
     public void addInviaListener(ActionListener listener) {
         btnInvia.addActionListener(listener);

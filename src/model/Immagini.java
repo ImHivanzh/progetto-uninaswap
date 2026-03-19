@@ -14,7 +14,7 @@ public class Immagini {
     private Annuncio annuncio;
 
     /**
-     * Crea vuoto immagine contenitore.
+     * Crea un contenitore immagine vuoto.
      */
     public Immagini() {
     }
@@ -22,8 +22,8 @@ public class Immagini {
     /**
      * Crea immagine contenitore con annuncio collegamento.
      *
-     * @param immagine byte immagine
-     * @param annuncio collegato annuncio
+     * @param immagine array di byte dell'immagine
+     * @param annuncio annuncio collegato
      */
     public Immagini(byte[] immagine, Annuncio annuncio) {
         this.immagine = immagine;
@@ -31,36 +31,36 @@ public class Immagini {
     }
 
     /**
-     * Restituisce byte immagine.
+     * Restituisce array di byte dell'immagine.
      *
-     * @return byte immagine
+     * @return array di byte dell'immagine
      */
     public byte[] getImmagine() {
         return immagine;
     }
 
     /**
-     * Imposta byte immagine.
+     * Imposta array di byte dell'immagine.
      *
-     * @param immagine byte immagine
+     * @param immagine array di byte dell'immagine
      */
     public void setImmagine(byte[] immagine) {
         this.immagine = immagine;
     }
 
     /**
-     * Restituisce collegato annuncio.
+     * Restituisce annuncio collegato.
      *
-     * @return collegato annuncio
+     * @return annuncio collegato
      */
     public Annuncio getAnnuncio() {
         return annuncio;
     }
 
     /**
-     * Imposta collegato annuncio.
+     * Imposta annuncio collegato.
      *
-     * @param annuncio collegato annuncio
+     * @param annuncio annuncio collegato
      */
     public void setAnnuncio(Annuncio annuncio) {
         this.annuncio = annuncio;

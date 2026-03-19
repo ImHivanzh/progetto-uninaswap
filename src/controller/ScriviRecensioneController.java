@@ -36,11 +36,11 @@ public class ScriviRecensioneController {
   private final int idAnnuncio;
 
   /**
-   * Crea controller e registra listener.
+   * Crea il controller e registra i listener.
    *
-   * @param view recensione vista
-   * @param idUtenteDestinatario id utente recensito
-   * @param idAnnuncio id annuncio per cui si lascia la recensione
+   * @param view vista della recensione
+   * @param idUtenteDestinatario id dell'utente recensito
+   * @param idAnnuncio id dell'annuncio per cui si lascia la recensione
    */
   public ScriviRecensioneController(ScriviRecensione view, int idUtenteDestinatario, int idAnnuncio) {
     this.view = view;
@@ -61,14 +61,14 @@ public class ScriviRecensioneController {
   }
 
   /**
-   * Registra UI listener per form recensione.
+   * Registra i listener dell'interfaccia per il form della recensione.
    */
   private void initListeners() {
     this.view.addInviaListener(e -> inviaRecensione());
   }
 
   /**
-   * Valida input e invia recensione.
+   * Valida l'input e invia la recensione.
    */
   private void inviaRecensione() {
     String descrizione = view.getDescrizione().trim();

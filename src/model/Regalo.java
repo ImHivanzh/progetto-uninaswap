@@ -9,7 +9,7 @@ import model.enums.TipoAnnuncio;
 public class Regalo extends Annuncio {
 
     /**
-     * Crea regalo annuncio con esplicito id.
+     * Crea un annuncio regalo con id esplicito.
      *
      * @param id id annuncio
      * @param titolo titolo
@@ -22,7 +22,7 @@ public class Regalo extends Annuncio {
     }
 
     /**
-     * Crea regalo annuncio per nuovo inserimento.
+     * Crea un annuncio regalo per nuovo inserimento.
      *
      * @param titolo titolo
      * @param descrizione descrizione

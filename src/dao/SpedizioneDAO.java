@@ -20,9 +20,9 @@ public class SpedizioneDAO {
   private final Connection con;
 
   /**
-   * Crea DAO e inizializza database connessione.
+   * Crea DAO e inizializza la connessione al database.
    *
-   * @throws DatabaseException quando database è non disponibile
+   * @throws DatabaseException quando il database non è disponibile
    */
   public SpedizioneDAO() throws DatabaseException {
     this.con = DbConnection.getInstance().getConnection();
@@ -37,7 +37,7 @@ public class SpedizioneDAO {
    * @param dataInvio data invio
    * @param dataArrivo data arrivo
    * @param indirizzo indirizzo spedizione
-   * @param numeroTelefono telefono contatto
+   * @param numeroTelefono telefono di contatto
    * @param idAnnuncio id annuncio
    * @return true quando inserimento riesce
    * @throws DatabaseException quando inserimento fallisce

@@ -11,9 +11,9 @@ import utils.Logger;
 public class BaseFrame extends JFrame {
 
     /**
-     * Crea finestra con titolo e imposta icona.
+     * Crea una finestra con titolo e imposta l'icona.
      *
-     * @param titolo finestra titolo
+     * @param titolo titolo della finestra
      */
     public BaseFrame(String titolo) {
         super(titolo);
@@ -21,7 +21,7 @@ public class BaseFrame extends JFrame {
     }
 
     /**
-     * Crea finestra e imposta icona.
+     * Crea una finestra e imposta l'icona.
      */
     public BaseFrame() {
         super();
@@ -29,7 +29,7 @@ public class BaseFrame extends JFrame {
     }
 
     /**
-     * Carica app icona e applica a finestra e taskbar quando supportato.
+     * Carica l'icona dell'applicazione e la applica alla finestra e alla taskbar quando supportato.
      */
     private void setFrameIcon() {
         try {
@@ -56,25 +56,25 @@ public class BaseFrame extends JFrame {
     }
 
     /**
-     * Mostra informativo messaggio dialogo.
+     * Mostra un dialogo con un messaggio informativo.
      *
-     * @param messaggio messaggio testo
+     * @param messaggio testo del messaggio
      */
     public void mostraMessaggio(String messaggio) {
         JOptionPane.showMessageDialog(this, messaggio, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
-     * Mostra errore messaggio dialogo.
+     * Mostra un dialogo con un messaggio di errore.
      *
-     * @param errore errore testo
+     * @param errore testo dell'errore
      */
     public void mostraErrore(String errore) {
         JOptionPane.showMessageDialog(this, errore, "Errore", JOptionPane.ERROR_MESSAGE);
     }
 
     /**
-     * Centra finestra in schermo.
+     * Centra la finestra sullo schermo.
      */
     public void centraFinestra() {
         setLocationRelativeTo(null);

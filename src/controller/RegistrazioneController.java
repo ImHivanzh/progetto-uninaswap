@@ -32,14 +32,14 @@ public class RegistrazioneController {
   }
 
   /**
-   * Registra UI listener per vista registrazione.
+   * Registra i listener dell'interfaccia per la vista di registrazione.
    */
   private void initListeners() {
     this.view.addRegistraListener(e -> registraUtente());
   }
 
   /**
-   * Valida input e invia nuovo registrazione.
+   * Valida l'input e invia la nuova registrazione.
    */
   private void registraUtente() {
     String username = view.getUsername().trim();

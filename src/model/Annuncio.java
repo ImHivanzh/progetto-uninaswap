@@ -47,14 +47,14 @@ public class Annuncio {
     private List<Immagini> immagini;
 
     /**
-     * Crea vuoto annuncio con inizializzato lista immagini.
+     * Crea un annuncio vuoto con lista immagini inizializzata.
      */
     public Annuncio() {
         this.immagini = new ArrayList<>();
     }
 
     /**
-     * Crea annuncio con principali campi.
+     * Crea un annuncio con i campi principali.
      *
      * @param utente proprietario
      * @param titolo titolo
@@ -73,7 +73,7 @@ public class Annuncio {
     }
 
     /**
-     * Crea annuncio con esplicito id, utile per DB ricostruzione.
+     * Crea un annuncio con id esplicito, utile per la ricostruzione dal DB.
      *
      * @param idAnnuncio id annuncio
      * @param titolo titolo

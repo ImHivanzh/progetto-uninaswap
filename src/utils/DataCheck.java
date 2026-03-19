@@ -18,10 +18,10 @@ public class DataCheck {
     }
 
     /**
-     * Valida email indirizzo contro base regex pattern.
+     * Valida l'indirizzo email contro un pattern regex di base.
      *
-     * @param email email indirizzo a valida
-     * @return true quando email corrisponde atteso formato
+     * @param email indirizzo email da validare
+     * @return true quando l'email corrisponde al formato atteso
      */
     public static boolean isValidEmail(String email) {
         if (email == null) {
@@ -32,10 +32,10 @@ public class DataCheck {
     }
 
     /**
-     * Valida numero telefono come 10-cifra numerico stringa.
+     * Valida il numero di telefono come stringa numerica di 10 cifre.
      *
-     * @param phoneNumber numero telefono a valida
-     * @return true quando valore è numero 10 cifre
+     * @param phoneNumber numero di telefono da validare
+     * @return true quando il valore è un numero di 10 cifre
      */
     public static boolean isValidPhoneNumber(String phoneNumber) {
         if (phoneNumber == null) {
@@ -46,10 +46,10 @@ public class DataCheck {
     }
 
     /**
-     * Verifica che password è forte sufficiente per registrazione.
+     * Verifica che la password sia sufficientemente forte per la registrazione.
      *
-     * @param password password a valida
-     * @return true quando ha lunghezza >= 8, maiuscola, minuscola, cifra, e speciale carattere
+     * @param password password da validare
+     * @return true quando ha lunghezza >= 8, maiuscola, minuscola, cifra e carattere speciale
      */
     public static boolean isStrongPassword(String password) {
         if (password == null || password.length() < MIN_PASSWORD_LENGTH) {

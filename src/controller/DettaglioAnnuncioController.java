@@ -65,11 +65,11 @@ public class DettaglioAnnuncioController {
   private Utente pubblicatore;
 
   /**
-   * Crea controller per vista dettaglio annuncio.
+   * Crea il controller per la vista di dettaglio dell'annuncio.
    *
-   * @param view dettaglio vista
-   * @param annuncio annuncio a visualizza
-   * @throws DatabaseException se inizializzazione DAO fallisce
+   * @param view vista di dettaglio
+   * @param annuncio annuncio da visualizzare
+   * @throws DatabaseException se l'inizializzazione del DAO fallisce
    */
   public DettaglioAnnuncioController(DettaglioAnnuncio view, Annuncio annuncio) throws DatabaseException {
     this.view = view;
@@ -83,7 +83,7 @@ public class DettaglioAnnuncioController {
   }
 
   /**
-   * Carica dati annuncio e popola vista.
+   * Carica i dati dell'annuncio e popola la vista.
    */
   private void caricaDati() {
     try {
@@ -154,7 +154,7 @@ public class DettaglioAnnuncioController {
   }
 
   /**
-   * Avanza a successiva immagine in carosello.
+   * Avanza all'immagine successiva nel carosello.
    */
   public void azioneSuccessiva() {
     if (listaImmagini != null && !listaImmagini.isEmpty()) {
@@ -164,7 +164,7 @@ public class DettaglioAnnuncioController {
   }
 
   /**
-   * Sposta a precedente immagine in carosello.
+   * Sposta all'immagine precedente nel carosello.
    */
   public void azionePrecedente() {
     if (listaImmagini != null && !listaImmagini.isEmpty()) {
@@ -174,7 +174,7 @@ public class DettaglioAnnuncioController {
   }
 
   /**
-   * Apre dialogo proposta e salva proposta se confermata.
+   * Apre il dialogo della proposta e salva la proposta se confermata.
    */
   public void azioneContatta() {
     FaiPropostaDialog dialog = new FaiPropostaDialog(view, annuncio.getTipoAnnuncio());
@@ -192,11 +192,11 @@ public class DettaglioAnnuncioController {
   }
 
   /**
-   * Salva proposta per corrente annuncio.
+   * Salva la proposta per l'annuncio corrente.
    *
-   * @param prezzo proposto prezzo
-   * @param descrizione descrizione proposta
-   * @param immagine proposta immagine
+   * @param prezzo prezzo proposto
+   * @param descrizione descrizione della proposta
+   * @param immagine immagine della proposta
    */
   private void salvaProposta(Double prezzo, String descrizione, byte[] immagine) {
     Utente utenteCorrente = SessionManager.getInstance().getUtente();
@@ -262,7 +262,7 @@ public class DettaglioAnnuncioController {
   }
 
   /**
-   * Aggiorna vista immagine basato in indice corrente.
+   * Aggiorna la vista dell'immagine in base all'indice corrente.
    */
   private void aggiornaVistaImmagine() {
     if (listaImmagini == null || listaImmagini.isEmpty()) {
@@ -284,7 +284,7 @@ public class DettaglioAnnuncioController {
   }
 
   /**
-   * Apre pubblicatore vista profilo.
+   * Apre la vista del profilo del pubblicatore.
    */
   private void apriProfiloPubblicatore() {
     if (pubblicatore == null) {
