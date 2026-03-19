@@ -473,16 +473,22 @@ public class PropostaDAO {
      * @param idAnnuncio ID dell'annuncio
      * @param idUtente ID dell'utente proponente
      * @param nuovaOfferta nuova offerta
+     * @param messaggio messaggio opzionale
      * @return true se l'aggiornamento ha successo
      * @throws DatabaseException se l'aggiornamento fallisce
      */
-    public boolean modificaPropostaVendita(int idAnnuncio, int idUtente, double nuovaOfferta) throws DatabaseException {
-        String sql = "UPDATE vendita SET controofferta = ? WHERE idannuncio = ? AND idutente = ?";
+    public boolean modificaPropostaVendita(int idAnnuncio, int idUtente, double nuovaOfferta, String messaggio) throws DatabaseException {
+        String sql = "UPDATE vendita SET controofferta = ?, messaggio = ? WHERE idannuncio = ? AND idutente = ?";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setDouble(1, nuovaOfferta);
-            ps.setInt(2, idAnnuncio);
-            ps.setInt(3, idUtente);
+            if (messaggio != null && !messaggio.isEmpty()) {
+                ps.setString(2, messaggio);
+            } else {
+                ps.setNull(2, Types.VARCHAR);
+            }
+            ps.setInt(3, idAnnuncio);
+            ps.setInt(4, idUtente);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DatabaseException("Errore durante la modifica della proposta di vendita", e);
@@ -514,6 +520,32 @@ public class PropostaDAO {
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DatabaseException("Errore durante la modifica della proposta di scambio", e);
+        }
+    }
+
+    /**
+     * Aggiorna il messaggio per una proposta di regalo.
+     *
+     * @param idAnnuncio ID dell'annuncio
+     * @param idUtente ID dell'utente proponente
+     * @param messaggio messaggio opzionale
+     * @return true se l'aggiornamento ha successo
+     * @throws DatabaseException se l'aggiornamento fallisce
+     */
+    public boolean modificaPropostaRegalo(int idAnnuncio, int idUtente, String messaggio) throws DatabaseException {
+        String sql = "UPDATE regalo SET messaggio = ? WHERE idannuncio = ? AND idutente = ?";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            if (messaggio != null && !messaggio.isEmpty()) {
+                ps.setString(1, messaggio);
+            } else {
+                ps.setNull(1, Types.VARCHAR);
+            }
+            ps.setInt(2, idAnnuncio);
+            ps.setInt(3, idUtente);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new DatabaseException("Errore durante la modifica della proposta di regalo", e);
         }
     }
 

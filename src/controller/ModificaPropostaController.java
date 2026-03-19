@@ -61,7 +61,20 @@ public class ModificaPropostaController {
 
     TipoAnnuncio tipo = proposta.annuncio().getTipoAnnuncio();
     switch (tipo) {
-      case VENDITA -> view.setPrezzoInput(proposta.dettaglio().replaceAll("[^0-9,.]", ""));
+      case VENDITA -> {
+        String dettaglio = proposta.dettaglio();
+        // Estrai prezzo: "Offerta: €123.45" o "Offerta: €123.45 | Messaggio: testo"
+        int messaggioIndex = dettaglio.indexOf(" | Messaggio: ");
+        String partPrezzo = messaggioIndex >= 0 ? dettaglio.substring(0, messaggioIndex) : dettaglio;
+        String prezzo = partPrezzo.replaceAll("[^0-9,.]", "");
+        view.setPrezzoInput(prezzo);
+
+        // Estrai messaggio se presente
+        if (messaggioIndex >= 0) {
+          String messaggio = dettaglio.substring(messaggioIndex + 14).trim();
+          view.setMessaggioInput(messaggio);
+        }
+      }
       case SCAMBIO -> {
         String dettaglio = proposta.dettaglio();
         int delimiter = dettaglio.indexOf(':');
@@ -69,6 +82,15 @@ public class ModificaPropostaController {
         view.setDescrizioneInput(descrizione);
         if (proposta.immagine() != null) {
           view.aggiornaAnteprimaImmagine(proposta.immagine());
+        }
+      }
+      case REGALO -> {
+        String dettaglio = proposta.dettaglio();
+        // Estrai messaggio: "Richiesta regalo | Messaggio: testo" o "Richiesta regalo"
+        int messaggioIndex = dettaglio.indexOf(" | Messaggio: ");
+        if (messaggioIndex >= 0) {
+          String messaggio = dettaglio.substring(messaggioIndex + 14).trim();
+          view.setMessaggioInput(messaggio);
         }
       }
       default -> {
@@ -114,6 +136,7 @@ public class ModificaPropostaController {
       boolean success = switch (tipo) {
         case VENDITA -> salvaPropostaVendita(idUtente);
         case SCAMBIO -> salvaPropostaScambio(idUtente);
+        case REGALO -> salvaPropostaRegalo(idUtente);
         default -> {
           view.mostraErrore("Tipo proposta non supportato.");
           yield false;
@@ -150,7 +173,8 @@ public class ModificaPropostaController {
       view.mostraErrore("Inserisci un prezzo valido maggiore di 0.");
       return false;
     }
-    return propostaDAO.modificaPropostaVendita(proposta.annuncio().getIdAnnuncio(), idUtente, nuovaOfferta);
+    String messaggio = view.getMessaggioInput().trim();
+    return propostaDAO.modificaPropostaVendita(proposta.annuncio().getIdAnnuncio(), idUtente, nuovaOfferta, messaggio);
   }
 
   /**
@@ -168,6 +192,18 @@ public class ModificaPropostaController {
     }
     return propostaDAO.modificaPropostaScambio(
             proposta.annuncio().getIdAnnuncio(), idUtente, nuovaDescrizione, immagineProposta);
+  }
+
+  /**
+   * Salva la proposta di regalo.
+   *
+   * @param idUtente ID dell'utente
+   * @return true se il salvataggio ha successo
+   * @throws DatabaseException se si verifica un errore nel database
+   */
+  private boolean salvaPropostaRegalo(int idUtente) throws DatabaseException {
+    String messaggio = view.getMessaggioInput().trim();
+    return propostaDAO.modificaPropostaRegalo(proposta.annuncio().getIdAnnuncio(), idUtente, messaggio);
   }
 
   /**

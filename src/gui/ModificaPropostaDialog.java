@@ -222,6 +222,14 @@ public class ModificaPropostaDialog extends JDialog {
     txtDescrizione.setText(descrizione);
   }
 
+  public String getMessaggioInput() {
+    return txtDescrizione.getText();
+  }
+
+  public void setMessaggioInput(String messaggio) {
+    txtDescrizione.setText(messaggio);
+  }
+
   public void aggiornaAnteprimaImmagine(byte[] imgData) {
     if (imgData != null) {
       ImageIcon icon = new ImageIcon(imgData);
