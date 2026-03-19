@@ -65,6 +65,10 @@ public class PubblicaAnnuncio extends BaseFrame {
    */
   private JTextField txtPrezzo;
   /**
+   * Campo oggetto richiesto per scambio.
+   */
+  private JTextField txtOggettoRichiesto;
+  /**
    * Pulsante pubblica.
    */
   private JButton btnPubblica;
@@ -145,14 +149,28 @@ public class PubblicaAnnuncio extends BaseFrame {
 
     cmbTipo.addActionListener(e -> {
       TipoAnnuncio tipo = (TipoAnnuncio) cmbTipo.getSelectedItem();
+
+      // Abilita prezzo solo per vendita
       boolean isVendita = (tipo == TipoAnnuncio.VENDITA);
       txtPrezzo.setEnabled(isVendita);
       if (!isVendita) {
         txtPrezzo.setText("");
       }
+
+      // Abilita oggetto richiesto solo per scambio
+      boolean isScambio = (tipo == TipoAnnuncio.SCAMBIO);
+      if (txtOggettoRichiesto != null) {
+        txtOggettoRichiesto.setEnabled(isScambio);
+        if (!isScambio) {
+          txtOggettoRichiesto.setText("");
+        }
+      }
     });
 
     txtPrezzo.setEnabled(cmbTipo.getSelectedItem() == TipoAnnuncio.VENDITA);
+    if (txtOggettoRichiesto != null) {
+      txtOggettoRichiesto.setEnabled(cmbTipo.getSelectedItem() == TipoAnnuncio.SCAMBIO);
+    }
   }
 
   /**
@@ -296,6 +314,15 @@ public class PubblicaAnnuncio extends BaseFrame {
    */
   public String getPrezzo() {
     return txtPrezzo.getText();
+  }
+
+  /**
+   * Restituisce input oggetto richiesto per scambio.
+   *
+   * @return oggetto richiesto testo
+   */
+  public String getOggettoRichiesto() {
+    return txtOggettoRichiesto != null ? txtOggettoRichiesto.getText() : "";
   }
 
   /**

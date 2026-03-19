@@ -98,7 +98,10 @@ public class PubblicaAnnuncioController {
           break;
 
         case SCAMBIO:
-          String oggettoRichiesto = "Da concordare";
+          String oggettoRichiesto = view.getOggettoRichiesto().trim();
+          if (oggettoRichiesto.isEmpty()) {
+            throw new IllegalArgumentException("Specifica cosa vorresti ricevere in cambio.");
+          }
           nuovoAnnuncio = new Scambio(titolo, descrizione, categoria, utente, oggettoRichiesto);
           nuovoAnnuncio.setSpedizione(spedizione);
           break;
