@@ -15,12 +15,17 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
- * Controller per modifica proposta.
+ * Controller per la modifica della proposta.
  */
 public class ModificaPropostaController {
 
   /**
-   * Vista dialogo modifica proposta.
+   * Delimitatore per il messaggio nel dettaglio.
+   */
+  private static final String MESSAGGIO_DELIMITER = " | Messaggio: ";
+
+  /**
+   * Vista del dialogo di modifica proposta.
    */
   private final ModificaPropostaDialog view;
   /**
@@ -28,11 +33,11 @@ public class ModificaPropostaController {
    */
   private final PropostaRiepilogo proposta;
   /**
-   * Immagine proposta in bytes.
+   * Immagine della proposta in bytes.
    */
   private byte[] immagineProposta;
   /**
-   * DAO per operazioni su proposte.
+   * DAO per le operazioni sulle proposte.
    */
   private final PropostaDAO propostaDAO;
 
@@ -63,15 +68,15 @@ public class ModificaPropostaController {
     switch (tipo) {
       case VENDITA -> {
         String dettaglio = proposta.dettaglio();
-        // Estrai prezzo: "Offerta: €123.45" o "Offerta: €123.45 | Messaggio: testo"
-        int messaggioIndex = dettaglio.indexOf(" | Messaggio: ");
+        // Estrae il prezzo: "Offerta: €123.45" o "Offerta: €123.45 | Messaggio: testo"
+        int messaggioIndex = dettaglio.indexOf(MESSAGGIO_DELIMITER);
         String partPrezzo = messaggioIndex >= 0 ? dettaglio.substring(0, messaggioIndex) : dettaglio;
         String prezzo = partPrezzo.replaceAll("[^0-9,.]", "");
         view.setPrezzoInput(prezzo);
 
-        // Estrai messaggio se presente
+        // Estrae il messaggio se presente
         if (messaggioIndex >= 0) {
-          String messaggio = dettaglio.substring(messaggioIndex + 14).trim();
+          String messaggio = dettaglio.substring(messaggioIndex + MESSAGGIO_DELIMITER.length()).trim();
           view.setMessaggioInput(messaggio);
         }
       }
@@ -86,10 +91,10 @@ public class ModificaPropostaController {
       }
       case REGALO -> {
         String dettaglio = proposta.dettaglio();
-        // Estrai messaggio: "Richiesta regalo | Messaggio: testo" o "Richiesta regalo"
-        int messaggioIndex = dettaglio.indexOf(" | Messaggio: ");
+        // Estrae il messaggio: "Richiesta regalo | Messaggio: testo" o "Richiesta regalo"
+        int messaggioIndex = dettaglio.indexOf(MESSAGGIO_DELIMITER);
         if (messaggioIndex >= 0) {
-          String messaggio = dettaglio.substring(messaggioIndex + 14).trim();
+          String messaggio = dettaglio.substring(messaggioIndex + MESSAGGIO_DELIMITER.length()).trim();
           view.setMessaggioInput(messaggio);
         }
       }
